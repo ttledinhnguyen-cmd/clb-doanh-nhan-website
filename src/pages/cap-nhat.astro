@@ -1,0 +1,577 @@
+---
+import Base from '../layouts/Base.astro';
+
+/**
+ * Trang hội viên tự cập nhật hồ sơ.
+ *
+ * Vào bằng đường dẫn riêng có mã bí mật: /cap-nhat?ma=xxxxx
+ * Không cần tài khoản, không mật khẩu. Thiết kế ưu tiên điện thoại vì phần lớn
+ * hội viên sẽ mở link từ Zalo trên máy.
+ */
+
+const o =
+  'w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]';
+const nhan = 'block text-sm font-semibold text-brand-900';
+---
+
+<Base tieuDe="Cập nhật hồ sơ" khongLapChiMuc anTroLy>
+  <section class="surface-deep relative isolate overflow-hidden">
+    <img
+      src="/logo-mark.svg"
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute -right-16 top-8 w-[30rem] max-w-[75%] opacity-[0.07] brightness-0 invert"
+    />
+    <div class="container-page relative pb-10 pt-28 sm:pt-32 lg:pb-14 lg:pt-40">
+      <p class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-accent-400">Dành cho hội viên</p>
+      <h1 class="mt-3 text-(length:--text-h1) font-extrabold leading-tight text-white">
+        Cập nhật hồ sơ
+      </h1>
+      <p id="loi-chao" class="mt-4 text-(length:--text-lead) text-brand-100"></p>
+    </div>
+  </section>
+
+  <section class="py-10 lg:py-16">
+    <div class="container-page max-w-3xl">
+      {/* Đang tải */}
+      <div id="dang-tai" class="py-16 text-center">
+        <div
+          class="mx-auto h-9 w-9 animate-spin rounded-full border-3 border-brand-200 border-t-brand-600"
+        >
+        </div>
+        <p class="mt-5 text-slate-500">Đang mở hồ sơ…</p>
+      </div>
+
+      {/* Không vào được */}
+      <div id="khong-vao-duoc" hidden class="rounded-2xl border border-red-200 bg-red-50 p-7 sm:p-9">
+        <h2 class="text-xl font-bold text-red-800">Không mở được hồ sơ</h2>
+        <p id="ly-do" class="mt-3 text-[0.95rem] leading-relaxed text-red-700"></p>
+        <p class="mt-5 text-[0.95rem] leading-relaxed text-slate-600">
+          Anh/chị vui lòng kiểm tra lại đường dẫn đã nhận, hoặc liên hệ ban thư ký câu lạc bộ để
+          được gửi lại.
+        </p>
+        <a
+          href="/lien-he"
+          class="mt-6 inline-flex min-h-11 items-center rounded-full bg-brand-600 px-6 text-sm font-bold text-white transition hover:bg-brand-700"
+          >Liên hệ ban thư ký</a
+        >
+      </div>
+
+      {/* Biểu mẫu */}
+      <form id="bieu-mau" hidden class="space-y-7">
+        {/* Chọn hội viên — chỉ ban thư ký thấy */}
+        <div id="khoi-chon-nguoi" hidden class="rounded-2xl bg-accent-50 p-5 ring-1 ring-accent-100 sm:p-6">
+          <label>
+            <span class="text-sm font-bold text-accent-700">Chọn hội viên cần sửa</span>
+            <select id="chon-nguoi" class:list={['mt-2.5', o]}>
+              <option value="">— Chọn —</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="than-bieu-mau" hidden class="space-y-7">
+          {/* Ảnh chân dung */}
+          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Ảnh chân dung
+            </legend>
+
+            <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-start">
+              <div class="mx-auto w-40 shrink-0 sm:mx-0">
+                <div class="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5">
+                  <img
+                    id="xem-truoc"
+                    src="/logo-mark.svg"
+                    alt="Ảnh chân dung hiện tại"
+                    class="aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30"
+                  />
+                </div>
+                <p class="mt-2 text-center text-xs text-slate-500">Khung hiển thị trên web</p>
+              </div>
+
+              <div class="min-w-0 flex-1">
+                <label
+                  class="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl bg-brand-600 px-5 font-semibold text-white transition hover:bg-brand-700 active:bg-brand-800"
+                >
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9a2 2 0 0 1 2-2h1.6l1-1.6A2 2 0 0 1 9.3 4.5h5.4a2 2 0 0 1 1.7.9l1 1.6H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <circle cx="12" cy="13" r="3.2"></circle>
+                  </svg>
+                  <span>Chọn ảnh</span>
+                  <input id="chon-anh" type="file" accept="image/*" class="sr-only" />
+                </label>
+                <p class="mt-3 text-[0.85rem] leading-relaxed text-slate-500">
+                  Chụp dọc, thấy rõ mặt là đẹp nhất. Ảnh sẽ được tự thu nhỏ trước khi gửi nên
+                  không cần chỉnh gì. Xem khung bên cạnh để biết web sẽ hiển thị ra sao.
+                </p>
+                <p id="thong-tin-anh" class="mt-2 text-[0.85rem] font-semibold text-brand-700"></p>
+              </div>
+            </div>
+          </fieldset>
+
+          {/* Cá nhân */}
+          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Thông tin cá nhân
+            </legend>
+            <div class="mt-5 grid gap-4 sm:grid-cols-3">
+              <label class="sm:col-span-2">
+                <span class={nhan}>Họ và tên</span>
+                <input name="hoTen" type="text" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Xưng hô</span>
+                <select name="xungHo" class:list={['mt-2', o]}>
+                  <option value="">—</option>
+                  <option>Ông</option>
+                  <option>Bà</option>
+                </select>
+              </label>
+            </div>
+            <p id="chuc-vu-clb" hidden class="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-[0.88rem] text-brand-800"></p>
+          </fieldset>
+
+          {/* Doanh nghiệp */}
+          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Doanh nghiệp
+            </legend>
+            <div class="mt-5 grid gap-4 sm:grid-cols-2">
+              <label class="sm:col-span-2">
+                <span class={nhan}>Tên doanh nghiệp</span>
+                <input name="doanhNghiep" type="text" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Chức danh</span>
+                <input name="chucDanh" type="text" placeholder="Giám đốc…" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Ngành nghề</span>
+                <input name="nganhNghe" type="text" list="ds-nganh" class:list={['mt-2', o]} />
+                <datalist id="ds-nganh"></datalist>
+              </label>
+              <label>
+                <span class={nhan}>Năm thành lập</span>
+                <input name="namThanhLap" type="number" inputmode="numeric" min="1900" max="2100" placeholder="2015" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Quy mô</span>
+                <input name="quyMo" type="text" placeholder="50 nhân viên" class:list={['mt-2', o]} />
+              </label>
+            </div>
+          </fieldset>
+
+          {/* Liên hệ */}
+          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Liên hệ
+            </legend>
+            <p class="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-[0.85rem] leading-relaxed text-amber-800 ring-1 ring-amber-100">
+              Những thông tin dưới đây hiển thị công khai trên website cho mọi người xem. Mục nào
+              không muốn công khai thì để trống.
+            </p>
+            <div class="mt-5 grid gap-4 sm:grid-cols-2">
+              <label>
+                <span class={nhan}>Điện thoại</span>
+                <input name="dienThoai" type="tel" inputmode="tel" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Email</span>
+                <input name="email" type="email" inputmode="email" class:list={['mt-2', o]} />
+              </label>
+              <label class="sm:col-span-2">
+                <span class={nhan}>Địa chỉ</span>
+                <input name="diaChi" type="text" class:list={['mt-2', o]} />
+              </label>
+              <label class="sm:col-span-2">
+                <span class={nhan}>Website</span>
+                <input name="website" type="url" placeholder="https://" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Facebook</span>
+                <input name="facebook" type="url" placeholder="https://facebook.com/…" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Zalo</span>
+                <input name="zalo" type="text" placeholder="Số Zalo hoặc link" class:list={['mt-2', o]} />
+              </label>
+            </div>
+          </fieldset>
+
+          {/* Giới thiệu */}
+          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Giới thiệu doanh nghiệp
+            </legend>
+            <label class="mt-5 block">
+              <textarea
+                name="gioiThieu"
+                rows="7"
+                placeholder="Doanh nghiệp làm gì, thế mạnh ở đâu, phục vụ khách hàng nào…"
+                class:list={[o]}></textarea>
+              <span id="dem-chu" class="mt-2 block text-right text-xs text-slate-400"></span>
+            </label>
+          </fieldset>
+
+          {/* Sản phẩm & khách hàng */}
+          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Sản phẩm và khách hàng
+            </legend>
+
+            <div class="mt-5">
+              <p class={nhan}>Sản phẩm / dịch vụ chính</p>
+              <div id="ds-san-pham" class="mt-2.5 space-y-2.5"></div>
+              <button
+                type="button"
+                data-them="sanPham"
+                class="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-bold text-brand-700 transition hover:bg-brand-50"
+              >
+                <span class="text-lg leading-none">+</span> Thêm dòng
+              </button>
+            </div>
+
+            <div class="mt-6">
+              <p class={nhan}>Khách hàng / dự án tiêu biểu</p>
+              <div id="ds-khach-hang" class="mt-2.5 space-y-2.5"></div>
+              <button
+                type="button"
+                data-them="khachHang"
+                class="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-bold text-brand-700 transition hover:bg-brand-50"
+              >
+                <span class="text-lg leading-none">+</span> Thêm dòng
+              </button>
+            </div>
+          </fieldset>
+
+          {/* Ưu đãi */}
+          <fieldset class="rounded-2xl border-l-4 border-accent-500 bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Ưu đãi cho hội viên CLB
+            </legend>
+            <p class="mt-4 text-[0.88rem] leading-relaxed text-slate-600">
+              Doanh nghiệp có chính sách ưu đãi riêng cho anh em trong câu lạc bộ thì ghi ở đây.
+              Để trống thì mục này không hiện trên trang.
+            </p>
+            <textarea
+              name="uuDaiHoiVien"
+              rows="3"
+              placeholder="Ví dụ: giảm 10% cho hội viên CLB khi sử dụng dịch vụ."
+              class:list={['mt-4', o]}></textarea>
+          </fieldset>
+
+          <div id="thong-bao" hidden role="status" class="rounded-xl px-5 py-4 text-[0.95rem] font-semibold"></div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  {/* Thanh lưu dính đáy màn hình — trên điện thoại luôn với tới được */}
+  <div
+    id="thanh-luu"
+    hidden
+    class="sticky bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur-lg"
+  >
+    <div class="container-page flex max-w-3xl items-center gap-3 py-3.5">
+      <p id="trang-thai" class="min-w-0 flex-1 truncate text-[0.85rem] text-slate-500">
+        Sửa xong thì bấm Lưu
+      </p>
+      <button
+        type="button"
+        id="nut-luu"
+        class="inline-flex min-h-12 shrink-0 items-center rounded-full bg-accent-500 px-7 font-bold text-white shadow-lg shadow-accent-500/25 transition hover:bg-accent-600 active:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Lưu thay đổi
+      </button>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const ma = new URLSearchParams(location.search).get('ma') ?? '';
+
+  const bieuMau = document.getElementById('bieu-mau') as HTMLFormElement;
+  const thanBieuMau = document.getElementById('than-bieu-mau') as HTMLElement;
+  const dangTai = document.getElementById('dang-tai') as HTMLElement;
+  const khongVaoDuoc = document.getElementById('khong-vao-duoc') as HTMLElement;
+  const lyDo = document.getElementById('ly-do')!;
+  const loiChao = document.getElementById('loi-chao')!;
+  const thanhLuu = document.getElementById('thanh-luu') as HTMLElement;
+  const nutLuu = document.getElementById('nut-luu') as HTMLButtonElement;
+  const trangThai = document.getElementById('trang-thai')!;
+  const thongBao = document.getElementById('thong-bao') as HTMLElement;
+  const xemTruoc = document.getElementById('xem-truoc') as HTMLImageElement;
+  const chonAnh = document.getElementById('chon-anh') as HTMLInputElement;
+  const thongTinAnh = document.getElementById('thong-tin-anh')!;
+  const khoiChonNguoi = document.getElementById('khoi-chon-nguoi') as HTMLElement;
+  const chonNguoi = document.getElementById('chon-nguoi') as HTMLSelectElement;
+  const demChu = document.getElementById('dem-chu')!;
+  const chucVuClb = document.getElementById('chuc-vu-clb') as HTMLElement;
+
+  let anhMoi: string | null = null;
+  let slugHienTai = '';
+  let vaiTro = 'hoi-vien';
+
+  const dungLoi = (msg: string) => {
+    dangTai.hidden = true;
+    khongVaoDuoc.hidden = false;
+    lyDo.textContent = msg;
+  };
+
+  const bao = (msg: string, ok: boolean) => {
+    thongBao.className =
+      'rounded-xl px-5 py-4 text-[0.95rem] font-semibold ' +
+      (ok
+        ? 'bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-200'
+        : 'bg-red-50 text-red-800 ring-1 ring-inset ring-red-200');
+    thongBao.textContent = msg;
+    thongBao.hidden = false;
+    thongBao.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  // ── Danh sách động (sản phẩm, khách hàng) ────────────────────────────────
+  const dongDanhSach = (khoi: HTMLElement, giaTri = '') => {
+    const hang = document.createElement('div');
+    hang.className = 'flex gap-2';
+    hang.innerHTML =
+      '<input type="text" value="" class="w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]">' +
+      '<button type="button" class="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-slate-400 transition hover:bg-red-50 hover:text-red-600" aria-label="Xoá dòng">' +
+      '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
+    (hang.querySelector('input') as HTMLInputElement).value = giaTri;
+    hang.querySelector('button')!.addEventListener('click', () => hang.remove());
+    khoi.appendChild(hang);
+    return hang;
+  };
+
+  for (const nut of document.querySelectorAll<HTMLButtonElement>('[data-them]')) {
+    nut.addEventListener('click', () => {
+      const khoi = document.getElementById(
+        nut.dataset.them === 'sanPham' ? 'ds-san-pham' : 'ds-khach-hang',
+      )!;
+      const hang = dongDanhSach(khoi);
+      (hang.querySelector('input') as HTMLInputElement).focus();
+    });
+  }
+
+  const docDanhSach = (id: string) =>
+    [...document.querySelectorAll<HTMLInputElement>(`#${id} input`)]
+      .map((i) => i.value.trim())
+      .filter(Boolean);
+
+  // ── Nén ảnh ngay trên máy người dùng ─────────────────────────────────────
+  // Ảnh điện thoại thường 3–8 MB, gửi thẳng lên sẽ chậm và nặng kho.
+  // Thu về cạnh dài 1200px rồi chuyển sang WebP, còn khoảng 100–200 KB.
+  async function nenAnh(file: File): Promise<string> {
+    const anh = await createImageBitmap(file);
+    const CANH = 1200;
+    const ti = Math.min(1, CANH / Math.max(anh.width, anh.height));
+    const w = Math.round(anh.width * ti);
+    const h = Math.round(anh.height * ti);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext('2d')!.drawImage(anh, 0, 0, w, h);
+    anh.close();
+
+    const blob = await new Promise<Blob | null>((res) =>
+      canvas.toBlob(res, 'image/webp', 0.82),
+    );
+    if (!blob) throw new Error('Không xử lý được ảnh này.');
+
+    return await new Promise<string>((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(String(fr.result));
+      fr.onerror = () => rej(new Error('Không đọc được ảnh.'));
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  chonAnh.addEventListener('change', async () => {
+    const file = chonAnh.files?.[0];
+    if (!file) return;
+    thongTinAnh.textContent = 'Đang xử lý ảnh…';
+    try {
+      anhMoi = await nenAnh(file);
+      xemTruoc.src = anhMoi;
+      xemTruoc.className = 'aspect-3/4 w-full object-cover';
+      const kb = Math.round((anhMoi.length * 0.75) / 1024);
+      thongTinAnh.textContent = `Đã chọn ảnh mới (${kb} KB). Bấm Lưu để áp dụng.`;
+    } catch (e) {
+      anhMoi = null;
+      thongTinAnh.textContent = 'Không dùng được ảnh này, thử ảnh khác giúp tôi.';
+      console.error(e);
+    }
+  });
+
+  // ── Đổ dữ liệu vào form ──────────────────────────────────────────────────
+  function donHoSo(hoSo: Record<string, unknown>) {
+    slugHienTai = String(hoSo.slug ?? '');
+
+    for (const ten of ['hoTen', 'xungHo', 'chucDanh', 'doanhNghiep', 'nganhNghe', 'namThanhLap', 'quyMo', 'dienThoai', 'email', 'website', 'diaChi', 'facebook', 'zalo', 'uuDaiHoiVien', 'gioiThieu']) {
+      const el = bieuMau.elements.namedItem(ten) as HTMLInputElement | null;
+      if (el) el.value = hoSo[ten] == null ? '' : String(hoSo[ten]);
+    }
+
+    for (const [khoa, id] of [['sanPham', 'ds-san-pham'], ['khachHang', 'ds-khach-hang']] as const) {
+      const khoi = document.getElementById(id)!;
+      khoi.innerHTML = '';
+      const ds = Array.isArray(hoSo[khoa]) ? (hoSo[khoa] as string[]) : [];
+      if (ds.length === 0) dongDanhSach(khoi);
+      else for (const m of ds) dongDanhSach(khoi, m);
+    }
+
+    anhMoi = null;
+    thongTinAnh.textContent = '';
+    const anhCu = hoSo.anh ? String(hoSo.anh) : `/images/hoi-vien/${slugHienTai}.webp`;
+    xemTruoc.src = anhCu;
+    xemTruoc.className = 'aspect-3/4 w-full object-cover';
+    xemTruoc.onerror = () => {
+      xemTruoc.src = '/logo-mark.svg';
+      xemTruoc.className = 'aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30';
+    };
+
+    if (hoSo.chucVuClb) {
+      chucVuClb.textContent = `Chức vụ trong CLB: ${hoSo.chucVuClb}. Mục này do câu lạc bộ quản lý, cần đổi thì báo ban thư ký.`;
+      chucVuClb.hidden = false;
+    } else chucVuClb.hidden = true;
+
+    capNhatDemChu();
+    thanBieuMau.hidden = false;
+    thanhLuu.hidden = false;
+  }
+
+  const oGioiThieu = () => bieuMau.elements.namedItem('gioiThieu') as HTMLTextAreaElement;
+  const capNhatDemChu = () => {
+    const n = oGioiThieu().value.length;
+    demChu.textContent = `${n} / 4000 ký tự`;
+    demChu.className = `mt-2 block text-right text-xs ${n > 4000 ? 'font-bold text-red-600' : 'text-slate-400'}`;
+  };
+
+  // ── Mở hồ sơ ─────────────────────────────────────────────────────────────
+  type MucDanhBa = { slug: string; ten: string; doanhNghiep: string; nganhNghe: string };
+  let danhBa: MucDanhBa[] = [];
+
+  async function moHoSo() {
+    if (!ma) return dungLoi('Đường dẫn thiếu mã truy cập.');
+
+    danhBa = await fetch('/danh-ba.json')
+      .then((r) => (r.ok ? r.json() : []))
+      .catch(() => []);
+
+    try {
+      const res = await fetch('/api/ho-so', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ma }),
+      });
+      const kq = await res.json();
+      if (!res.ok) return dungLoi(kq.loi ?? 'Không mở được hồ sơ.');
+
+      vaiTro = kq.vaiTro;
+      dangTai.hidden = true;
+      bieuMau.hidden = false;
+
+      if (vaiTro === 'thu-ky') {
+        loiChao.textContent = 'Chế độ ban thư ký — chọn hội viên cần sửa ở bên dưới.';
+        khoiChonNguoi.hidden = false;
+        for (const s of kq.danhSach as string[]) {
+          const muc = danhBa.find((m) => m.slug === s);
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = muc
+            ? muc.ten + (muc.doanhNghiep ? ` — ${muc.doanhNghiep}` : '')
+            : s;
+          chonNguoi.appendChild(opt);
+        }
+      } else {
+        donHoSo(kq.hoSo);
+        const ten = [kq.hoSo.xungHo, kq.hoSo.hoTen].filter(Boolean).join(' ');
+        loiChao.textContent = `Kính chào ${ten}. Anh/chị sửa thông tin bên dưới rồi bấm Lưu.`;
+      }
+
+      // Gợi ý ngành nghề đã có trong danh bạ, để tên ngành không bị mỗi người
+      // viết một kiểu làm hỏng bộ lọc ở trang Hội viên.
+      const dl = document.getElementById('ds-nganh')!;
+      for (const n of new Set(danhBa.map((m) => m.nganhNghe).filter(Boolean))) {
+        if (n === 'Đang cập nhật') continue;
+        const opt = document.createElement('option');
+        opt.value = n;
+        dl.appendChild(opt);
+      }
+    } catch {
+      dungLoi('Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi thử lại.');
+    }
+  }
+
+  chonNguoi.addEventListener('change', async () => {
+    if (!chonNguoi.value) {
+      thanBieuMau.hidden = true;
+      thanhLuu.hidden = true;
+      return;
+    }
+    thongBao.hidden = true;
+    const res = await fetch('/api/ho-so', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ma, slug: chonNguoi.value, layHoSo: true }),
+    });
+    const kq = await res.json();
+    if (res.ok) donHoSo(kq.hoSo);
+    else bao(kq.loi ?? 'Không mở được hồ sơ này.', false);
+  });
+
+  // ── Lưu ──────────────────────────────────────────────────────────────────
+  nutLuu.addEventListener('click', async () => {
+    if (oGioiThieu().value.length > 4000) {
+      bao('Phần giới thiệu dài quá 4000 ký tự, anh/chị rút ngắn giúp.', false);
+      return;
+    }
+
+    nutLuu.disabled = true;
+    nutLuu.textContent = 'Đang lưu…';
+    trangThai.textContent = 'Đang gửi lên máy chủ…';
+    thongBao.hidden = true;
+
+    const duLieu: Record<string, unknown> = {};
+    for (const ten of ['hoTen', 'xungHo', 'chucDanh', 'doanhNghiep', 'nganhNghe', 'namThanhLap', 'quyMo', 'dienThoai', 'email', 'website', 'diaChi', 'facebook', 'zalo', 'uuDaiHoiVien', 'gioiThieu']) {
+      const el = bieuMau.elements.namedItem(ten) as HTMLInputElement | null;
+      if (el) duLieu[ten] = el.value;
+    }
+    duLieu.sanPham = docDanhSach('ds-san-pham');
+    duLieu.khachHang = docDanhSach('ds-khach-hang');
+
+    try {
+      const res = await fetch('/api/ho-so', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ma, slug: slugHienTai, duLieu, ...(anhMoi ? { anh: anhMoi } : {}) }),
+      });
+      const kq = await res.json();
+
+      if (!res.ok) throw new Error(kq.loi ?? 'Lưu không thành công.');
+
+      if (kq.khongDoi) {
+        bao('Không có gì thay đổi so với hồ sơ hiện tại.', true);
+        trangThai.textContent = 'Không có thay đổi';
+      } else {
+        bao(
+          'Đã lưu xong. Website sẽ hiển thị thông tin mới sau khoảng 1–2 phút, anh/chị không cần làm gì thêm.',
+          true,
+        );
+        trangThai.textContent = 'Đã lưu';
+        anhMoi = null;
+        thongTinAnh.textContent = '';
+      }
+    } catch (e) {
+      bao((e as Error).message, false);
+      trangThai.textContent = 'Lưu chưa được';
+    } finally {
+      nutLuu.disabled = false;
+      nutLuu.textContent = 'Lưu thay đổi';
+    }
+  });
+
+  oGioiThieu().addEventListener('input', capNhatDemChu);
+  moHoSo();
+</script>

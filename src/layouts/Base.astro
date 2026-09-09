@@ -9,9 +9,17 @@ interface Props {
   tieuDe?: string;
   moTa?: string;
   anh?: string;
-  khongPhaiTrangChu?: boolean;
+  khongLapChiMuc?: boolean;
+  /** Ẩn nút trợ lý — dùng cho trang riêng tư, tránh che nút bấm quan trọng. */
+  anTroLy?: boolean;
 }
-const { tieuDe, moTa = site.moTa, anh = '/apple-touch-icon.png' } = Astro.props;
+const {
+  tieuDe,
+  moTa = site.moTa,
+  anh = '/apple-touch-icon.png',
+  khongLapChiMuc = false,
+  anTroLy = false,
+} = Astro.props;
 const title = tieuDe ? `${tieuDe} · ${site.tenNgan}` : `${site.ten} · ${site.khauHieu}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const anhTuyetDoi = new URL(anh, Astro.site);
@@ -25,6 +33,7 @@ const anhTuyetDoi = new URL(anh, Astro.site);
     <title>{title}</title>
     <meta name="description" content={moTa} />
     <link rel="canonical" href={canonical} />
+    {khongLapChiMuc && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#00558f" />
@@ -64,7 +73,7 @@ const anhTuyetDoi = new URL(anh, Astro.site);
     <Header />
     <main id="noi-dung"><slot /></main>
     <Footer />
-    <TroLySlot />
+    {!anTroLy && <TroLySlot />}
 
     <script>
       // Hiện dần các khối có class `reveal` khi cuộn tới.

@@ -5,3 +5,6 @@ dist/
 .DS_Store
 .env
 .env.production
+
+# Mã cập nhật hồ sơ của hội viên — TUYỆT ĐỐI không đưa lên kho.
+rieng-tu/

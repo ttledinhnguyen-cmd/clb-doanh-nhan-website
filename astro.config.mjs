@@ -7,6 +7,10 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://clbdoanhnhankhanhhoa.pages.dev',
   trailingSlash: 'ignore',
-  integrations: [sitemap()],
+  output: 'static',
+  integrations: [
+    // Trang /cap-nhat là trang riêng tư của hội viên, không đưa vào sitemap.
+    sitemap({ filter: (url) => !url.includes('/cap-nhat') }),
+  ],
   vite: { plugins: [tailwindcss()] },
 });
