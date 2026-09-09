@@ -81,6 +81,13 @@ thêm hội viên, tải ảnh lên bằng chuột. Mỗi lần lưu, web tự b
 Thêm hội viên: tạo file mới trong `src/content/hoi-vien/`, ví dụ `nguyen-van-a.md`.
 Xem `_mau-bai-viet.md` trong `src/content/tin-tuc/` để biết cấu trúc một bài viết.
 
+**Ảnh chân dung hội viên** lấy theo thứ tự ưu tiên:
+1. Trường `anh` trong frontmatter — dùng cho ảnh tải lên qua `/admin`
+2. Nếu `anh` để trống: `/images/hoi-vien/<tên-file>.webp` do `scripts/build-assets.mjs` cắt sẵn
+
+Nghĩa là 20 thành viên Ban điều hành hiện dùng ảnh cắt sẵn, còn hội viên mới thêm qua
+trang quản trị thì bắt buộc phải tải ảnh lên.
+
 > File có tên bắt đầu bằng dấu gạch dưới `_` sẽ **không** hiển thị trên web.
 
 ---
@@ -117,11 +124,11 @@ Cách này đơn giản nhất và đủ dùng khi chỉ một người cập nh
 `/admin` cho ban thư ký thì bắt buộc phải có kho GitHub, vì Decap CMS lưu nội dung bằng cách
 ghi thẳng vào kho. Khi đó chuyển sang cách nối Git:
 
-1. Đẩy mã nguồn lên một kho GitHub.
+1. Đẩy mã nguồn lên một kho GitHub (gốc kho chính là thư mục `website/` này).
 2. Cloudflare Dashboard → **Workers & Pages** → chọn dự án → **Settings** → **Build** →
    **Connect to Git**.
 3. Cấu hình build: preset **Astro**, build command `npm run build`, output `dist`,
-   root directory `website`.
+   root directory để trống.
 
 Sau đó mỗi lần lưu bài trong `/admin`, Cloudflare tự build lại, không cần chạy lệnh nữa.
 
@@ -170,14 +177,29 @@ npx wrangler d1 execute clb-doanh-nhan --remote -y --command "UPDATE dang_ky_hoi
 
 ### Bật trang quản trị `/admin`
 
-1. GitHub → **Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**
-   - Homepage URL: `https://<tên-miền>`
-   - Authorization callback URL: `https://<tên-miền>/callback`
-2. Cloudflare Pages → **Settings** → **Variables**: thêm `GITHUB_CLIENT_ID` và
-   `GITHUB_CLIENT_SECRET` (đánh dấu Secret).
-3. Sửa dòng `repo:` trong `public/admin/config.yml` thành `<tài-khoản>/<tên-kho>`.
+Giao diện đã dựng xong và chạy được tại `/admin`, chỉ còn thiếu phần đăng nhập.
+Cần 3 bước, làm một lần duy nhất:
 
-Ai được cấp quyền ghi vào kho GitHub thì đăng nhập được `/admin`.
+1. Tạo kho GitHub và đẩy mã nguồn lên (kho đã `git init` và commit sẵn):
+   ```bash
+   git remote add origin https://github.com/<tài-khoản>/<tên-kho>.git
+   git push -u origin main
+   ```
+2. Sửa dòng `repo:` trong `public/admin/config.yml` thành `<tài-khoản>/<tên-kho>`.
+3. GitHub → **Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**
+   - Homepage URL: `https://clb-doanh-nhan-khanh-hoa.pages.dev`
+   - Authorization callback URL: `https://clb-doanh-nhan-khanh-hoa.pages.dev/callback`
+
+   Rồi Cloudflare Pages → **Settings** → **Variables**, thêm `GITHUB_CLIENT_ID` và
+   `GITHUB_CLIENT_SECRET` (đánh dấu Secret), và deploy lại.
+
+Ai được cấp quyền ghi vào kho GitHub thì đăng nhập được `/admin`. Muốn thêm người,
+mời họ làm collaborator của kho — không cần cấp thêm gì trên Cloudflare.
+
+**Thư ký làm được gì trong `/admin`:** thêm/sửa hội viên (kể cả tải ảnh chân dung và
+ảnh doanh nghiệp bằng chuột), viết bài cho mục Tin tức, và sửa thông tin chung của CLB
+(địa chỉ, điện thoại, khẩu hiệu, thành tựu). Mỗi lần bấm lưu, Cloudflare tự build lại
+và khoảng 1 phút sau là web cập nhật.
 
 ---
 
@@ -188,8 +210,8 @@ Ai được cấp quyền ghi vào kho GitHub thì đăng nhập được `/admi
 | Địa chỉ web | https://clb-doanh-nhan-khanh-hoa.pages.dev |
 | Cloudflare Pages | ✅ đang chạy |
 | Biểu mẫu đăng ký + D1 | ✅ đang chạy |
-| Email báo hồ sơ mới | ⏸ tuỳ chọn, chưa bật |
-| Trang quản trị `/admin` | ⏸ chưa cấu hình đăng nhập GitHub |
+| Email báo hồ sơ mới | ⏸ tạm gác, chờ CLB có email chính thức |
+| Trang quản trị `/admin` | ⏸ giao diện xong, chờ tạo kho GitHub + OAuth |
 | Chatbot | ⏸ chưa chốt công nghệ |
 | Chặn Google lập chỉ mục | 🔒 **đang bật** — nhớ tắt khi ra mắt chính thức |
 
