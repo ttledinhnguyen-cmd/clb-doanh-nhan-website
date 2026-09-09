@@ -1,0 +1,42 @@
+---
+interface Props {
+  nhan?: string;
+  tieuDe: string;
+  moTa?: string;
+  giua?: boolean;
+  sang?: boolean;
+  class?: string;
+}
+const { nhan, tieuDe, moTa, giua = false, sang = false, class: className = '' } = Astro.props;
+---
+
+<div class:list={['reveal max-w-3xl', giua && 'mx-auto text-center', className]}>
+  {
+    nhan && (
+      <p
+        class:list={[
+          'text-xs font-bold uppercase tracking-[0.2em]',
+          sang ? 'text-accent-400' : 'text-accent-500',
+        ]}
+      >
+        {nhan}
+      </p>
+    )
+  }
+  <h2
+    class:list={[
+      'mt-3 text-(length:--text-h2) leading-[1.15]',
+      sang && 'text-white',
+      giua ? 'after:mx-auto rule-accent' : 'rule-accent',
+    ]}
+  >
+    {tieuDe}
+  </h2>
+  {
+    moTa && (
+      <p class:list={['mt-5 text-(length:--text-lead) leading-relaxed', sang ? 'text-brand-200' : 'text-slate-600']}>
+        {moTa}
+      </p>
+    )
+  }
+</div>

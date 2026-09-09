@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base tieuDe="Không tìm thấy trang">
+  <section class="surface-deep relative isolate flex min-h-[70vh] items-center overflow-hidden">
+    <img
+      src="/logo-mark.svg"
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute -right-20 top-20 w-[36rem] max-w-[80%] opacity-[0.07] brightness-0 invert"
+    />
+    <div class="container-page relative py-24 text-center">
+      <p class="text-7xl font-extrabold text-accent-500 sm:text-8xl">404</p>
+      <h1 class="mt-6 text-(length:--text-h1) font-extrabold text-white">Không tìm thấy trang</h1>
+      <p class="mx-auto mt-5 max-w-lg text-(length:--text-lead) text-brand-100">
+        Đường dẫn anh/chị truy cập không tồn tại hoặc đã được thay đổi.
+      </p>
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <a
+          href="/"
+          class="rounded-full bg-accent-500 px-7 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-accent-600"
+          >Về trang chủ</a
+        >
+        <a
+          href="/hoi-vien"
+          class="rounded-full border border-white/25 px-7 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-white/10"
+          >Danh bạ hội viên</a
+        >
+      </div>
+    </div>
+  </section>
+</Base>

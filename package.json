@@ -1,0 +1,25 @@
+{
+  "name": "clb-doanh-nhan-khanh-hoa",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "anh": "node scripts/build-assets.mjs",
+    "kiem-tra": "node scripts/kiem-tra-link.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.4.1",
+    "@fontsource/be-vietnam-pro": "^5.3.0",
+    "@tailwindcss/vite": "^4.1.13",
+    "astro": "^5.14.1",
+    "sharp": "^0.34.3",
+    "tailwindcss": "^4.1.13"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260908.1"
+  }
+}

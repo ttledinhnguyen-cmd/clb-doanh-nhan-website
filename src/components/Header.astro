@@ -1,0 +1,117 @@
+---
+import Logo from './Logo.astro';
+
+const menu = [
+  { ten: 'Giới thiệu', href: '/gioi-thieu' },
+  { ten: 'Cơ cấu tổ chức', href: '/co-cau-to-chuc' },
+  { ten: 'Hội viên', href: '/hoi-vien' },
+  { ten: 'Tin tức', href: '/tin-tuc' },
+  { ten: 'Thư viện', href: '/thu-vien' },
+  { ten: 'Liên hệ', href: '/lien-he' },
+];
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const dangO = (href: string) => path === href || path.startsWith(href + '/');
+---
+
+<header
+  id="site-header"
+  class="group/hdr fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-300 data-dinh:bg-white/92 data-dinh:shadow-[0_1px_0_0_rgb(0_0_0/0.06),0_10px_30px_-18px_rgb(0_42_71/0.35)] data-dinh:backdrop-blur-xl"
+>
+  <div class="container-page flex h-16 items-center justify-between gap-3 sm:h-20">
+    <Logo variant="tuDong" />
+
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Điều hướng chính">
+      {
+        menu.map((m) => (
+          <a
+            href={m.href}
+            aria-current={dangO(m.href) ? 'page' : undefined}
+            class="group/nav relative rounded-lg px-3.5 py-2 text-[0.92rem] font-semibold text-white/85 transition-colors hover:text-white aria-[current=page]:text-white group-data-dinh/hdr:text-slate-600 group-data-dinh/hdr:hover:text-brand-700 group-data-dinh/hdr:aria-[current=page]:text-brand-700"
+          >
+            {m.ten}
+            <span
+              aria-hidden="true"
+              class="absolute inset-x-3.5 bottom-0.5 h-0.5 origin-left scale-x-0 rounded-full bg-accent-500 transition-transform duration-300 group-hover/nav:scale-x-100 group-aria-[current=page]/nav:scale-x-100"
+            />
+          </a>
+        ))
+      }
+      <a
+        href="/dang-ky"
+        class="ml-3 rounded-full bg-white/12 px-5 py-2.5 text-[0.92rem] font-semibold text-white ring-1 ring-inset ring-white/25 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20 group-data-dinh/hdr:bg-brand-600 group-data-dinh/hdr:text-white group-data-dinh/hdr:shadow-lg group-data-dinh/hdr:shadow-brand-600/25 group-data-dinh/hdr:ring-transparent group-data-dinh/hdr:hover:bg-brand-700"
+        >Gia nhập CLB</a
+      >
+    </nav>
+
+    <button
+      type="button"
+      id="nut-menu"
+      class="relative z-10 grid h-11 w-11 place-items-center rounded-xl text-white transition hover:bg-white/10 group-data-dinh/hdr:text-brand-800 group-data-dinh/hdr:hover:bg-brand-50 lg:hidden"
+      aria-controls="menu-mobile"
+      aria-expanded="false"
+    >
+      <span class="sr-only">Mở menu</span>
+      <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M4 7h16M4 12h16M4 17h16" data-icon-mo></path>
+        <path d="M6 6l12 12M18 6L6 18" class="hidden" data-icon-dong></path>
+      </svg>
+    </button>
+  </div>
+
+  <div
+    id="menu-mobile"
+    class="grid grid-rows-[0fr] overflow-hidden border-t border-transparent bg-white transition-[grid-template-rows,border-color] duration-300 lg:hidden"
+  >
+    <nav class="min-h-0" aria-label="Điều hướng di động">
+      <ul class="container-page flex flex-col gap-1 py-4">
+        {
+          menu.map((m) => (
+            <li>
+              <a
+                href={m.href}
+                aria-current={dangO(m.href) ? 'page' : undefined}
+                class="block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 transition hover:bg-brand-50 hover:text-brand-700 aria-[current=page]:bg-brand-50 aria-[current=page]:text-brand-700"
+              >
+                {m.ten}
+              </a>
+            </li>
+          ))
+        }
+        <li class="pt-2">
+          <a
+            href="/dang-ky"
+            class="block rounded-xl bg-brand-600 px-4 py-3.5 text-center text-base font-semibold text-white"
+            >Gia nhập CLB</a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header')!;
+  const nut = document.getElementById('nut-menu')!;
+  const menu = document.getElementById('menu-mobile')!;
+  const iconMo = nut.querySelector('[data-icon-mo]')!;
+  const iconDong = nut.querySelector('[data-icon-dong]')!;
+
+  const menuDangMo = () => nut.getAttribute('aria-expanded') === 'true';
+
+  const capNhatNen = () => {
+    if (window.scrollY > 12 || menuDangMo()) header.dataset.dinh = '';
+    else delete header.dataset.dinh;
+  };
+  capNhatNen();
+  addEventListener('scroll', capNhatNen, { passive: true });
+
+  nut.addEventListener('click', () => {
+    const mo = !menuDangMo();
+    nut.setAttribute('aria-expanded', String(mo));
+    menu.classList.toggle('grid-rows-[1fr]', mo);
+    menu.classList.toggle('border-slate-200', mo);
+    iconMo.classList.toggle('hidden', mo);
+    iconDong.classList.toggle('hidden', !mo);
+    capNhatNen();
+  });
+</script>

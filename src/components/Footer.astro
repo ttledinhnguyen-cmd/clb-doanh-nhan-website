@@ -1,0 +1,129 @@
+---
+import site from '../data/site.json';
+
+const cot = [
+  {
+    tieuDe: 'Câu lạc bộ',
+    muc: [
+      { ten: 'Giới thiệu', href: '/gioi-thieu' },
+      { ten: 'Cơ cấu tổ chức', href: '/co-cau-to-chuc' },
+      { ten: 'Tiêu chí hoạt động', href: '/gioi-thieu#tieu-chi' },
+      { ten: 'Thành tựu nổi bật', href: '/gioi-thieu#thanh-tuu' },
+    ],
+  },
+  {
+    tieuDe: 'Hội viên',
+    muc: [
+      { ten: 'Danh sách hội viên', href: '/hoi-vien' },
+      { ten: 'Đăng ký gia nhập', href: '/dang-ky' },
+      { ten: 'Tin tức hoạt động', href: '/tin-tuc' },
+      { ten: 'Thư viện ảnh', href: '/thu-vien' },
+    ],
+  },
+];
+const nam = new Date().getFullYear();
+---
+
+<footer class="surface-deep relative mt-24 overflow-hidden text-brand-100">
+  <img
+    src="/logo-mark.svg"
+    alt=""
+    aria-hidden="true"
+    class="pointer-events-none absolute -right-16 -top-20 w-[28rem] max-w-[70%] opacity-[0.06] brightness-0 invert"
+  />
+
+  <div class="container-page relative py-16 lg:py-20">
+    <div class="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
+      <div>
+        <img src="/logo-mark.svg" alt="" width="269" height="180" class="h-14 w-auto brightness-0 invert" />
+        <p class="mt-5 text-lg font-bold text-white">{site.ten}</p>
+        <p class="mt-2 max-w-sm text-sm/relaxed text-brand-200">{site.moTa}</p>
+        <p class="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-accent-400">
+          {site.khauHieu}
+        </p>
+      </div>
+
+      {
+        cot.map((c) => (
+          <nav aria-label={c.tieuDe}>
+            <h2 class="text-sm font-bold uppercase tracking-[0.14em] text-white">{c.tieuDe}</h2>
+            <ul class="mt-3 sm:mt-5">
+              {c.muc.map((m) => (
+                <li>
+                  <a href={m.href} class="-mx-2 block rounded-lg px-2 py-2.5 text-sm text-brand-200 transition hover:bg-white/5 hover:text-white sm:py-1.5">
+                    {m.ten}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-[0.14em] text-white">Liên hệ</h2>
+        <ul class="mt-3 space-y-1 text-sm text-brand-200 sm:mt-5 sm:space-y-3">
+          {site.lienHe.diaChi && <li>{site.lienHe.diaChi}</li>}
+          {
+            site.lienHe.dienThoai && (
+              <li>
+                <a href={`tel:${site.lienHe.dienThoai.replace(/\s/g, '')}`} class="transition hover:text-white">
+                  {site.lienHe.dienThoai}
+                </a>
+              </li>
+            )
+          }
+          {
+            site.lienHe.email && (
+              <li>
+                <a href={`mailto:${site.lienHe.email}`} class="transition hover:text-white">
+                  {site.lienHe.email}
+                </a>
+              </li>
+            )
+          }
+          {
+            !site.lienHe.diaChi && !site.lienHe.dienThoai && !site.lienHe.email && (
+              <li class="italic text-brand-300">Thông tin liên hệ đang cập nhật.</li>
+            )
+          }
+        </ul>
+        {
+          (site.lienHe.facebook || site.lienHe.youtube) && (
+            <div class="mt-6 flex gap-3">
+              {site.lienHe.facebook && (
+                <a
+                  href={site.lienHe.facebook}
+                  class="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition hover:bg-accent-500"
+                  aria-label="Facebook"
+                >
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor">
+                    <path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H16.7V3.6c-.29-.04-1.27-.12-2.42-.12-2.4 0-4.03 1.46-4.03 4.15V9.9H7.5V13h2.75v8z" />
+                  </svg>
+                </a>
+              )}
+              {site.lienHe.youtube && (
+                <a
+                  href={site.lienHe.youtube}
+                  class="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition hover:bg-accent-500"
+                  aria-label="YouTube"
+                >
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor">
+                    <path d="M21.6 7.2a2.5 2.5 0 0 0-1.75-1.77C18.28 5 12 5 12 5s-6.28 0-7.85.43A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.75 1.77C5.72 19 12 19 12 19s6.28 0 7.85-.43a2.5 2.5 0 0 0 1.75-1.77A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8M10 15.02V8.98L15.2 12z" />
+                  </svg>
+                </a>
+              )}
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    <div
+      class="mt-14 flex flex-col gap-3 border-t border-white/10 pt-8 text-xs text-brand-300 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {nam} {site.ten}. Bảo trợ bởi {site.baoTro}.</p>
+      <p>Thành lập ngày 02/04/2016 tại TP. Hồ Chí Minh.</p>
+    </div>
+  </div>
+</footer>

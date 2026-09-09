@@ -1,0 +1,54 @@
+{
+  "ten": "CLB Doanh nhân Khánh Hòa – Sài Gòn",
+  "tenNgan": "CLB Doanh nhân Khánh Hòa – Sài Gòn",
+  "khauHieu": "Gắn kết đồng hương · Gia tăng giá trị · Nâng bước tương lai",
+  "moTa": "Câu lạc bộ Doanh nhân Khánh Hòa – Sài Gòn quy tụ doanh nhân, chuyên gia xuất thân từ Khánh Hòa hoặc từng gắn bó với Khánh Hòa, hoạt động tại TP. Hồ Chí Minh từ năm 2016.",
+  "ngayThanhLap": "2016-04-02",
+  "baoTro": "Liên hiệp Khoa học Doanh nhân Việt Nam",
+  "lienHe": {
+    "diaChi": "",
+    "dienThoai": "",
+    "email": "",
+    "facebook": "",
+    "youtube": "",
+    "zalo": ""
+  },
+  "soLieu": [
+    { "so": "2016", "nhan": "Năm thành lập", "chiTiet": "Ngày 02/04/2016" },
+    { "so": "10", "nhan": "Chuyến Caravan", "chiTiet": "“Trở về tuổi thơ tôi”" },
+    { "so": "6", "nhan": "Kỳ Quê hương biển gọi", "chiTiet": "Gây quỹ học bổng" },
+    { "so": "20", "nhan": "Thành viên Ban điều hành", "chiTiet": "Nhiệm kỳ hiện tại" }
+  ],
+  "tieuChi": [
+    {
+      "ma": "ket-noi-dong-huong",
+      "ten": "Kết nối đồng hương",
+      "tomTat": "Là cầu nối thắt chặt tình đồng hương.",
+      "noiDung": "Kết nối những người con Khánh Hòa cùng giao lưu, sinh hoạt, hợp tác trong các lĩnh vực kinh doanh và cuộc sống. Là cầu nối thắt chặt tình đồng hương."
+    },
+    {
+      "ma": "gia-tang-gia-tri",
+      "ten": "Gia tăng giá trị",
+      "tomTat": "Liên kết để trở thành khối vững mạnh.",
+      "noiDung": "Thông qua những hoạt động để tăng tính tương tác, hợp tác đặc biệt trong kinh doanh. Liên kết để trở thành khối vững mạnh, nâng cao sự cạnh tranh, tạo ra giá trị cho nhau trên thương trường trong và ngoài nước."
+    },
+    {
+      "ma": "nang-buoc-tuong-lai",
+      "ten": "Nâng bước tương lai",
+      "tomTat": "Chăm lo cho thế hệ trẻ Khánh Hòa.",
+      "noiDung": "Hướng đến sự chăm lo cho thế hệ trẻ học sinh, sinh viên Khánh Hoà trên bước đường tương lai. Xây dựng đội ngũ kế thừa, quan tâm đến lực lượng trẻ phát huy sức mạnh tình đoàn kết giữa các thế hệ."
+    }
+  ],
+  "thanhTuu": [
+    "Nhiều năm liên tiếp nhận bằng khen của Chủ tịch tỉnh Khánh Hoà vì có nhiều đóng góp trong công tác hỗ trợ thiện nguyện xã hội tại tỉnh Khánh Hoà.",
+    "Tổ chức 10 chuyến Caravan “Trở về tuổi thơ tôi”, trao tặng cho hàng nghìn em học sinh những phần quà học tập, những suất học bổng, xây dựng nhà tình thương, trao tặng hệ thống nước sạch uống tại vòi.",
+    "Tổ chức 6 kỳ “Quê hương biển gọi” nhằm gây quỹ học bổng “Nâng bước tương lai” cho các em học sinh, sinh viên năm nhất có hoàn cảnh khó khăn tại tỉnh Khánh Hoà và các tỉnh lân cận.",
+    "Thúc đẩy xúc tiến thương mại cùng các tỉnh như Khánh Hoà, An Giang, Tây Ninh và các đơn vị bạn."
+  ],
+  "suKienThuongNien": [
+    { "ten": "Caravan “Trở về tuổi thơ tôi”", "moTa": "Hành trình thiện nguyện thường niên về với học sinh vùng khó khăn." },
+    { "ten": "Chương trình nghệ thuật “Quê hương biển gọi”", "moTa": "Đêm nghệ thuật gây quỹ học bổng “Nâng bước tương lai”." },
+    { "ten": "Họp định kỳ", "moTa": "Sinh hoạt định kỳ, kết nối và chia sẻ cơ hội kinh doanh giữa các hội viên." },
+    { "ten": "Tất niên CLB", "moTa": "Tổng kết năm, tri ân và gắn kết cộng đồng doanh nhân đồng hương." }
+  ]
+}

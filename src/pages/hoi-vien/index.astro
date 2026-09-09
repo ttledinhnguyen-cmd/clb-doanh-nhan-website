@@ -1,0 +1,182 @@
+---
+import Base from '../../layouts/Base.astro';
+import HeroTrang from '../../components/HeroTrang.astro';
+import TheHoiVien from '../../components/TheHoiVien.astro';
+import { layHoiVien, gomNganhNghe, boDau, tenDayDu, anhChanDung, coAnhNhieuCo } from '../../lib/hoi-vien';
+
+const hoiVien = await layHoiVien();
+const nganhNghe = gomNganhNghe(hoiVien);
+
+/** Chuỗi phẳng, không dấu — dùng cho ô tìm kiếm phía trình duyệt. */
+const chuoiTim = (m: (typeof hoiVien)[number]) =>
+  boDau(
+    [tenDayDu(m), m.data.chucVuClb, m.data.chucDanh, m.data.doanhNghiep, m.data.nganhNghe]
+      .filter(Boolean)
+      .join(' '),
+  );
+---
+
+<Base
+  tieuDe="Danh sách hội viên"
+  moTa="Danh bạ doanh nghiệp của hội viên CLB Doanh nhân Khánh Hòa – Sài Gòn, tra cứu theo tên và ngành nghề."
+>
+  <HeroTrang
+    nhan="Hội viên"
+    tieuDe="Danh bạ doanh nghiệp hội viên"
+    moTa="Tra cứu hội viên theo tên hoặc ngành nghề để tìm đối tác, nhà cung cấp và cơ hội hợp tác ngay trong câu lạc bộ."
+    duongDan={[{ ten: 'Hội viên' }]}
+  />
+
+  <section class="py-14 lg:py-20">
+    <div class="container-page">
+      {/* Thanh công cụ */}
+      <div class="rounded-2xl bg-slate-50 p-6 ring-1 ring-slate-900/5 sm:p-7">
+        <label class="block">
+          <span class="text-sm font-bold text-brand-900">Tìm hội viên</span>
+          <div class="relative mt-2.5">
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+            <input
+              type="search"
+              id="o-tim"
+              placeholder="Tên, doanh nghiệp hoặc ngành nghề…"
+              autocomplete="off"
+              class="w-full rounded-xl border-0 bg-white py-3.5 pl-12 pr-4 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]"
+            />
+          </div>
+        </label>
+
+        <div class="mt-6">
+          <p class="text-sm font-bold text-brand-900">
+            Lọc theo ngành nghề
+            <span class="ml-1 font-medium text-slate-400 sm:hidden">— vuốt ngang để xem thêm</span>
+          </p>
+          <div
+            class="-mx-6 mt-3 flex gap-2 overflow-x-auto px-6 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-7 sm:flex-wrap sm:overflow-visible sm:px-7 sm:pb-0"
+            role="group"
+            aria-label="Lọc theo ngành nghề"
+          >
+            <button
+              type="button"
+              data-nganh="*"
+              aria-pressed="true"
+              class="loc-nganh inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-[0.82rem] font-semibold ring-1 ring-inset transition bg-white text-slate-600 ring-slate-200 hover:ring-brand-300 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600 sm:min-h-0 sm:py-2"
+            >
+              Tất cả <span class="opacity-70">{hoiVien.length}</span>
+            </button>
+            {
+              nganhNghe.map((n) => (
+                <button
+                  type="button"
+                  data-nganh={boDau(n.ten)}
+                  aria-pressed="false"
+                  class="loc-nganh inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-[0.82rem] font-semibold ring-1 ring-inset transition bg-white text-slate-600 ring-slate-200 hover:ring-brand-300 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600 sm:min-h-0 sm:py-2"
+                >
+                  {n.ten} <span class="opacity-70">{n.soLuong}</span>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      <p class="mt-8 text-sm text-slate-500" aria-live="polite">
+        Đang hiển thị <strong id="so-ket-qua" class="font-bold text-brand-800">{hoiVien.length}</strong>
+        / {hoiVien.length} hội viên
+      </p>
+
+      <div id="luoi-hoi-vien" class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {
+          hoiVien.map((m, i) => (
+            <div data-tim={chuoiTim(m)} data-nganh={boDau(m.data.nganhNghe ?? '')}>
+              <TheHoiVien
+                slug={m.id}
+                hoTen={m.data.hoTen}
+                xungHo={m.data.xungHo}
+                anh={anhChanDung(m)}
+                anhNho={coAnhNhieuCo(m) ? anhChanDung(m, true) : undefined}
+                vaiTro={m.data.chucVuClb}
+                chucDanh={m.data.chucDanh}
+                doanhNghiep={m.data.doanhNghiep}
+                nganhNghe={m.data.nganhNghe}
+                uuTien={i < 4}
+              />
+            </div>
+          ))
+        }
+      </div>
+
+      <p id="khong-thay" hidden class="mt-16 text-center text-slate-500">
+        Không tìm thấy hội viên nào phù hợp. Thử từ khoá khác hoặc bỏ bộ lọc ngành nghề.
+      </p>
+
+      <div class="mt-20 rounded-2xl border border-dashed border-brand-200 bg-brand-50/60 p-8 text-center sm:p-10">
+        <h2 class="text-xl font-bold">Bạn là hội viên và muốn cập nhật hồ sơ?</h2>
+        <p class="mx-auto mt-3 max-w-xl text-[0.95rem] leading-relaxed text-slate-600">
+          Gửi thông tin doanh nghiệp, hình ảnh và ưu đãi dành cho hội viên về ban thư ký để được
+          bổ sung vào danh bạ.
+        </p>
+        <a
+          href="/lien-he"
+          class="mt-6 inline-flex rounded-full bg-brand-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-700"
+          >Liên hệ ban thư ký</a
+        >
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const oTim = document.getElementById('o-tim') as HTMLInputElement;
+  const luoi = document.getElementById('luoi-hoi-vien')!;
+  const soKetQua = document.getElementById('so-ket-qua')!;
+  const khongThay = document.getElementById('khong-thay') as HTMLElement;
+  const nutLoc = [...document.querySelectorAll<HTMLButtonElement>('.loc-nganh')];
+  const the = [...luoi.querySelectorAll<HTMLElement>('[data-tim]')];
+
+  let nganhDangChon = '*';
+
+  // Phải khớp đúng với boDau() trong src/lib/hoi-vien.ts, nếu không sẽ tìm hụt.
+  const boDau = (s) =>
+    s
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/đ/g, 'd');
+
+  const loc = () => {
+    const tuKhoa = boDau(oTim.value.trim());
+    let hien = 0;
+
+    for (const t of the) {
+      const hopNganh = nganhDangChon === '*' || t.dataset.nganh === nganhDangChon;
+      const hopTim = !tuKhoa || (t.dataset.tim ?? '').includes(tuKhoa);
+      const ok = hopNganh && hopTim;
+      t.hidden = !ok;
+      if (ok) hien++;
+    }
+
+    soKetQua.textContent = String(hien);
+    khongThay.hidden = hien !== 0;
+  };
+
+  oTim.addEventListener('input', loc);
+
+  for (const nut of nutLoc) {
+    nut.addEventListener('click', () => {
+      nganhDangChon = nut.dataset.nganh ?? '*';
+      for (const n of nutLoc) n.setAttribute('aria-pressed', String(n === nut));
+      loc();
+    });
+  }
+</script>

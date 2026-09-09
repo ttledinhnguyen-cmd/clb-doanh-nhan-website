@@ -1,0 +1,113 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroTrang from '../components/HeroTrang.astro';
+import TieuDeMuc from '../components/TieuDeMuc.astro';
+import TheHoiVien from '../components/TheHoiVien.astro';
+import { layBanDieuHanhTheoNhom, layBanDieuHanh, anhChanDung, coAnhNhieuCo } from '../lib/hoi-vien';
+
+const nhomBdh = await layBanDieuHanhTheoNhom();
+const tong = (await layBanDieuHanh()).length;
+---
+
+<Base
+  tieuDe="Cơ cấu tổ chức"
+  moTa="Ban điều hành CLB Doanh nhân Khánh Hòa – Sài Gòn: Chủ tịch, các Phó Chủ tịch, Uỷ viên Ban Chấp hành và Uỷ viên dự khuyết."
+>
+  <HeroTrang
+    nhan="Cơ cấu tổ chức"
+    tieuDe="Ban điều hành câu lạc bộ"
+    moTa={`${tong} thành viên Ban điều hành cùng dẫn dắt các hoạt động kết nối, xúc tiến thương mại và công tác xã hội của câu lạc bộ.`}
+    duongDan={[{ ten: 'Cơ cấu tổ chức' }]}
+  >
+    <nav class="mt-10 flex flex-wrap gap-2.5" aria-label="Chuyển nhanh tới nhóm">
+      {
+        nhomBdh.map((n) => (
+          <a
+            href={`#${n.ma}`}
+            class="inline-flex min-h-11 items-center rounded-full bg-white/10 px-4 text-[0.82rem] font-semibold text-brand-100 ring-1 ring-inset ring-white/15 backdrop-blur transition hover:bg-white/20 hover:text-white sm:min-h-0 sm:py-2"
+          >
+            {n.ten}
+            <span class="ml-1.5 text-accent-400">{n.thanhVien.length}</span>
+          </a>
+        ))
+      }
+    </nav>
+  </HeroTrang>
+
+  {/* Sơ đồ tổ chức */}
+  <section class="border-b border-slate-200 bg-slate-50 py-16 lg:py-20">
+    <div class="container-page">
+      <TieuDeMuc nhan="Sơ đồ" tieuDe="Bộ máy điều hành" giua />
+
+      <ol class="mt-12 space-y-3">
+        {
+          nhomBdh.map((n, i) => (
+            <li class="reveal flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl bg-white px-6 py-5 shadow-sm ring-1 ring-slate-900/5">
+              <span
+                aria-hidden="true"
+                class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-600 text-sm font-extrabold text-white"
+              >
+                {i + 1}
+              </span>
+              <span class="flex-1 text-base font-bold text-brand-900">{n.ten}</span>
+              <span class="text-sm font-semibold text-slate-500">
+                {n.thanhVien.length} thành viên
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {/* Từng nhóm chức vụ */}
+  {
+    nhomBdh.map((nhom, idx) => (
+      <section
+        id={nhom.ma}
+        class:list={['scroll-mt-24 py-16 lg:py-20', idx % 2 === 1 && 'bg-brand-50/50']}
+      >
+        <div class="container-page">
+          <TieuDeMuc nhan={`${nhom.thanhVien.length} thành viên`} tieuDe={nhom.ten} />
+
+          <div
+            class:list={[
+              'mt-12 grid gap-6',
+              nhom.thanhVien.length === 1
+                ? 'sm:max-w-sm'
+                : 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+            ]}
+          >
+            {nhom.thanhVien.map((m, i) => (
+              <TheHoiVien
+                slug={m.id}
+                hoTen={m.data.hoTen}
+                xungHo={m.data.xungHo}
+                anh={anhChanDung(m)}
+                anhNho={coAnhNhieuCo(m) ? anhChanDung(m, true) : undefined}
+                vaiTro={m.data.chucVuClb}
+                chucDanh={m.data.chucDanh}
+                doanhNghiep={m.data.doanhNghiep}
+                nganhNghe={m.data.nganhNghe}
+                uuTien={idx === 0 && i === 0}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="border-t border-slate-200 py-16">
+    <div class="container-page text-center">
+      <p class="reveal text-(length:--text-lead) text-slate-600">
+        Xem thông tin doanh nghiệp của toàn bộ hội viên câu lạc bộ.
+      </p>
+      <a
+        href="/hoi-vien"
+        class="reveal mt-6 inline-flex rounded-full bg-brand-600 px-7 py-3.5 font-bold text-white shadow-lg shadow-brand-600/25 transition hover:-translate-y-0.5 hover:bg-brand-700"
+        >Danh sách hội viên</a
+      >
+    </div>
+  </section>
+</Base>

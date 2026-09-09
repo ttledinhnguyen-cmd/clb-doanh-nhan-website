@@ -1,0 +1,342 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroTrang from '../components/HeroTrang.astro';
+import { layHoiVien, gomNganhNghe } from '../lib/hoi-vien';
+
+const hoiVien = await layHoiVien();
+const nganhNghe = gomNganhNghe(hoiVien);
+
+const dieuKien = [
+  'Là người con Khánh Hòa, hoặc từng sinh sống, học tập, công tác tại Khánh Hòa.',
+  'Đang là doanh nhân, chủ doanh nghiệp hoặc chuyên gia đang làm việc tại TP. Hồ Chí Minh và khu vực lân cận.',
+  'Đồng thuận với tiêu chí “Gắn kết đồng hương – Gia tăng giá trị – Nâng bước tương lai”.',
+  'Có hội viên hiện tại của câu lạc bộ giới thiệu (khuyến khích, không bắt buộc).',
+];
+
+const cacBuoc = [
+  { ten: 'Gửi hồ sơ', moTa: 'Điền và gửi biểu mẫu đăng ký ngay trên trang này.' },
+  { ten: 'Ban thư ký liên hệ', moTa: 'Ban thư ký xác nhận thông tin và trao đổi thêm trong vòng 5–7 ngày.' },
+  { ten: 'Gặp mặt', moTa: 'Anh/chị được mời tham dự một buổi sinh hoạt định kỳ của câu lạc bộ.' },
+  { ten: 'Kết nạp', moTa: 'Ban điều hành xét duyệt và làm lễ kết nạp hội viên mới.' },
+];
+
+// text-base (16px) trên điện thoại là bắt buộc: iOS Safari tự phóng to trang khi
+// người dùng bấm vào ô nhập có cỡ chữ nhỏ hơn 16px.
+const lopO =
+  'w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]';
+const lopNhan = 'block text-sm font-semibold text-brand-900';
+---
+
+<Base
+  tieuDe="Đăng ký gia nhập"
+  moTa="Đăng ký trở thành hội viên CLB Doanh nhân Khánh Hòa – Sài Gòn."
+>
+  <HeroTrang
+    nhan="Gia nhập"
+    tieuDe="Đăng ký trở thành hội viên"
+    moTa="Điền thông tin bên dưới, ban thư ký câu lạc bộ sẽ liên hệ với anh/chị trong thời gian sớm nhất."
+    duongDan={[{ ten: 'Đăng ký gia nhập' }]}
+  />
+
+  {/* Điều kiện & quy trình */}
+  <section class="border-b border-slate-200 py-14 lg:py-20">
+    <div class="container-page grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <h2 class="rule-accent text-(length:--text-h2)">Điều kiện tham gia</h2>
+        <ul class="mt-8 space-y-4">
+          {
+            dieuKien.map((d) => (
+              <li class="flex items-start gap-3.5">
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  class="mt-0.5 h-5 w-5 shrink-0 text-accent-500"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+                <span class="text-[0.95rem] leading-relaxed text-slate-600">{d}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="rule-accent text-(length:--text-h2)">Quy trình kết nạp</h2>
+        <ol class="mt-8 space-y-5">
+          {
+            cacBuoc.map((b, i) => (
+              <li class="flex items-start gap-4">
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-600 text-sm font-extrabold text-white">
+                  {i + 1}
+                </span>
+                <span>
+                  <span class="block font-bold text-brand-900">{b.ten}</span>
+                  <span class="mt-1 block text-[0.92rem] leading-relaxed text-slate-600">
+                    {b.moTa}
+                  </span>
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  {/* Biểu mẫu */}
+  <section class="bg-slate-50 py-14 lg:py-20">
+    <div class="container-page">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="rule-accent text-(length:--text-h2)">Biểu mẫu đăng ký</h2>
+        <p class="mt-5 text-[0.95rem] text-slate-600">
+          Các trường có dấu <span class="font-bold text-accent-600">*</span> là bắt buộc.
+        </p>
+
+        <form id="form-dang-ky" novalidate class="mt-10 space-y-10">
+          {/* Phần 1 */}
+          <fieldset class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 sm:p-8">
+            <legend class="px-2 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              1. Thông tin cá nhân
+            </legend>
+
+            <div class="mt-6 grid gap-5 sm:grid-cols-2">
+              <label class="sm:col-span-2">
+                <span class={lopNhan}>Họ và tên <span class="text-accent-600">*</span></span>
+                <input type="text" name="hoTen" required autocomplete="name" class:list={['mt-2', lopO]} />
+              </label>
+
+              <label>
+                <span class={lopNhan}>Số điện thoại <span class="text-accent-600">*</span></span>
+                <input
+                  type="tel"
+                  name="dienThoai"
+                  required
+                  inputmode="tel"
+                  autocomplete="tel"
+                  placeholder="09xx xxx xxx"
+                  class:list={['mt-2', lopO]}
+                />
+              </label>
+
+              <label>
+                <span class={lopNhan}>Email <span class="text-accent-600">*</span></span>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  autocomplete="email"
+                  placeholder="ten@congty.vn"
+                  class:list={['mt-2', lopO]}
+                />
+              </label>
+
+              <label class="sm:col-span-2">
+                <span class={lopNhan}>
+                  Mối liên hệ với Khánh Hòa <span class="text-accent-600">*</span>
+                </span>
+                <select name="lienHeKhanhHoa" required class:list={['mt-2', lopO]}>
+                  <option value="">— Chọn —</option>
+                  <option>Sinh ra và lớn lên tại Khánh Hòa</option>
+                  <option>Quê quán Khánh Hòa</option>
+                  <option>Từng sinh sống, học tập tại Khánh Hòa</option>
+                  <option>Từng công tác, làm việc tại Khánh Hòa</option>
+                  <option>Có gia đình, người thân tại Khánh Hòa</option>
+                  <option>Khác</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
+
+          {/* Phần 2 */}
+          <fieldset class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 sm:p-8">
+            <legend class="px-2 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              2. Thông tin doanh nghiệp
+            </legend>
+
+            <div class="mt-6 grid gap-5 sm:grid-cols-2">
+              <label class="sm:col-span-2">
+                <span class={lopNhan}>Tên doanh nghiệp / tổ chức <span class="text-accent-600">*</span></span>
+                <input type="text" name="doanhNghiep" required autocomplete="organization" class:list={['mt-2', lopO]} />
+              </label>
+
+              <label>
+                <span class={lopNhan}>Chức danh <span class="text-accent-600">*</span></span>
+                <input
+                  type="text"
+                  name="chucDanh"
+                  required
+                  placeholder="Giám đốc, Tổng giám đốc…"
+                  autocomplete="organization-title"
+                  class:list={['mt-2', lopO]}
+                />
+              </label>
+
+              <label>
+                <span class={lopNhan}>Ngành nghề <span class="text-accent-600">*</span></span>
+                <input
+                  type="text"
+                  name="nganhNghe"
+                  required
+                  list="ds-nganh-nghe"
+                  placeholder="Nhập hoặc chọn ngành nghề"
+                  class:list={['mt-2', lopO]}
+                />
+                <datalist id="ds-nganh-nghe">
+                  {nganhNghe.filter((n) => n.ten !== 'Đang cập nhật').map((n) => <option value={n.ten} />)}
+                </datalist>
+              </label>
+
+              <label class="sm:col-span-2">
+                <span class={lopNhan}>Địa chỉ doanh nghiệp</span>
+                <input type="text" name="diaChi" autocomplete="street-address" class:list={['mt-2', lopO]} />
+              </label>
+
+              <label class="sm:col-span-2">
+                <span class={lopNhan}>Website / Fanpage</span>
+                <input type="url" name="website" placeholder="https://" class:list={['mt-2', lopO]} />
+              </label>
+
+              <label class="sm:col-span-2">
+                <span class={lopNhan}>Giới thiệu ngắn về doanh nghiệp</span>
+                <textarea
+                  name="gioiThieu"
+                  rows="4"
+                  placeholder="Sản phẩm, dịch vụ chính và thế mạnh của doanh nghiệp…"
+                  class:list={['mt-2', lopO]}></textarea>
+              </label>
+            </div>
+          </fieldset>
+
+          {/* Phần 3 */}
+          <fieldset class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 sm:p-8">
+            <legend class="px-2 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              3. Người giới thiệu & cam kết
+            </legend>
+
+            <div class="mt-6 space-y-5">
+              <label class="block">
+                <span class={lopNhan}>Hội viên giới thiệu</span>
+                <input
+                  type="text"
+                  name="nguoiGioiThieu"
+                  list="ds-hoi-vien"
+                  placeholder="Để trống nếu chưa có người giới thiệu"
+                  class:list={['mt-2', lopO]}
+                />
+                <datalist id="ds-hoi-vien">
+                  {hoiVien.map((m) => <option value={m.data.hoTen} />)}
+                </datalist>
+              </label>
+
+              <label class="block">
+                <span class={lopNhan}>Anh/chị mong muốn nhận được gì khi tham gia câu lạc bộ?</span>
+                <textarea name="mongMuon" rows="3" class:list={['mt-2', lopO]}></textarea>
+              </label>
+
+              {/* Bẫy bot – người dùng thật không bao giờ điền ô này */}
+              <div class="absolute left-[-9999px]" aria-hidden="true">
+                <label>Không điền ô này<input type="text" name="website2" tabindex="-1" autocomplete="off" /></label>
+              </div>
+
+              <label class="flex items-start gap-3 pt-1">
+                <input
+                  type="checkbox"
+                  name="camKet"
+                  required
+                  class="mt-0.5 h-6 w-6 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-brand-500 sm:mt-1 sm:h-5 sm:w-5"
+                />
+                <span class="text-[0.92rem] leading-relaxed text-slate-600">
+                  Tôi cam kết thông tin cung cấp là chính xác và đồng ý tuân thủ điều lệ hoạt động
+                  của câu lạc bộ. <span class="text-accent-600">*</span>
+                </span>
+              </label>
+
+              <label class="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  name="dongYCongKhai"
+                  class="mt-0.5 h-6 w-6 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-brand-500 sm:mt-1 sm:h-5 sm:w-5"
+                />
+                <span class="text-[0.92rem] leading-relaxed text-slate-600">
+                  Tôi đồng ý cho câu lạc bộ đăng thông tin doanh nghiệp và liên hệ của tôi lên trang
+                  danh bạ hội viên.
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div id="thong-bao" hidden role="status" class="rounded-xl px-5 py-4 text-[0.95rem] font-semibold"></div>
+
+          <button
+            type="submit"
+            id="nut-gui"
+            class="w-full rounded-full bg-accent-500 px-8 py-4 text-base font-bold text-white shadow-xl shadow-accent-500/25 transition hover:-translate-y-0.5 hover:bg-accent-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 sm:w-auto"
+          >
+            Gửi hồ sơ đăng ký
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.getElementById('form-dang-ky') as HTMLFormElement;
+  const nut = document.getElementById('nut-gui') as HTMLButtonElement;
+  const bao = document.getElementById('thong-bao') as HTMLElement;
+
+  const LOP_LOI = 'bg-red-50 text-red-800 ring-1 ring-inset ring-red-200';
+  const LOP_OK = 'bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-200';
+
+  const hienBao = (noiDung: string, ok: boolean) => {
+    bao.className = `rounded-xl px-5 py-4 text-[0.95rem] font-semibold ${ok ? LOP_OK : LOP_LOI}`;
+    bao.textContent = noiDung;
+    bao.hidden = false;
+    bao.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    nut.disabled = true;
+    const chuCu = nut.textContent;
+    nut.textContent = 'Đang gửi…';
+    bao.hidden = true;
+
+    try {
+      const res = await fetch('/api/dang-ky', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form))),
+      });
+      const kq = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        form.hidden = true;
+        hienBao(
+          'Cảm ơn anh/chị! Hồ sơ đã được gửi tới ban thư ký câu lạc bộ. Chúng tôi sẽ liên hệ trong 5–7 ngày làm việc.',
+          true,
+        );
+        return;
+      }
+      throw new Error(kq.loi || 'Gửi hồ sơ không thành công.');
+    } catch (err) {
+      hienBao(
+        (err as Error).message +
+          ' Anh/chị vui lòng thử lại, hoặc liên hệ trực tiếp ban thư ký qua trang Liên hệ.',
+        false,
+      );
+    } finally {
+      nut.disabled = false;
+      nut.textContent = chuCu;
+    }
+  });
+</script>

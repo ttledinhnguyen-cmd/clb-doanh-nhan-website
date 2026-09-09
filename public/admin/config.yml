@@ -1,0 +1,190 @@
+# Cấu hình trang quản trị nội dung (Decap CMS).
+#
+# TRƯỚC KHI DÙNG: sửa dòng `repo:` bên dưới thành kho GitHub thật của dự án,
+# ví dụ  repo: clbdoanhnhankhanhhoa/website
+# Hướng dẫn đầy đủ xem trong README.md, mục "Trang quản trị".
+
+backend:
+  name: github
+  repo: TEN-TAI-KHOAN/TEN-KHO-GITHUB
+  branch: main
+  base_url: https://clb-doanh-nhan-khanh-hoa.pages.dev
+  auth_endpoint: oauth
+  commit_messages:
+    create: 'Thêm {{collection}} "{{slug}}"'
+    update: 'Cập nhật {{collection}} "{{slug}}"'
+    delete: 'Xoá {{collection}} "{{slug}}"'
+    uploadMedia: 'Tải lên "{{path}}"'
+    deleteMedia: 'Xoá ảnh "{{path}}"'
+
+locale: vi
+media_folder: public/images/tai-len
+public_folder: /images/tai-len
+
+site_url: https://clb-doanh-nhan-khanh-hoa.pages.dev
+logo_url: /logo-mark.svg
+
+collections:
+  - name: tin-tuc
+    label: Tin tức
+    label_singular: bài viết
+    folder: src/content/tin-tuc
+    create: true
+    slug: '{{slug}}'
+    identifier_field: tieuDe
+    summary: '{{ngay | date("DD/MM/YYYY")}} — {{tieuDe}}'
+    sortable_fields: [ngay, tieuDe]
+    view_filters:
+      - label: Bài nổi bật
+        field: noiBat
+        pattern: true
+    fields:
+      - { name: tieuDe, label: Tiêu đề, widget: string }
+      - {
+          name: moTa,
+          label: Tóm tắt,
+          widget: text,
+          required: false,
+          hint: 'Một hai câu, hiện ở trang danh sách và khi chia sẻ link lên Facebook/Zalo.',
+        }
+      - { name: ngay, label: Ngày đăng, widget: datetime, date_format: 'DD/MM/YYYY', time_format: false, picker_utc: false }
+      - name: danhMuc
+        label: Chuyên mục
+        widget: select
+        options:
+          - { label: Công tác xã hội, value: cong-tac-xa-hoi }
+          - { label: Phát triển thành viên, value: phat-trien-thanh-vien }
+          - { label: Văn hoá – Thể thao, value: van-hoa-the-thao }
+          - { label: Sự kiện CLB, value: su-kien }
+      - { name: anhBia, label: Ảnh bìa, widget: image, required: false }
+      - {
+          name: album,
+          label: Album ảnh liên quan,
+          widget: string,
+          required: false,
+          hint: 'Mã album trong thư viện, ví dụ: giai-cuu-bi-do-2023. Để trống nếu không có.',
+        }
+      - { name: noiBat, label: Bài nổi bật, widget: boolean, default: false, required: false }
+      - { name: body, label: Nội dung, widget: markdown }
+
+  - name: hoi-vien
+    label: Hội viên
+    label_singular: hội viên
+    folder: src/content/hoi-vien
+    create: true
+    slug: '{{slug}}'
+    identifier_field: hoTen
+    summary: '{{hoTen}} — {{doanhNghiep}}'
+    sortable_fields: [thuTu, hoTen, nganhNghe]
+    fields:
+      - { name: hoTen, label: Họ và tên, widget: string }
+      - { name: xungHo, label: Xưng hô, widget: select, options: [Ông, Bà], required: false }
+      - name: anh
+        label: Ảnh chân dung
+        widget: image
+        required: false
+        hint: >
+          Ảnh dọc, khổ 3:4 là đẹp nhất (ví dụ 900x1200). Để trống thì hệ thống dùng
+          ảnh đã cắt sẵn từ kho ảnh gốc của CLB. Hội viên mới thì bắt buộc phải tải ảnh lên.
+      - {
+          name: anhGoc,
+          label: Tên file ảnh gốc (nội bộ),
+          widget: string,
+          required: false,
+          hint: 'Chỉ dùng cho khâu xử lý ảnh hàng loạt. Thư ký không cần điền ô này.',
+        }
+
+      - name: chucVuClb
+        label: Chức vụ trong CLB
+        widget: string
+        required: false
+        hint: 'Để trống nếu là hội viên thường (không thuộc Ban điều hành).'
+      - name: capBac
+        label: Cấp bậc trong Ban điều hành
+        widget: select
+        required: false
+        default: ''
+        options:
+          - { label: '— Không thuộc Ban điều hành —', value: '' }
+          - { label: Chủ tịch, value: chu-tich }
+          - { label: Phó Chủ tịch Thường trực, value: pho-chu-tich-thuong-truc }
+          - { label: Phó Chủ tịch, value: pho-chu-tich }
+          - { label: Phó Chủ tịch Danh dự, value: pho-chu-tich-danh-du }
+          - { label: Uỷ viên Ban Chấp hành, value: uy-vien }
+          - { label: Uỷ viên dự khuyết BCH, value: uy-vien-du-khuyet }
+      - {
+          name: thuTu,
+          label: Thứ tự sắp xếp,
+          widget: number,
+          value_type: int,
+          default: 9999,
+          hint: 'Số nhỏ hiển thị trước. Hội viên thường để 9999.',
+        }
+
+      - { name: chucDanh, label: Chức danh tại doanh nghiệp, widget: string, required: false }
+      - { name: doanhNghiep, label: Tên doanh nghiệp, widget: string, required: false }
+      - { name: nganhNghe, label: Ngành nghề, widget: string, default: 'Đang cập nhật' }
+      - { name: namThanhLap, label: Năm thành lập DN, widget: number, value_type: int, required: false, default: null }
+      - { name: quyMo, label: Quy mô, widget: string, required: false }
+      - { name: logoDoanhNghiep, label: Logo doanh nghiệp, widget: image, required: false }
+
+      - { name: dienThoai, label: Điện thoại, widget: string, required: false }
+      - { name: email, label: Email, widget: string, required: false }
+      - { name: website, label: Website, widget: string, required: false }
+      - { name: diaChi, label: Địa chỉ, widget: string, required: false }
+      - { name: facebook, label: Facebook, widget: string, required: false }
+      - { name: zalo, label: Zalo, widget: string, required: false }
+
+      - { name: namGiaNhap, label: Năm gia nhập CLB, widget: number, value_type: int, required: false, default: null }
+      - { name: sanPham, label: Sản phẩm / dịch vụ chính, widget: list, required: false, field: { name: ten, label: Tên, widget: string } }
+      - { name: khachHang, label: Khách hàng / dự án tiêu biểu, widget: list, required: false, field: { name: ten, label: Tên, widget: string } }
+      - { name: uuDaiHoiVien, label: Ưu đãi dành cho hội viên CLB, widget: text, required: false }
+      - { name: anhDoanhNghiep, label: Hình ảnh doanh nghiệp, widget: list, required: false, field: { name: anh, label: Ảnh, widget: image } }
+      - { name: noiBat, label: Hiển thị nổi bật, widget: boolean, default: false, required: false }
+      - { name: body, label: Giới thiệu doanh nghiệp, widget: markdown, required: false }
+
+  - name: cai-dat
+    label: Cài đặt chung
+    files:
+      - name: thong-tin-clb
+        label: Thông tin câu lạc bộ
+        file: src/data/site.json
+        fields:
+          - { name: ten, label: Tên đầy đủ, widget: string }
+          - { name: tenNgan, label: Tên rút gọn, widget: string }
+          - { name: khauHieu, label: Khẩu hiệu, widget: string }
+          - { name: moTa, label: Mô tả ngắn, widget: text }
+          - { name: ngayThanhLap, label: Ngày thành lập, widget: string }
+          - { name: baoTro, label: Đơn vị bảo trợ, widget: string }
+          - name: lienHe
+            label: Thông tin liên hệ
+            widget: object
+            fields:
+              - { name: diaChi, label: Địa chỉ, widget: string, required: false }
+              - { name: dienThoai, label: Điện thoại, widget: string, required: false }
+              - { name: email, label: Email, widget: string, required: false }
+              - { name: facebook, label: Facebook, widget: string, required: false }
+              - { name: youtube, label: YouTube, widget: string, required: false }
+              - { name: zalo, label: Zalo, widget: string, required: false }
+          - name: soLieu
+            label: Số liệu nổi bật (trang chủ)
+            widget: list
+            fields:
+              - { name: so, label: Con số, widget: string }
+              - { name: nhan, label: Nhãn, widget: string }
+              - { name: chiTiet, label: Chú thích, widget: string }
+          - name: tieuChi
+            label: Tiêu chí hoạt động
+            widget: list
+            fields:
+              - { name: ma, label: Mã, widget: string }
+              - { name: ten, label: Tên tiêu chí, widget: string }
+              - { name: tomTat, label: Tóm tắt, widget: string }
+              - { name: noiDung, label: Nội dung, widget: text }
+          - { name: thanhTuu, label: Thành tựu nổi bật, widget: list, field: { name: noiDung, label: Nội dung, widget: text } }
+          - name: suKienThuongNien
+            label: Sự kiện thường niên
+            widget: list
+            fields:
+              - { name: ten, label: Tên sự kiện, widget: string }
+              - { name: moTa, label: Mô tả, widget: text }

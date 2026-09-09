@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroTrang from '../components/HeroTrang.astro';
+import site from '../data/site.json';
+
+const lh = site.lienHe;
+const muc = [
+  { nhan: 'Địa chỉ', gt: lh.diaChi, href: '' },
+  { nhan: 'Điện thoại', gt: lh.dienThoai, href: lh.dienThoai ? `tel:${lh.dienThoai.replace(/\s/g, '')}` : '' },
+  { nhan: 'Email', gt: lh.email, href: lh.email ? `mailto:${lh.email}` : '' },
+  { nhan: 'Facebook', gt: lh.facebook, href: lh.facebook },
+  { nhan: 'Zalo', gt: lh.zalo, href: lh.zalo.startsWith('http') ? lh.zalo : '' },
+].filter((m) => m.gt);
+---
+
+<Base
+  tieuDe="Liên hệ"
+  moTa="Liên hệ ban thư ký CLB Doanh nhân Khánh Hòa – Sài Gòn."
+>
+  <HeroTrang
+    nhan="Liên hệ"
+    tieuDe="Kết nối với câu lạc bộ"
+    moTa="Ban thư ký luôn sẵn sàng tiếp nhận thông tin hợp tác, đề nghị tài trợ và câu hỏi từ anh/chị."
+    duongDan={[{ ten: 'Liên hệ' }]}
+  />
+
+  <section class="py-14 lg:py-20">
+    <div class="container-page grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+      <div>
+        <h2 class="rule-accent text-(length:--text-h2)">Thông tin liên hệ</h2>
+
+        {
+          muc.length > 0 ? (
+            <dl class="mt-10 divide-y divide-slate-200 rounded-2xl bg-slate-50 px-7 ring-1 ring-slate-900/5">
+              {muc.map((m) => (
+                <div class="py-5">
+                  <dt class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                    {m.nhan}
+                  </dt>
+                  <dd class="mt-2 text-[1.02rem] font-semibold break-words text-brand-900">
+                    {m.href ? (
+                      <a
+                        href={m.href}
+                        class="transition hover:text-accent-600"
+                        rel={m.href.startsWith('http') ? 'noopener' : undefined}
+                        target={m.href.startsWith('http') ? '_blank' : undefined}
+                      >
+                        {m.gt}
+                      </a>
+                    ) : (
+                      m.gt
+                    )}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <div class="mt-10 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8">
+              <p class="text-slate-600">
+                Thông tin liên hệ chính thức của câu lạc bộ đang được cập nhật. Trong thời gian này,
+                anh/chị có thể gửi thông tin qua biểu mẫu đăng ký gia nhập.
+              </p>
+              <a
+                href="/dang-ky"
+                class="mt-6 inline-flex rounded-full bg-brand-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-700"
+              >
+                Tới biểu mẫu đăng ký
+              </a>
+            </div>
+          )
+        }
+      </div>
+
+      <div class="rounded-2xl bg-brand-50/70 p-8 ring-1 ring-brand-100 sm:p-10">
+        <h2 class="text-(length:--text-h2)">Anh/chị muốn gia nhập câu lạc bộ?</h2>
+        <p class="mt-5 text-[0.98rem] leading-relaxed text-slate-600">
+          Câu lạc bộ chào đón những người con Khánh Hòa và những ai từng gắn bó với mảnh đất này,
+          hiện đang làm doanh nhân, chủ doanh nghiệp hoặc chuyên gia tại TP. Hồ Chí Minh.
+        </p>
+        <a
+          href="/dang-ky"
+          class="mt-8 inline-flex rounded-full bg-accent-500 px-7 py-3.5 font-bold text-white shadow-lg shadow-accent-500/25 transition hover:-translate-y-0.5 hover:bg-accent-600"
+          >Đăng ký gia nhập</a
+        >
+
+        <hr class="my-8 border-brand-100" />
+
+        <h3 class="text-lg font-bold">Hoặc tìm hiểu thêm</h3>
+        <ul class="mt-4 space-y-2.5">
+          <li><a href="/gioi-thieu" class="font-semibold text-brand-600 transition hover:text-accent-500">→ Giới thiệu về câu lạc bộ</a></li>
+          <li><a href="/co-cau-to-chuc" class="font-semibold text-brand-600 transition hover:text-accent-500">→ Ban điều hành</a></li>
+          <li><a href="/hoi-vien" class="font-semibold text-brand-600 transition hover:text-accent-500">→ Danh bạ hội viên</a></li>
+          <li><a href="/thu-vien" class="font-semibold text-brand-600 transition hover:text-accent-500">→ Thư viện ảnh hoạt động</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>

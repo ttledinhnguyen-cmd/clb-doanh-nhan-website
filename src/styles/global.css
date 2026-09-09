@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@import "@fontsource/be-vietnam-pro/vietnamese-400.css";
+@import "@fontsource/be-vietnam-pro/vietnamese-500.css";
+@import "@fontsource/be-vietnam-pro/vietnamese-600.css";
+@import "@fontsource/be-vietnam-pro/vietnamese-700.css";
+@import "@fontsource/be-vietnam-pro/vietnamese-800.css";
+@import "@fontsource/be-vietnam-pro/latin-400.css";
+@import "@fontsource/be-vietnam-pro/latin-600.css";
+@import "@fontsource/be-vietnam-pro/latin-700.css";
+@import "@fontsource/be-vietnam-pro/latin-800.css";
+
+@theme {
+  /* Xanh lấy trực tiếp từ logo: #00558F (CMYK 100/50/0/30) */
+  --color-brand-50:  #eff6fb;
+  --color-brand-100: #d7e8f5;
+  --color-brand-200: #a9d0ea;
+  --color-brand-300: #6fb2dd;
+  --color-brand-400: #2c8ac9;
+  --color-brand-500: #0a6baf;
+  --color-brand-600: #00558f;
+  --color-brand-700: #004675;
+  --color-brand-800: #003a63;
+  --color-brand-900: #002a47;
+  --color-brand-950: #001c31;
+
+  /* Cam lấy từ dòng chữ "KHÁNH HÒA – SÀI GÒN": #F37021 */
+  --color-accent-50:  #fef4ed;
+  --color-accent-100: #fde8da;
+  --color-accent-300: #f9b184;
+  --color-accent-400: #f79155;
+  --color-accent-500: #f37021;
+  --color-accent-600: #d95a10;
+  --color-accent-700: #b4470c;
+
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+
+  --text-hero: clamp(2.25rem, 1.2rem + 4.2vw, 4.5rem);
+  --text-h1:   clamp(1.85rem, 1.1rem + 2.8vw, 3.25rem);
+  --text-h2:   clamp(1.5rem, 1.05rem + 1.8vw, 2.4rem);
+  --text-lead: clamp(1.02rem, 0.95rem + 0.4vw, 1.2rem);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, ::before, ::after {
+      animation-duration: .01ms !important;
+      transition-duration: .01ms !important;
+    }
+  }
+  body {
+    @apply bg-white text-slate-700 font-sans antialiased;
+    text-wrap: pretty;
+  }
+  h1, h2, h3, h4 {
+    @apply text-brand-900 font-bold tracking-tight;
+    text-wrap: balance;
+  }
+  ::selection { @apply bg-brand-600 text-white; }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent-500 rounded-sm;
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12;
+}
+
+/* Gạch nhấn màu cam dưới tiêu đề mục */
+@utility rule-accent {
+  &::after {
+    content: "";
+    @apply mt-4 block h-1 w-14 rounded-full bg-accent-500;
+  }
+}
+
+/* Nền xanh đậm chuyển sắc, dùng cho hero và footer */
+@utility surface-deep {
+  background:
+    radial-gradient(90rem 45rem at 12% -10%, --alpha(var(--color-brand-500) / 55%), transparent 60%),
+    radial-gradient(70rem 40rem at 100% 0%, --alpha(var(--color-brand-700) / 70%), transparent 55%),
+    linear-gradient(160deg, var(--color-brand-900) 0%, var(--color-brand-950) 100%);
+}
+
+/* Hiện dần khi cuộn tới */
+@utility reveal {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+  &.is-visible { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}

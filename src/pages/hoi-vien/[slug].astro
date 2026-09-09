@@ -1,0 +1,326 @@
+---
+import Base from '../../layouts/Base.astro';
+import { render } from 'astro:content';
+import { layHoiVien, tenDayDu, anhChanDung, coAnhNhieuCo } from '../../lib/hoi-vien';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () =>
+  (await layHoiVien()).map((m) => ({ params: { slug: m.id }, props: { m } }));
+
+const { m } = Astro.props;
+const d = m.data;
+const { Content } = await render(m);
+
+const tatCa = await layHoiVien();
+const cungNganh = tatCa
+  .filter((x) => x.id !== m.id && x.data.nganhNghe === d.nganhNghe && d.nganhNghe !== 'Đang cập nhật')
+  .slice(0, 4);
+
+const ten = tenDayDu(m);
+
+/** Toàn bộ thông tin liên hệ được công khai theo yêu cầu của câu lạc bộ. */
+const lienHe = [
+  { nhan: 'Điện thoại', gt: d.dienThoai, href: d.dienThoai ? `tel:${d.dienThoai.replace(/[^\d+]/g, '')}` : '' },
+  { nhan: 'Email', gt: d.email, href: d.email ? `mailto:${d.email}` : '' },
+  { nhan: 'Website', gt: d.website, href: d.website },
+  { nhan: 'Địa chỉ', gt: d.diaChi, href: '' },
+  { nhan: 'Facebook', gt: d.facebook, href: d.facebook },
+  { nhan: 'Zalo', gt: d.zalo, href: d.zalo.startsWith('http') ? d.zalo : '' },
+].filter((x) => x.gt);
+
+const thongTinDn = [
+  { nhan: 'Doanh nghiệp', gt: d.doanhNghiep },
+  { nhan: 'Chức danh', gt: d.chucDanh },
+  { nhan: 'Ngành nghề', gt: d.nganhNghe },
+  { nhan: 'Năm thành lập', gt: d.namThanhLap ? String(d.namThanhLap) : '' },
+  { nhan: 'Quy mô', gt: d.quyMo },
+].filter((x) => x.gt);
+
+const chuaCoLienHe = lienHe.length === 0;
+const coGioiThieu = Boolean(m.body?.trim());
+---
+
+<Base
+  tieuDe={ten}
+  moTa={[d.chucVuClb, d.chucDanh, d.doanhNghiep].filter(Boolean).join(' · ') || d.hoTen}
+  anh={anhChanDung(m)}
+>
+  <article>
+    {/* Đầu trang */}
+    <section class="surface-deep relative isolate overflow-hidden">
+      <img
+        src="/logo-mark.svg"
+        alt=""
+        aria-hidden="true"
+        class="pointer-events-none absolute -right-16 top-10 w-[34rem] max-w-[75%] opacity-[0.07] brightness-0 invert"
+      />
+
+      <div class="container-page relative pb-16 pt-32 sm:pt-36 lg:pb-20 lg:pt-44">
+        <nav aria-label="Đường dẫn" class="mb-8">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-brand-200">
+            <li><a href="/" class="transition hover:text-white">Trang chủ</a></li>
+            <li aria-hidden="true" class="text-brand-400">/</li>
+            <li><a href="/hoi-vien" class="transition hover:text-white">Hội viên</a></li>
+            <li aria-hidden="true" class="text-brand-400">/</li>
+            <li class="text-white">{d.hoTen}</li>
+          </ol>
+        </nav>
+
+        <div class="grid gap-10 sm:grid-cols-[14rem_1fr] sm:items-end lg:gap-14">
+          <img
+            src={anhChanDung(m)}
+            srcset={coAnhNhieuCo(m) ? `${anhChanDung(m, true)} 450w, ${anhChanDung(m)} 900w` : undefined}
+            sizes={coAnhNhieuCo(m) ? '(min-width: 640px) 14rem, 16rem' : undefined}
+            alt={`Chân dung ${ten}`}
+            width="900"
+            height="1200"
+            loading="eager"
+            fetchpriority="high"
+            class="aspect-3/4 w-full max-w-64 rounded-2xl object-cover shadow-2xl shadow-brand-950/50 ring-1 ring-white/10 sm:max-w-56"
+          />
+
+          <div>
+            {
+              d.chucVuClb && (
+                <p class="inline-flex rounded-full bg-accent-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
+                  {d.chucVuClb}
+                </p>
+              )
+            }
+            <h1 class="mt-5 text-(length:--text-h1) font-extrabold leading-tight text-white">
+              {d.hoTen}
+            </h1>
+            {
+              (d.chucDanh || d.doanhNghiep) && (
+                <p class="mt-4 text-(length:--text-lead) text-brand-100">
+                  {d.chucDanh}
+                  {d.chucDanh && d.doanhNghiep && ' · '}
+                  {d.doanhNghiep}
+                </p>
+              )
+            }
+            <div class="mt-6 flex flex-wrap gap-2.5">
+              {
+                d.nganhNghe && (
+                  <span class="rounded-lg bg-white/10 px-3.5 py-2 text-[0.8rem] font-semibold text-white ring-1 ring-inset ring-white/15">
+                    {d.nganhNghe}
+                  </span>
+                )
+              }
+              {
+                d.namGiaNhap && (
+                  <span class="rounded-lg bg-white/10 px-3.5 py-2 text-[0.8rem] font-semibold text-white ring-1 ring-inset ring-white/15">
+                    Hội viên từ {d.namGiaNhap}
+                  </span>
+                )
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Nội dung */}
+    <section class="py-16 lg:py-20">
+      <div class="container-page grid gap-12 lg:grid-cols-[1fr_20rem] lg:gap-16">
+        <div class="min-w-0">
+          {
+            coGioiThieu ? (
+              <>
+                <h2 class="rule-accent text-(length:--text-h2)">Giới thiệu</h2>
+                <div class="mt-8 space-y-5 text-(length:--text-lead) leading-relaxed text-slate-600">
+                  <Content />
+                </div>
+              </>
+            ) : (
+              <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                <p class="text-slate-500">
+                  Phần giới thiệu doanh nghiệp của {ten} đang được cập nhật.
+                </p>
+              </div>
+            )
+          }
+
+          {
+            d.sanPham.length > 0 && (
+              <div class="mt-12">
+                <h2 class="rule-accent text-(length:--text-h2)">Sản phẩm & dịch vụ chính</h2>
+                <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+                  {d.sanPham.map((sp) => (
+                    <li class="flex items-start gap-3 rounded-xl bg-slate-50 px-5 py-4 ring-1 ring-slate-900/5">
+                      <span
+                        aria-hidden="true"
+                        class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500"
+                      />
+                      <span class="text-[0.95rem] text-slate-700">{sp}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          {
+            d.khachHang.length > 0 && (
+              <div class="mt-12">
+                <h2 class="rule-accent text-(length:--text-h2)">Khách hàng & dự án tiêu biểu</h2>
+                <ul class="mt-8 flex flex-wrap gap-2.5">
+                  {d.khachHang.map((k) => (
+                    <li class="rounded-lg bg-brand-50 px-4 py-2.5 text-[0.9rem] font-semibold text-brand-800">
+                      {k}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          {
+            d.uuDaiHoiVien && (
+              <div class="mt-12 rounded-2xl border-l-4 border-accent-500 bg-accent-50 p-7 sm:p-8">
+                <h2 class="text-xl font-bold text-accent-700">Ưu đãi dành cho hội viên CLB</h2>
+                <p class="mt-3 text-[0.95rem] leading-relaxed text-slate-700">{d.uuDaiHoiVien}</p>
+              </div>
+            )
+          }
+
+          {
+            d.anhDoanhNghiep.length > 0 && (
+              <div class="mt-12">
+                <h2 class="rule-accent text-(length:--text-h2)">Hình ảnh doanh nghiệp</h2>
+                <div class="mt-8 grid gap-4 sm:grid-cols-2">
+                  {d.anhDoanhNghiep.map((a) => (
+                    <img
+                      src={a}
+                      alt={`Hình ảnh ${d.doanhNghiep || d.hoTen}`}
+                      loading="lazy"
+                      decoding="async"
+                      class="aspect-4/3 w-full rounded-xl object-cover ring-1 ring-slate-900/5"
+                    />
+                  ))}
+                </div>
+              </div>
+            )
+          }
+        </div>
+
+        {/* Cột thông tin */}
+        <aside class="lg:sticky lg:top-28 lg:self-start">
+          {
+            thongTinDn.length > 0 && (
+              <div class="rounded-2xl bg-slate-50 p-6 ring-1 ring-slate-900/5">
+                <h2 class="text-sm font-bold uppercase tracking-[0.14em] text-brand-900">
+                  Doanh nghiệp
+                </h2>
+                <dl class="mt-5 space-y-4">
+                  {thongTinDn.map((t) => (
+                    <div>
+                      <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        {t.nhan}
+                      </dt>
+                      <dd class="mt-1 text-[0.95rem] font-semibold text-brand-900">{t.gt}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )
+          }
+
+          <div class="mt-6 rounded-2xl bg-brand-600 p-6 text-white">
+            <h2 class="text-sm font-bold uppercase tracking-[0.14em]">Liên hệ</h2>
+            {
+              chuaCoLienHe ? (
+                <p class="mt-4 text-sm leading-relaxed text-brand-100">
+                  Thông tin liên hệ đang được cập nhật. Anh/chị có thể liên hệ qua ban thư ký câu lạc
+                  bộ.
+                </p>
+              ) : (
+                <dl class="mt-5 space-y-4">
+                  {lienHe.map((l) => (
+                    <div>
+                      <dt class="text-xs font-semibold uppercase tracking-wide text-brand-200">
+                        {l.nhan}
+                      </dt>
+                      <dd class="mt-1 text-[0.95rem] font-semibold break-words">
+                        {l.href ? (
+                          <a
+                            href={l.href}
+                            class="underline decoration-white/30 underline-offset-4 transition hover:decoration-white"
+                            rel={l.href.startsWith('http') ? 'noopener' : undefined}
+                            target={l.href.startsWith('http') ? '_blank' : undefined}
+                          >
+                            {l.gt}
+                          </a>
+                        ) : (
+                          l.gt
+                        )}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )
+            }
+            <a
+              href="/lien-he"
+              class="mt-6 block rounded-xl bg-white px-4 py-3 text-center text-sm font-bold text-brand-700 transition hover:bg-brand-50"
+              >Liên hệ qua ban thư ký</a
+            >
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    {/* Hội viên cùng ngành */}
+    {
+      cungNganh.length > 0 && (
+        <section class="border-t border-slate-200 bg-slate-50 py-16 lg:py-20">
+          <div class="container-page">
+            <h2 class="rule-accent text-(length:--text-h2)">Hội viên cùng ngành {d.nganhNghe}</h2>
+            <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {cungNganh.map((x) => (
+                <li>
+                  <a
+                    href={`/hoi-vien/${x.id}`}
+                    class="group flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-900/5 transition hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    <img
+                      src={anhChanDung(x, coAnhNhieuCo(x))}
+                      alt=""
+                      width="450"
+                      height="600"
+                      loading="lazy"
+                      decoding="async"
+                      class="h-16 w-12 shrink-0 rounded-lg object-cover"
+                    />
+                    <span class="min-w-0">
+                      <span class="block truncate text-[0.95rem] font-bold text-brand-900 transition group-hover:text-brand-600">
+                        {x.data.hoTen}
+                      </span>
+                      <span class="mt-0.5 block truncate text-xs text-slate-500">
+                        {x.data.doanhNghiep || x.data.chucDanh}
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="border-t border-slate-200 py-12">
+      <div class="container-page">
+        <a
+          href="/hoi-vien"
+          class="-mx-2 inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-bold text-brand-700 transition hover:bg-brand-50 hover:text-accent-500"
+        >
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"></path>
+          </svg>
+          Về danh sách hội viên
+        </a>
+      </div>
+    </section>
+  </article>
+</Base>

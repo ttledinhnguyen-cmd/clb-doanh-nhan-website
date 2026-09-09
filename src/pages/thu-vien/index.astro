@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import HeroTrang from '../../components/HeroTrang.astro';
+import thuVien from '../../data/thu-vien.json';
+import { DANH_MUC_TIN } from '../../content.config';
+
+const tongAnh = thuVien.reduce((s, a) => s + a.soAnh, 0);
+
+const nhom = Object.entries(DANH_MUC_TIN)
+  .map(([ma, ten]) => ({ ma, ten, album: thuVien.filter((a) => a.danhMuc === ma) }))
+  .filter((n) => n.album.length > 0);
+---
+
+<Base
+  tieuDe="Thư viện ảnh"
+  moTa="Hình ảnh các hoạt động của CLB Doanh nhân Khánh Hòa – Sài Gòn: caravan thiện nguyện, công tác xã hội, văn hoá thể thao."
+>
+  <HeroTrang
+    nhan="Thư viện"
+    tieuDe="Hình ảnh hoạt động"
+    moTa={`${tongAnh} bức ảnh ghi lại những chương trình câu lạc bộ đã cùng nhau đi qua.`}
+    duongDan={[{ ten: 'Thư viện' }]}
+  />
+
+  {
+    nhom.map((n, i) => (
+      <section class:list={['py-14 lg:py-20', i % 2 === 1 && 'bg-slate-50']}>
+        <div class="container-page">
+          <h2 class="rule-accent text-(length:--text-h2)">{n.ten}</h2>
+
+          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {n.album.map((a) => (
+              <a
+                href={`/thu-vien/${a.slug}`}
+                class="group reveal relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-brand-900/20"
+              >
+                <img
+                  src={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}-thumb.webp`}
+                  alt={a.ten}
+                  width="640"
+                  height="480"
+                  loading="lazy"
+                  decoding="async"
+                  class="aspect-4/3 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/35 to-transparent" />
+                <div class="absolute inset-x-0 bottom-0 p-6">
+                  <p class="text-[0.75rem] font-bold uppercase tracking-[0.14em] text-accent-400">
+                    {a.soAnh} hình ảnh
+                  </p>
+                  <h3 class="mt-1.5 text-lg font-bold leading-snug text-white">{a.ten}</h3>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+</Base>

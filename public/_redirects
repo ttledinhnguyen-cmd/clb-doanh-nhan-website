@@ -1,0 +1,2 @@
+# Trang quản trị: cho phép vào bằng /admin lẫn /admin/
+/admin    /admin/index.html    200

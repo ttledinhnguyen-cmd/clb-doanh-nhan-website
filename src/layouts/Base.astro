@@ -1,0 +1,92 @@
+---
+import '../styles/global.css';
+import site from '../data/site.json';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import TroLySlot from '../components/TroLySlot.astro';
+
+interface Props {
+  tieuDe?: string;
+  moTa?: string;
+  anh?: string;
+  khongPhaiTrangChu?: boolean;
+}
+const { tieuDe, moTa = site.moTa, anh = '/apple-touch-icon.png' } = Astro.props;
+const title = tieuDe ? `${tieuDe} · ${site.tenNgan}` : `${site.ten} · ${site.khauHieu}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const anhTuyetDoi = new URL(anh, Astro.site);
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={moTa} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/logo-mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#00558f" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.ten} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={moTa} />
+    <meta property="og:image" content={anhTuyetDoi} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="vi_VN" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: site.ten,
+        url: Astro.site?.toString(),
+        logo: new URL('/logo-full.svg', Astro.site).toString(),
+        foundingDate: site.ngayThanhLap,
+        slogan: site.khauHieu,
+        description: site.moTa,
+        areaServed: 'Việt Nam',
+      })}
+    />
+  </head>
+
+  <body>
+    <a
+      href="#noi-dung"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-brand-700 focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white"
+      >Tới nội dung chính</a
+    >
+
+    <Header />
+    <main id="noi-dung"><slot /></main>
+    <Footer />
+    <TroLySlot />
+
+    <script>
+      // Hiện dần các khối có class `reveal` khi cuộn tới.
+      const muc = document.querySelectorAll('.reveal');
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && muc.length) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (!e.isIntersecting) continue;
+              (e.target as HTMLElement).classList.add('is-visible');
+              io.unobserve(e.target);
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.08 },
+        );
+        muc.forEach((m, i) => {
+          (m as HTMLElement).style.transitionDelay = `${Math.min(i % 6, 5) * 70}ms`;
+          io.observe(m);
+        });
+      } else {
+        muc.forEach((m) => m.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>

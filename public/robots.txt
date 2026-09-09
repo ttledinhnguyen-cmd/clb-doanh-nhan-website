@@ -1,0 +1,9 @@
+# ==== GIAI ĐOẠN XEM THỬ ====
+# Đang chặn toàn bộ công cụ tìm kiếm vì web chưa hoàn thiện nội dung.
+# KHI RA MẮT CHÍNH THỨC: đổi "Disallow: /" thành "Allow: /" và bỏ dòng
+# X-Robots-Tag trong public/_headers.
+
+User-agent: *
+Disallow: /
+
+Sitemap: https://clb-doanh-nhan-khanh-hoa.pages.dev/sitemap-index.xml

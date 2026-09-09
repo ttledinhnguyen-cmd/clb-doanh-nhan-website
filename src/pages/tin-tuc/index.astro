@@ -1,0 +1,167 @@
+---
+import Base from '../../layouts/Base.astro';
+import HeroTrang from '../../components/HeroTrang.astro';
+import { getCollection } from 'astro:content';
+import { DANH_MUC_TIN } from '../../content.config';
+import thuVien from '../../data/thu-vien.json';
+
+const baiViet = (await getCollection('tinTuc')).sort(
+  (a, b) => b.data.ngay.valueOf() - a.data.ngay.valueOf(),
+);
+
+const demTheoDanhMuc = Object.entries(DANH_MUC_TIN).map(([ma, ten]) => ({
+  ma,
+  ten,
+  soBai: baiViet.filter((b) => b.data.danhMuc === ma).length,
+}));
+
+const ngayVn = (d: Date) =>
+  d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+---
+
+<Base
+  tieuDe="Tin tức hoạt động"
+  moTa="Bản tin hoạt động của CLB Doanh nhân Khánh Hòa – Sài Gòn: công tác xã hội, phát triển thành viên, văn hoá thể thao và sự kiện."
+>
+  <HeroTrang
+    nhan="Bản tin"
+    tieuDe="Tin tức hoạt động"
+    moTa="Cập nhật các chương trình thiện nguyện, sự kiện kết nối và hoạt động văn hoá thể thao của câu lạc bộ."
+    duongDan={[{ ten: 'Tin tức' }]}
+  />
+
+  <section class="py-14 lg:py-20">
+    <div class="container-page">
+      {
+        baiViet.length > 0 ? (
+          <>
+            <div class="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0" role="group" aria-label="Lọc theo chuyên mục">
+              <button
+                type="button"
+                data-dm="*"
+                aria-pressed="true"
+                class="loc-dm inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-[0.82rem] font-semibold ring-1 ring-inset transition bg-white text-slate-600 ring-slate-200 hover:ring-brand-300 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600 sm:min-h-0 sm:py-2"
+              >
+                Tất cả <span class="opacity-70">{baiViet.length}</span>
+              </button>
+              {demTheoDanhMuc
+                .filter((d) => d.soBai > 0)
+                .map((d) => (
+                  <button
+                    type="button"
+                    data-dm={d.ma}
+                    aria-pressed="false"
+                    class="loc-dm inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-[0.82rem] font-semibold ring-1 ring-inset transition bg-white text-slate-600 ring-slate-200 hover:ring-brand-300 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600 sm:min-h-0 sm:py-2"
+                  >
+                    {d.ten} <span class="opacity-70">{d.soBai}</span>
+                  </button>
+                ))}
+            </div>
+
+            <div id="luoi-tin" class="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+              {baiViet.map((b, i) => (
+                <article data-dm={b.data.danhMuc}>
+                  <a
+                    href={`/tin-tuc/${b.id}`}
+                    class="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-brand-900/10"
+                  >
+                    {b.data.anhBia && (
+                      <img
+                        src={b.data.anhBia}
+                        alt=""
+                        width="640"
+                        height="480"
+                        loading={i < 3 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        class="aspect-4/3 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    )}
+                    <div class="flex flex-1 flex-col p-6">
+                      <p class="text-[0.75rem] font-bold uppercase tracking-[0.14em] text-accent-500">
+                        {DANH_MUC_TIN[b.data.danhMuc as keyof typeof DANH_MUC_TIN]}
+                      </p>
+                      <h2 class="mt-3 text-lg font-bold leading-snug transition group-hover:text-brand-600">
+                        {b.data.tieuDe}
+                      </h2>
+                      {b.data.moTa && (
+                        <p class="mt-3 line-clamp-3 text-[0.92rem] leading-relaxed text-slate-600">
+                          {b.data.moTa}
+                        </p>
+                      )}
+                      <time
+                        datetime={b.data.ngay.toISOString()}
+                        class="mt-auto pt-5 text-xs font-semibold text-slate-400"
+                      >
+                        {ngayVn(b.data.ngay)}
+                      </time>
+                    </div>
+                  </a>
+                </article>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div class="mx-auto max-w-2xl rounded-2xl border border-dashed border-brand-200 bg-brand-50/60 p-10 text-center sm:p-14">
+            <img src="/logo-mark.svg" alt="" class="mx-auto h-12 w-auto opacity-40" />
+            <h2 class="mt-6 text-xl font-bold">Bản tin đang được chuẩn bị</h2>
+            <p class="mx-auto mt-3 max-w-md text-[0.95rem] leading-relaxed text-slate-600">
+              Những bài viết đầu tiên sẽ sớm được đăng tải. Trong lúc chờ, mời anh/chị xem lại hình
+              ảnh các hoạt động đã diễn ra của câu lạc bộ.
+            </p>
+            <a
+              href="/thu-vien"
+              class="mt-7 inline-flex rounded-full bg-brand-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-brand-700"
+            >
+              Xem thư viện ảnh
+            </a>
+          </div>
+        )
+      }
+
+      {/* Album ảnh hoạt động */}
+      <div class="mt-20">
+        <h2 class="rule-accent text-(length:--text-h2)">Hình ảnh các hoạt động</h2>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            thuVien.map((a) => (
+              <a
+                href={`/thu-vien/${a.slug}`}
+                class="group relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+              >
+                <img
+                  src={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}-thumb.webp`}
+                  alt={a.ten}
+                  width="640"
+                  height="480"
+                  loading="lazy"
+                  decoding="async"
+                  class="aspect-4/3 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/35 to-transparent" />
+                <div class="absolute inset-x-0 bottom-0 p-5">
+                  <p class="text-[0.75rem] font-bold uppercase tracking-[0.14em] text-accent-400">
+                    {a.soAnh} hình ảnh
+                  </p>
+                  <h3 class="mt-1.5 text-base font-bold leading-snug text-white">{a.ten}</h3>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const nutLoc = [...document.querySelectorAll<HTMLButtonElement>('.loc-dm')];
+  const bai = [...document.querySelectorAll<HTMLElement>('#luoi-tin > [data-dm]')];
+
+  for (const nut of nutLoc) {
+    nut.addEventListener('click', () => {
+      const dm = nut.dataset.dm ?? '*';
+      for (const n of nutLoc) n.setAttribute('aria-pressed', String(n === nut));
+      for (const b of bai) b.hidden = dm !== '*' && b.dataset.dm !== dm;
+    });
+  }
+</script>

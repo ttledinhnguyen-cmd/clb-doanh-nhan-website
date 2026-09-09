@@ -1,0 +1,55 @@
+---
+/**
+ * Bộ nhận diện ngang: biểu tượng cánh yến + tên CLB.
+ *
+ * `variant="tuDong"` dùng trong header — logo hiển thị màu sáng khi header còn
+ * trong suốt trên hero nền xanh đậm, và trở lại màu gốc khi header dính lên đầu
+ * trang (thẻ cha đặt `data-dinh` và `class="group/hdr"`).
+ */
+interface Props {
+  variant?: 'toi' | 'sang' | 'tuDong';
+  class?: string;
+}
+const { variant = 'toi', class: className = '' } = Astro.props;
+
+const anhTheo = {
+  toi: '',
+  sang: 'brightness-0 invert',
+  tuDong: 'brightness-0 invert group-data-dinh/hdr:brightness-100 group-data-dinh/hdr:invert-0',
+};
+const tenTheo = {
+  toi: 'text-brand-800',
+  sang: 'text-white',
+  tuDong: 'text-white group-data-dinh/hdr:text-brand-800',
+};
+const phuTheo = {
+  toi: 'text-accent-500',
+  sang: 'text-accent-400',
+  tuDong: 'text-accent-400 group-data-dinh/hdr:text-accent-500',
+};
+---
+
+<a
+  href="/"
+  class:list={['group flex shrink-0 items-center gap-3', className]}
+  aria-label="Trang chủ CLB Doanh nhân Khánh Hòa – Sài Gòn"
+>
+  <img
+    src="/logo-mark.svg"
+    alt=""
+    width="269"
+    height="180"
+    class:list={[
+      'h-9 w-auto transition duration-500 group-hover:scale-105 sm:h-10',
+      anhTheo[variant],
+    ]}
+  />
+  <span class="flex flex-col leading-none">
+    <span class:list={['text-[0.94rem] font-extrabold tracking-tight transition-colors sm:text-base', tenTheo[variant]]}>
+      CLB Doanh nhân
+    </span>
+    <span class:list={['mt-1 text-[0.75rem] font-semibold tracking-[0.18em] transition-colors sm:text-[0.72rem]', phuTheo[variant]]}>
+      KHÁNH HÒA – SÀI GÒN
+    </span>
+  </span>
+</a>

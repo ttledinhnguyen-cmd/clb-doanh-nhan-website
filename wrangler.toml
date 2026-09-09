@@ -1,0 +1,14 @@
+# Cấu hình Cloudflare Pages.
+
+name = "clb-doanh-nhan-khanh-hoa"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-09-01"
+
+# Cơ sở dữ liệu lưu hồ sơ đăng ký hội viên (trang /dang-ky).
+# Tạo ngày 09/09/2026, đặt tại khu vực APAC.
+# Bảng khai trong schema/dang-ky.sql. Tên binding phải giữ đúng là "DB" vì
+# functions/api/dang-ky.ts gọi env.DB.
+[[d1_databases]]
+binding = "DB"
+database_name = "clb-doanh-nhan"
+database_id = "19a83d31-9bdb-400d-bbaf-7b8af4c8eb74"

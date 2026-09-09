@@ -1,0 +1,268 @@
+---
+import Base from '../layouts/Base.astro';
+import TieuDeMuc from '../components/TieuDeMuc.astro';
+import TheHoiVien from '../components/TheHoiVien.astro';
+import site from '../data/site.json';
+import thuVien from '../data/thu-vien.json';
+import { layBanDieuHanh, anhChanDung, coAnhNhieuCo } from '../lib/hoi-vien';
+
+const banDieuHanh = await layBanDieuHanh();
+const noiBat = banDieuHanh.slice(0, 4);
+const albumNoiBat = thuVien.slice(0, 3);
+
+// Ảnh hero là chân dung Chủ tịch đương nhiệm — tự đổi theo dữ liệu, không ghi cứng tên.
+const chuTich = banDieuHanh.find((m) => m.data.capBac === 'chu-tich');
+---
+
+<Base>
+  {/* Hero */}
+  <section class="surface-deep relative isolate overflow-hidden">
+    <img
+      src="/logo-mark.svg"
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute -right-24 top-16 w-[46rem] max-w-[85%] opacity-[0.07] brightness-0 invert"
+    />
+
+    <div
+      class="container-page relative grid items-center gap-14 pb-20 pt-32 sm:pt-36 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:pb-28 lg:pt-44"
+    >
+      <div>
+        <p
+          class="reveal inline-flex items-center gap-2.5 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-brand-100 ring-1 ring-inset ring-white/15 backdrop-blur"
+        >
+          <span class="h-1.5 w-1.5 rounded-full bg-accent-500"></span>
+          Thành lập 02/04/2016
+        </p>
+
+        <h1 class="reveal mt-7 text-(length:--text-hero) font-extrabold leading-[1.05] text-white">
+          Câu lạc bộ<br />
+          <span class="text-accent-500">Doanh nhân</span><br />
+          Khánh Hòa – Sài Gòn
+        </h1>
+
+        <p class="reveal mt-7 max-w-xl text-(length:--text-lead) leading-relaxed text-brand-100">
+          Nơi hội tụ những người con Khánh Hòa đang lập nghiệp tại TP. Hồ Chí Minh — cùng giao lưu,
+          hợp tác và chung tay dựng xây quê hương.
+        </p>
+
+        <p class="reveal mt-6 text-sm font-bold uppercase tracking-[0.14em] text-accent-400">
+          {site.khauHieu}
+        </p>
+
+        <div class="reveal mt-10 flex flex-wrap gap-4">
+          <a
+            href="/dang-ky"
+            class="rounded-full bg-accent-500 px-7 py-3.5 text-[0.95rem] font-bold text-white shadow-xl shadow-accent-500/25 transition hover:-translate-y-0.5 hover:bg-accent-600"
+            >Đăng ký gia nhập</a
+          >
+          <a
+            href="/gioi-thieu"
+            class="rounded-full border border-white/25 px-7 py-3.5 text-[0.95rem] font-bold text-white transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/10"
+            >Tìm hiểu về CLB</a
+          >
+        </div>
+      </div>
+
+      {
+        chuTich && (
+          <div class="reveal relative mx-auto w-full max-w-sm lg:mx-0 lg:ml-auto">
+            <a
+              href={`/hoi-vien/${chuTich.id}`}
+              class="group block overflow-hidden rounded-3xl shadow-2xl shadow-brand-950/50 ring-1 ring-white/10"
+            >
+              <div class="relative">
+                <img
+                  src={anhChanDung(chuTich)}
+                  srcset={coAnhNhieuCo(chuTich)
+                    ? `${anhChanDung(chuTich, true)} 450w, ${anhChanDung(chuTich)} 900w`
+                    : undefined}
+                  sizes={coAnhNhieuCo(chuTich) ? '(min-width: 1024px) 24rem, 90vw' : undefined}
+                  alt={`Chân dung ${chuTich.data.xungHo} ${chuTich.data.hoTen}, ${chuTich.data.chucVuClb} câu lạc bộ`}
+                  width="900"
+                  height="1200"
+                  loading="eager"
+                  fetchpriority="high"
+                  class="aspect-3/4 w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent" />
+
+                <div class="absolute inset-x-0 bottom-0 p-6 sm:p-7">
+                  <p class="text-[0.75rem] font-bold uppercase tracking-[0.18em] text-accent-400">
+                    {chuTich.data.chucVuClb} câu lạc bộ
+                  </p>
+                  <p class="mt-2 text-xl font-extrabold leading-tight text-white sm:text-2xl">
+                    {chuTich.data.hoTen}
+                  </p>
+                  <p class="mt-2 text-[0.82rem] leading-snug text-brand-100">
+                    {chuTich.data.chucDanh} {chuTich.data.doanhNghiep}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  {/* Số liệu */}
+  <section class="border-b border-slate-200 bg-white">
+    <div class="container-page grid grid-cols-2 gap-x-6 gap-y-10 py-14 lg:grid-cols-4 lg:py-16">
+      {
+        site.soLieu.map((s) => (
+          <div class="reveal text-center">
+            <p class="text-4xl font-extrabold tracking-tight text-brand-700 sm:text-5xl">{s.so}</p>
+            <p class="mt-2.5 text-sm font-bold text-brand-900">{s.nhan}</p>
+            <p class="mt-1 text-xs text-slate-500">{s.chiTiet}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* Ba tiêu chí hoạt động */}
+  <section class="bg-brand-50/60 py-20 lg:py-28">
+    <div class="container-page">
+      <TieuDeMuc
+        nhan="Tiêu chí hoạt động"
+        tieuDe="Ba giá trị cốt lõi dẫn đường"
+        moTa="Mọi hoạt động của câu lạc bộ đều xoay quanh ba tiêu chí được đặt ra từ ngày đầu thành lập."
+        giua
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-3">
+        {
+          site.tieuChi.map((t, i) => (
+            <article class="reveal group relative overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-brand-900/10">
+              <span class="absolute right-6 top-4 text-7xl font-extrabold leading-none text-brand-50 transition-colors duration-500 group-hover:text-accent-50">
+                0{i + 1}
+              </span>
+              <div class="relative">
+                <img src="/logo-mark.svg" alt="" class="h-9 w-auto opacity-90" />
+                <h3 class="mt-6 text-xl font-bold">{t.ten}</h3>
+                <p class="mt-3.5 text-[0.95rem] leading-relaxed text-slate-600">{t.noiDung}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* Ban điều hành */}
+  <section class="py-20 lg:py-28">
+    <div class="container-page">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <TieuDeMuc
+          nhan="Cơ cấu tổ chức"
+          tieuDe="Ban điều hành câu lạc bộ"
+          moTa="Đội ngũ dẫn dắt các hoạt động kết nối, xúc tiến thương mại và công tác xã hội của CLB."
+          class="flex-1"
+        />
+        <a
+          href="/co-cau-to-chuc"
+          class="reveal shrink-0 rounded-full border-2 border-brand-600 px-6 py-3 text-sm font-bold text-brand-700 transition hover:bg-brand-600 hover:text-white"
+          >Xem toàn bộ ban điều hành</a
+        >
+      </div>
+
+      <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          noiBat.map((m, i) => (
+            <TheHoiVien
+              slug={m.id}
+              hoTen={m.data.hoTen}
+              xungHo={m.data.xungHo}
+              anh={anhChanDung(m)}
+              anhNho={coAnhNhieuCo(m) ? anhChanDung(m, true) : undefined}
+              vaiTro={m.data.chucVuClb}
+              chucDanh={m.data.chucDanh}
+              doanhNghiep={m.data.doanhNghiep}
+              nganhNghe={m.data.nganhNghe}
+              uuTien={i < 2}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {/* Hoạt động nổi bật */}
+  <section class="bg-slate-50 py-20 lg:py-28">
+    <div class="container-page">
+      <TieuDeMuc
+        nhan="Hoạt động"
+        tieuDe="Dấu ấn của câu lạc bộ"
+        moTa="Từ thiện nguyện, văn hoá thể thao đến xúc tiến thương mại — mỗi hoạt động đều là một nhịp cầu gắn kết."
+      />
+
+      <div class="mt-14 grid gap-6 md:grid-cols-3">
+        {
+          albumNoiBat.map((a) => (
+            <a
+              href={`/thu-vien/${a.slug}`}
+              class="group reveal relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-brand-900/20"
+            >
+              <img
+                src={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}-thumb.webp`}
+                alt={a.ten}
+                width="640"
+                height="480"
+                loading="lazy"
+                decoding="async"
+                class="aspect-4/3 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/40 to-transparent" />
+              <div class="absolute inset-x-0 bottom-0 p-6">
+                <p class="text-[0.75rem] font-bold uppercase tracking-[0.16em] text-accent-400">
+                  {a.soAnh} hình ảnh
+                </p>
+                <h3 class="mt-2 text-lg font-bold leading-snug text-white">{a.ten}</h3>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="reveal mt-12 text-center">
+        <a
+          href="/thu-vien"
+          class="inline-flex rounded-full border-2 border-brand-600 px-7 py-3 text-sm font-bold text-brand-700 transition hover:bg-brand-600 hover:text-white"
+          >Xem toàn bộ thư viện ảnh</a
+        >
+      </div>
+    </div>
+  </section>
+
+  {/* Kêu gọi gia nhập */}
+  <section class="surface-deep relative isolate overflow-hidden py-20 lg:py-28">
+    <img
+      src="/logo-mark.svg"
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute -bottom-24 -left-20 w-[34rem] max-w-[70%] opacity-[0.06] brightness-0 invert"
+    />
+    <div class="container-page relative text-center">
+      <TieuDeMuc
+        nhan="Gia nhập"
+        tieuDe="Cùng chúng tôi viết tiếp hành trình"
+        moTa="Nếu anh/chị là người con Khánh Hòa hoặc từng gắn bó với mảnh đất này, câu lạc bộ luôn rộng cửa chào đón."
+        giua
+        sang
+      />
+      <div class="reveal mt-10 flex flex-wrap justify-center gap-4">
+        <a
+          href="/dang-ky"
+          class="rounded-full bg-accent-500 px-8 py-4 font-bold text-white shadow-xl shadow-accent-500/25 transition hover:-translate-y-0.5 hover:bg-accent-600"
+          >Đăng ký làm hội viên</a
+        >
+        <a
+          href="/lien-he"
+          class="rounded-full border border-white/25 px-8 py-4 font-bold text-white transition hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/10"
+          >Liên hệ ban thư ký</a
+        >
+      </div>
+    </div>
+  </section>
+</Base>

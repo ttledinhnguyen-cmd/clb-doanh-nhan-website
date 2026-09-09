@@ -1,0 +1,69 @@
+---
+/**
+ * Chỗ đặt sẵn cho chatbot tư vấn thông tin CLB.
+ *
+ * Công nghệ chạy chatbot chưa chốt, nên phần này mới chỉ là nút mở khung chat.
+ * Khi chốt, chỉ cần nối `guiCauHoi()` bên dưới vào endpoint tương ứng
+ * (Cloudflare Function `/api/tro-ly`) là chạy được, không phải sửa giao diện.
+ */
+---
+
+<div class="fixed bottom-5 right-5 z-40 print:hidden">
+  <button
+    type="button"
+    id="nut-tro-ly"
+    class="group flex items-center gap-2.5 rounded-full bg-brand-600 py-3.5 pl-4 pr-5 text-white shadow-xl shadow-brand-900/25 transition hover:-translate-y-0.5 hover:bg-brand-700"
+    aria-expanded="false"
+    aria-controls="khung-tro-ly"
+  >
+    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.3-.6L3 21l1.8-5a8.2 8.2 0 0 1-.8-3.5 8.4 8.4 0 0 1 8.5-8.4 8.4 8.4 0 0 1 8.5 8.4z"></path>
+    </svg>
+    <span class="text-sm font-semibold">Hỏi về CLB</span>
+  </button>
+
+  <div
+    id="khung-tro-ly"
+    hidden
+    class="absolute bottom-16 right-0 w-[min(22rem,calc(100vw-2.5rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-brand-900/20"
+  >
+    <div class="flex items-center gap-3 bg-brand-800 px-4 py-3.5 text-white">
+      <img src="/logo-mark.svg" alt="" class="h-6 w-auto brightness-0 invert" />
+      <div class="min-w-0">
+        <p class="text-sm font-bold">Trợ lý CLB</p>
+        <p class="text-[0.75rem] text-brand-200">Hỏi đáp thông tin câu lạc bộ</p>
+      </div>
+      <button type="button" id="dong-tro-ly" class="ml-auto rounded-lg p-1.5 transition hover:bg-white/15" aria-label="Đóng">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="space-y-3 px-4 py-5 text-sm">
+      <p class="rounded-xl rounded-tl-sm bg-brand-50 px-3.5 py-3 text-slate-700">
+        Chào anh/chị! Trợ lý đang được hoàn thiện và sẽ sớm có mặt để giải đáp thông tin về câu lạc bộ.
+      </p>
+      <p class="text-slate-500">Trong lúc chờ, anh/chị có thể xem nhanh:</p>
+      <ul class="space-y-1.5">
+        <li><a href="/gioi-thieu" class="font-semibold text-brand-600 hover:text-accent-500">→ Giới thiệu về CLB</a></li>
+        <li><a href="/co-cau-to-chuc" class="font-semibold text-brand-600 hover:text-accent-500">→ Cơ cấu tổ chức</a></li>
+        <li><a href="/dang-ky" class="font-semibold text-brand-600 hover:text-accent-500">→ Cách gia nhập CLB</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  const nut = document.getElementById('nut-tro-ly')!;
+  const khung = document.getElementById('khung-tro-ly') as HTMLElement;
+  const dong = document.getElementById('dong-tro-ly')!;
+
+  const dat = (mo: boolean) => {
+    khung.hidden = !mo;
+    nut.setAttribute('aria-expanded', String(mo));
+  };
+  nut.addEventListener('click', () => dat(khung.hidden));
+  dong.addEventListener('click', () => dat(false));
+  addEventListener('keydown', (e) => e.key === 'Escape' && dat(false));
+</script>

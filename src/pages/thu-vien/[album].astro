@@ -1,0 +1,233 @@
+---
+import Base from '../../layouts/Base.astro';
+import HeroTrang from '../../components/HeroTrang.astro';
+import thuVien from '../../data/thu-vien.json';
+import { DANH_MUC_TIN } from '../../content.config';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () =>
+  thuVien.map((a) => ({ params: { album: a.slug }, props: { a } }));
+
+const { a } = Astro.props;
+const tenDanhMuc = DANH_MUC_TIN[a.danhMuc as keyof typeof DANH_MUC_TIN];
+const khac = thuVien.filter((x) => x.slug !== a.slug).slice(0, 3);
+---
+
+<Base
+  tieuDe={a.ten}
+  moTa={`${a.soAnh} hình ảnh chương trình ${a.ten} của CLB Doanh nhân Khánh Hòa – Sài Gòn.`}
+  anh={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}.webp`}
+>
+  <HeroTrang
+    nhan={tenDanhMuc}
+    tieuDe={a.ten}
+    moTa={`${a.soAnh} hình ảnh được ghi lại trong chương trình.`}
+    duongDan={[{ ten: 'Thư viện', href: '/thu-vien' }, { ten: a.ten }]}
+  />
+
+  <section class="py-14 lg:py-20">
+    <div class="container-page">
+      <ul id="luoi-anh" class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+        {
+          a.anh.map((anh, i) => (
+            <li>
+              <button
+                type="button"
+                data-i={i}
+                class="group block w-full overflow-hidden rounded-xl ring-1 ring-slate-900/5 transition hover:-translate-y-1 hover:shadow-lg"
+                aria-label={`Xem ảnh ${i + 1} trên ${a.soAnh}`}
+              >
+                <img
+                  src={`/images/hoat-dong/${a.slug}/${anh.ten}-thumb.webp`}
+                  alt={`${a.ten} — ảnh ${i + 1}`}
+                  width="640"
+                  height="480"
+                  loading={i < 8 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  class="aspect-4/3 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    khac.length > 0 && (
+      <section class="border-t border-slate-200 bg-slate-50 py-14 lg:py-20">
+        <div class="container-page">
+          <h2 class="rule-accent text-(length:--text-h2)">Album khác</h2>
+          <div class="mt-10 grid gap-6 sm:grid-cols-3">
+            {khac.map((x) => (
+              <a
+                href={`/thu-vien/${x.slug}`}
+                class="group relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+              >
+                <img
+                  src={`/images/hoat-dong/${x.slug}/${x.anh[0].ten}-thumb.webp`}
+                  alt={x.ten}
+                  width="640"
+                  height="480"
+                  loading="lazy"
+                  decoding="async"
+                  class="aspect-4/3 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/35 to-transparent" />
+                <div class="absolute inset-x-0 bottom-0 p-5">
+                  <h3 class="text-base font-bold leading-snug text-white">{x.ten}</h3>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {/* Khung xem ảnh phóng to */}
+  <dialog
+    id="khung-anh"
+    class="max-h-none max-w-none bg-transparent backdrop:bg-brand-950/92 backdrop:backdrop-blur-sm"
+  >
+    <div class="fixed inset-0 flex flex-col">
+      <div class="flex items-center justify-between gap-4 px-4 py-4 text-white sm:px-6">
+        <p class="text-sm font-semibold" id="so-anh"></p>
+        <button
+          type="button"
+          id="dong-anh"
+          class="grid h-11 w-11 place-items-center rounded-full bg-white/10 transition hover:bg-white/25"
+          aria-label="Đóng"
+        >
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <path d="M6 6l12 12M18 6L6 18"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="relative flex min-h-0 flex-1 items-center justify-center px-4 sm:px-16">
+        <img
+          id="anh-lon"
+          src=""
+          alt=""
+          draggable="false"
+          class="max-h-full max-w-full touch-pan-y rounded-lg object-contain select-none"
+        />
+
+        {/* Máy tính: mũi tên hai bên ảnh. Điện thoại: dùng thanh nút phía dưới. */}
+        <button
+          type="button"
+          data-lat="-1"
+          class="absolute left-4 hidden h-12 w-12 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/25 sm:grid"
+          aria-label="Ảnh trước"
+        >
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          data-lat="1"
+          class="absolute right-4 hidden h-12 w-12 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/25 sm:grid"
+          aria-label="Ảnh sau"
+        >
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 6l6 6-6 6"></path>
+          </svg>
+        </button>
+      </div>
+
+      {/* Thanh điều khiển cho điện thoại — không che mất ảnh */}
+      <div class="flex items-center justify-center gap-5 px-4 pb-6 pt-5 sm:hidden">
+        <button
+          type="button"
+          data-lat="-1"
+          class="grid h-14 w-14 place-items-center rounded-full bg-white/12 text-white active:bg-white/30"
+          aria-label="Ảnh trước"
+        >
+          <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"></path>
+          </svg>
+        </button>
+        <p class="text-xs text-brand-200">Vuốt để lật ảnh</p>
+        <button
+          type="button"
+          data-lat="1"
+          class="grid h-14 w-14 place-items-center rounded-full bg-white/12 text-white active:bg-white/30"
+          aria-label="Ảnh sau"
+        >
+          <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 6l6 6-6 6"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <script
+    is:inline
+    define:vars={{ slug: a.slug, ten: a.ten, danhSach: a.anh.map((x) => x.ten) }}
+  >
+    (() => {
+      const khung = document.getElementById('khung-anh');
+      const anhLon = document.getElementById('anh-lon');
+      const soAnh = document.getElementById('so-anh');
+      let i = 0;
+
+      const hien = (k) => {
+        i = (k + danhSach.length) % danhSach.length;
+        anhLon.src = `/images/hoat-dong/${slug}/${danhSach[i]}.webp`;
+        anhLon.alt = `${ten} — ảnh ${i + 1}`;
+        soAnh.textContent = `Ảnh ${i + 1} / ${danhSach.length}`;
+      };
+
+      document.getElementById('luoi-anh').addEventListener('click', (e) => {
+        const nut = e.target.closest('[data-i]');
+        if (!nut) return;
+        hien(Number(nut.dataset.i));
+        khung.showModal();
+      });
+
+      document.getElementById('dong-anh').addEventListener('click', () => khung.close());
+
+      // Có 2 bộ nút lật: mũi tên hai bên (máy tính) và thanh dưới (điện thoại).
+      for (const nut of khung.querySelectorAll('[data-lat]')) {
+        nut.addEventListener('click', () => hien(i + Number(nut.dataset.lat)));
+      }
+
+      khung.addEventListener('click', (e) => {
+        if (e.target === khung) khung.close();
+      });
+      khung.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') hien(i - 1);
+        if (e.key === 'ArrowRight') hien(i + 1);
+      });
+
+      // Vuốt ngang để lật ảnh trên điện thoại.
+      let batDauX = 0;
+      let batDauY = 0;
+      khung.addEventListener(
+        'touchstart',
+        (e) => {
+          batDauX = e.changedTouches[0].clientX;
+          batDauY = e.changedTouches[0].clientY;
+        },
+        { passive: true },
+      );
+      khung.addEventListener(
+        'touchend',
+        (e) => {
+          const dx = e.changedTouches[0].clientX - batDauX;
+          const dy = e.changedTouches[0].clientY - batDauY;
+          // Chỉ tính là vuốt ngang khi đi đủ xa và rõ ràng ngang hơn dọc,
+          // để không cướp thao tác cuộn dọc của người dùng.
+          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            hien(dx < 0 ? i + 1 : i - 1);
+          }
+        },
+        { passive: true },
+      );
+    })();
+  </script>
+</Base>
