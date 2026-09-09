@@ -1,0 +1,120 @@
+BẬT TÍNH NĂNG HỘI VIÊN TỰ CẬP NHẬT HỒ SƠ
+
+Cập nhật: 10/09/2026
+
+Phần lập trình đã xong và đã đưa lên web. Còn 4 bước phải làm bằng tay vì liên
+quan tới tài khoản và khoá bí mật. Làm một lần duy nhất, khoảng 15 phút.
+
+
+LƯU Ý TRƯỚC KHI BẮT ĐẦU
+
+Khi dán khoá vào terminal, dùng CHUỘT PHẢI để dán, đừng bấm Ctrl+V. Lần trước
+Ctrl+V đã chèn nhầm ký tự điều khiển làm khoá hỏng.
+
+Dán khoá bí mật xong màn hình sẽ không hiện gì cả. Đó là bình thường, terminal
+cố tình giấu. Cứ dán rồi Enter.
+
+
+BƯỚC 1 — TẠO KHOÁ CHO MÁY CHỦ GHI VÀO KHO
+
+Máy chủ cần quyền ghi vào kho GitHub để lưu hồ sơ hộ hội viên.
+
+1. Vào https://github.com/settings/personal-access-tokens/new
+2. Điền:
+   - Token name:        clb-cap-nhat-ho-so
+   - Expiration:        chọn No expiration
+                        (chọn thời hạn thì tới ngày đó tính năng sẽ ngừng chạy)
+   - Repository access: chọn "Only select repositories"
+                        rồi chọn kho clb-doanh-nhan-website
+3. Kéo xuống mục "Repository permissions", tìm dòng "Contents",
+   đổi từ "No access" sang "Read and write"
+   (chỉ cần đúng một quyền này, các dòng khác để nguyên)
+4. Bấm "Generate token" ở cuối trang
+5. Copy chuỗi hiện ra. Nó chỉ hiện MỘT LẦN, đóng trang là mất.
+
+
+BƯỚC 2 — NẠP KHOÁ VÀO CLOUDFLARE
+
+Mở terminal tại thư mục website, chạy lần lượt:
+
+    cd "D:\Hosting\Hao's Projects\CLB Doanh Nhan\website"
+
+    npx wrangler pages secret put GITHUB_TOKEN --project-name clb-doanh-nhan-khanh-hoa
+
+  → dán chuỗi vừa copy ở bước 1
+
+    npx wrangler pages secret put GITHUB_REPO --project-name clb-doanh-nhan-khanh-hoa
+
+  → gõ đúng dòng này:  ttledinhnguyen-cmd/clb-doanh-nhan-website
+
+
+BƯỚC 3 — NỐI CLOUDFLARE VỚI KHO GITHUB
+
+Việc này để mỗi khi hội viên bấm Lưu, Cloudflare tự dựng lại website.
+Không làm bước này thì hồ sơ vẫn được lưu nhưng website sẽ không đổi.
+
+1. Vào https://dash.cloudflare.com
+2. Workers & Pages → chọn dự án clb-doanh-nhan-khanh-hoa
+3. Settings → Build → bấm "Connect to Git"
+4. Chọn kho clb-doanh-nhan-website
+5. Cấu hình build:
+   - Framework preset:        Astro
+   - Build command:           npm run build
+   - Build output directory:  dist
+   - Root directory:          để trống
+6. Lưu lại
+
+Từ lúc này trở đi không cần chạy lệnh deploy bằng tay nữa. Cứ có thay đổi
+trong kho là Cloudflare tự dựng lại.
+
+
+BƯỚC 4 — PHÁT ĐƯỜNG DẪN CHO HỘI VIÊN
+
+    cd "D:\Hosting\Hao's Projects\CLB Doanh Nhan\website"
+    npm run ma
+
+Lệnh này tạo 2 file trong thư mục rieng-tu:
+
+  ma-cap-nhat.sql          → nạp vào cơ sở dữ liệu
+  duong-dan-hoi-vien.txt   → danh sách đường dẫn để gửi cho từng người
+
+Nạp vào cơ sở dữ liệu:
+
+    npx wrangler d1 execute clb-doanh-nhan --remote -y --file rieng-tu/ma-cap-nhat.sql
+
+Rồi mở file duong-dan-hoi-vien.txt. Trong đó có 21 dòng: 1 dòng cho ban thư ký
+và 20 dòng cho từng thành viên Ban điều hành. Gửi riêng từng đường dẫn cho đúng
+người qua Zalo.
+
+QUAN TRỌNG: mỗi đường dẫn là chìa khoá riêng của một người. Ai cầm link đều sửa
+được hồ sơ đó. Gửi riêng, đừng đăng vào nhóm chung.
+
+Thư mục rieng-tu đã được loại khỏi Git nên không bị đẩy lên kho.
+
+
+SAU KHI XONG
+
+Thử trước một link của chính mình xem có mở được không. Sửa một chữ, bấm Lưu,
+chờ khoảng 1-2 phút rồi xem trang hội viên đó trên web đã đổi chưa.
+
+Chạy được rồi thì báo tôi, tôi sẽ kiểm tra lại toàn bộ luồng trên bản chạy thật.
+
+
+NHỮNG TÌNH HUỐNG HAY GẶP
+
+Lộ link của ai đó:
+    npm run ma nguyen-hai-nam
+    npx wrangler d1 execute clb-doanh-nhan --remote -y --file rieng-tu/ma-cap-nhat.sql
+  Link cũ mất tác dụng ngay, gửi link mới cho người đó.
+
+Có hội viên mới cần cấp link:
+    npm run ma
+  rồi nạp SQL như trên. Lệnh này phát lại mã cho tất cả mọi người, nên phải gửi
+  lại link mới cho toàn bộ hội viên. Muốn chỉ cấp cho một người thì thêm mã hội
+  viên vào cuối lệnh như ví dụ trên.
+
+Xem ai đã sửa gì:
+    npx wrangler d1 execute clb-doanh-nhan --remote -y --command "SELECT luc, slug, truong FROM nhat_ky_sua_ho_so ORDER BY id DESC LIMIT 30"
+
+Ai đó sửa hỏng hồ sơ:
+  Mọi thay đổi đều lưu lịch sử trong kho GitHub, khôi phục được. Báo tôi.

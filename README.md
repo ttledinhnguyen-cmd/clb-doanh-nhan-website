@@ -71,12 +71,26 @@ Thang màu đầy đủ khai báo trong `src/styles/global.css` (`--color-brand-
 
 ## Thêm & sửa nội dung
 
-### Cách 1 — Trang quản trị (dành cho ban thư ký)
+Có ba đường, dành cho ba nhóm người khác nhau.
 
-Vào `https://<tên-miền>/admin`, đăng nhập bằng GitHub. Giao diện tiếng Việt, thêm bài viết,
-thêm hội viên, tải ảnh lên bằng chuột. Mỗi lần lưu, web tự build lại sau khoảng 1 phút.
+### Cách 1 — `/cap-nhat` (hội viên và ban thư ký, không cần tài khoản)
 
-### Cách 2 — Sửa file trực tiếp
+Mỗi người nhận một đường dẫn bí mật riêng gửi qua Zalo. Mở link là sửa được hồ sơ,
+không cần tài khoản hay mật khẩu. Hội viên chỉ sửa được hồ sơ của mình; mã của ban thư ký
+sửa được hồ sơ mọi người.
+
+Máy chủ kiểm tra mã rồi thay mặt họ commit vào kho GitHub bằng một khoá bot, nên người dùng
+không cần biết GitHub là gì. Chức vụ trong CLB, cấp bậc và thứ tự hiển thị nằm ngoài danh
+sách trường cho sửa, hội viên không tự đổi được dù có chỉnh gói dữ liệu gửi lên.
+
+Cách phát và thu hồi đường dẫn: `docs/buoc-cuoi-bat-tinh-nang-cap-nhat.txt`.
+
+### Cách 2 — `/admin` (Decap CMS, cần tài khoản GitHub)
+
+Đầy đủ hơn: thêm bài viết, tạo hội viên mới, sửa thông tin chung của CLB. Nhưng bắt buộc
+phải có tài khoản GitHub và được cấp quyền vào kho, nên chỉ hợp với người rành kỹ thuật.
+
+### Cách 3 — Sửa file trực tiếp
 
 Thêm hội viên: tạo file mới trong `src/content/hoi-vien/`, ví dụ `nguyen-van-a.md`.
 Xem `_mau-bai-viet.md` trong `src/content/tin-tuc/` để biết cấu trúc một bài viết.
@@ -217,7 +231,8 @@ và khoảng 1 phút sau là web cập nhật.
 | Biểu mẫu đăng ký + D1 | ✅ đang chạy |
 | Email báo hồ sơ mới | ⏸ tạm gác, chờ CLB có email chính thức |
 | Kho GitHub | `ttledinhnguyen-cmd/clb-doanh-nhan-website` |
-| Trang quản trị `/admin` | ✅ đang chạy, đăng nhập bằng GitHub |
+| Hội viên tự cập nhật `/cap-nhat` | ⏸ code xong, chờ 4 bước ở `docs/buoc-cuoi-bat-tinh-nang-cap-nhat.txt` |
+| Trang quản trị `/admin` (Decap) | ✅ chạy, nhưng cần tài khoản GitHub nên chỉ dành cho người kỹ thuật |
 | Chatbot | ⏸ chưa chốt công nghệ |
 | Chặn Google lập chỉ mục | 🔒 **đang bật** — nhớ tắt khi ra mắt chính thức |
 
