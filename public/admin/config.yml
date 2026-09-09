@@ -1,12 +1,12 @@
 # Cấu hình trang quản trị nội dung (Decap CMS).
 #
-# TRƯỚC KHI DÙNG: sửa dòng `repo:` bên dưới thành kho GitHub thật của dự án,
-# ví dụ  repo: clbdoanhnhankhanhhoa/website
-# Hướng dẫn đầy đủ xem trong README.md, mục "Trang quản trị".
+# Kho GitHub đã gắn xong. Nội dung thư ký lưu ở /admin được commit thẳng vào kho,
+# Cloudflare tự build lại và web cập nhật sau khoảng 1 phút.
+# Hướng dẫn đầy đủ xem trong README.md, mục "Bật trang quản trị /admin".
 
 backend:
   name: github
-  repo: TEN-TAI-KHOAN/TEN-KHO-GITHUB
+  repo: ttledinhnguyen-cmd/clb-doanh-nhan-website
   branch: main
   base_url: https://clb-doanh-nhan-khanh-hoa.pages.dev
   auth_endpoint: oauth
