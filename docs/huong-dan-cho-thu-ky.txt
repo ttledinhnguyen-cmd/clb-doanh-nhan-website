@@ -1,0 +1,116 @@
+HƯỚNG DẪN CẬP NHẬT WEBSITE CLB DOANH NHÂN KHÁNH HÒA - SÀI GÒN
+Dành cho ban thư ký
+
+Cập nhật: 10/09/2026
+
+
+ĐỊA CHỈ
+
+Website:        https://clb-doanh-nhan-khanh-hoa.pages.dev
+Trang quản trị: https://clb-doanh-nhan-khanh-hoa.pages.dev/admin
+
+
+TRƯỚC KHI BẮT ĐẦU
+
+Cần một tài khoản GitHub. Nếu chưa có thì đăng ký miễn phí tại
+https://github.com/signup, rồi báo tên tài khoản để được cấp quyền vào kho
+nội dung của CLB. Chưa được cấp quyền thì đăng nhập sẽ báo lỗi.
+
+Trang quản trị dùng được trên máy tính và cả điện thoại, nhưng nhập liệu nhiều
+thì máy tính dễ hơn.
+
+
+CÁCH ĐĂNG NHẬP
+
+1. Vào https://clb-doanh-nhan-khanh-hoa.pages.dev/admin
+2. Bấm "Đăng nhập bằng GitHub"
+3. Một cửa sổ GitHub hiện ra, bấm nút xanh Authorize
+4. Vào được rồi thì thấy 3 mục bên trái: Tin tức, Hội viên, Cài đặt chung
+
+
+THÊM MỘT HỘI VIÊN MỚI
+
+1. Bấm mục "Hội viên" bên trái
+2. Bấm nút "hội viên mới" góc trên bên phải
+3. Điền các ô. Bắt buộc phải có: Họ và tên, Ngành nghề
+4. Ô "Ảnh chân dung": bấm vào, chọn "Upload" rồi chọn file ảnh trong máy.
+   Ảnh nên chụp dọc, tỉ lệ 3:4 (ví dụ 900x1200 điểm ảnh) thì hiển thị đẹp nhất.
+   Ảnh ngang cũng dùng được nhưng sẽ bị cắt bớt hai bên.
+5. Bấm "Publish" ở góc trên bên phải
+
+Khoảng 1 phút sau website sẽ tự cập nhật. Nếu chưa thấy, chờ thêm chút rồi
+tải lại trang.
+
+Vài ô cần lưu ý:
+
+- Chức vụ trong CLB: chỉ điền nếu người đó thuộc Ban điều hành. Hội viên
+  thường thì để trống.
+- Cấp bậc trong Ban điều hành: chọn "Không thuộc Ban điều hành" cho hội viên
+  thường. Chọn sai thì họ sẽ xuất hiện nhầm trong trang Cơ cấu tổ chức.
+- Thứ tự sắp xếp: số nhỏ hiện trước. Hội viên thường cứ để 9999.
+- Ngành nghề: gõ y hệt tên ngành đã có sẵn (ví dụ "Xây dựng") thì họ sẽ được
+  gom chung một nhóm khi lọc. Gõ khác đi một chữ là thành nhóm riêng.
+- Ưu đãi dành cho hội viên CLB: ghi chính sách ưu đãi riêng cho anh em trong
+  câu lạc bộ. Để trống thì mục này không hiện.
+
+
+SỬA THÔNG TIN HỘI VIÊN CÓ SẴN
+
+1. Bấm mục "Hội viên"
+2. Bấm vào tên người cần sửa
+3. Sửa xong bấm "Publish"
+
+
+ĐĂNG MỘT BÀI TIN TỨC
+
+1. Bấm mục "Tin tức"
+2. Bấm nút "bài viết mới"
+3. Điền:
+   - Tiêu đề
+   - Tóm tắt: một hai câu, hiện ở trang danh sách và khi chia sẻ link lên
+     Facebook, Zalo
+   - Ngày đăng
+   - Chuyên mục: chọn một trong bốn mục
+   - Ảnh bìa: bấm Upload rồi chọn ảnh
+   - Nội dung: gõ như gõ Word bình thường
+4. Bấm "Publish"
+
+Muốn gắn album ảnh có sẵn vào cuối bài thì điền ô "Album ảnh liên quan" bằng
+mã album. Mã album là đoạn chữ trên thanh địa chỉ khi xem album đó, ví dụ
+giai-cuu-bi-do-2023. Không cần thì để trống.
+
+
+SỬA THÔNG TIN CHUNG CỦA CLB
+
+Mục "Cài đặt chung" cho sửa: địa chỉ, điện thoại, email, Facebook, khẩu hiệu,
+các số liệu ở trang chủ, ba tiêu chí hoạt động, danh sách thành tựu.
+
+Sửa xong nhớ bấm "Publish".
+
+
+VỀ ẢNH
+
+- Không cần thu nhỏ ảnh trước khi tải lên
+- Ảnh chân dung: chụp dọc, thấy rõ mặt, nền gọn
+- Ảnh bài viết: chụp ngang thì đẹp hơn
+- Ảnh đã tải lên nằm chung một kho, dùng lại được cho bài khác
+
+
+NHỮNG ĐIỀU CẦN BIẾT
+
+- Mỗi lần bấm Publish là website cập nhật sau khoảng 1 phút. Không có nút xem
+  trước, nên đọc kỹ trước khi bấm.
+- Mọi thay đổi đều được lưu lại lịch sử, lỡ xoá nhầm hay sửa sai vẫn khôi phục
+  được. Báo người phụ trách kỹ thuật.
+- Thông tin liên hệ của hội viên (điện thoại, email) hiển thị công khai cho mọi
+  người xem. Nên hỏi ý kiến từng người trước khi đăng.
+- Hiện website đang chặn Google tìm thấy, vì nội dung chưa hoàn thiện. Khi nào
+  đầy đủ thì báo người phụ trách kỹ thuật mở ra.
+
+
+GẶP TRỤC TRẶC
+
+- Đăng nhập báo lỗi: kiểm tra đã được cấp quyền vào kho nội dung chưa
+- Bấm Publish mà web không đổi: chờ thêm 2-3 phút rồi tải lại trang
+- Tải ảnh lên bị lỗi: thử ảnh nhỏ hơn, hoặc đổi sang định dạng JPG
+- Lỡ xoá nhầm: đừng làm gì thêm, báo ngay người phụ trách kỹ thuật

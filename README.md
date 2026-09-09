@@ -177,8 +177,13 @@ npx wrangler d1 execute clb-doanh-nhan --remote -y --command "UPDATE dang_ky_hoi
 
 ### Bật trang quản trị `/admin`
 
-Giao diện đã dựng xong và chạy được tại `/admin`, chỉ còn thiếu phần đăng nhập.
-Cần 3 bước, làm một lần duy nhất:
+**Đã cấu hình xong và đang chạy.** Kho GitHub, OAuth App và hai khoá bí mật đều đã gắn.
+Hướng dẫn sử dụng dành cho ban thư ký nằm ở `docs/huong-dan-cho-thu-ky.txt`.
+
+Muốn thêm người được quyền vào `/admin`: mời họ làm collaborator của kho GitHub
+(Settings → Collaborators). Không cần cấp thêm gì trên Cloudflare.
+
+Các bước đã làm, ghi lại phòng khi phải dựng lại từ đầu:
 
 1. Tạo kho GitHub và đẩy mã nguồn lên (kho đã `git init` và commit sẵn):
    ```bash
@@ -211,7 +216,8 @@ và khoảng 1 phút sau là web cập nhật.
 | Cloudflare Pages | ✅ đang chạy |
 | Biểu mẫu đăng ký + D1 | ✅ đang chạy |
 | Email báo hồ sơ mới | ⏸ tạm gác, chờ CLB có email chính thức |
-| Trang quản trị `/admin` | ⏸ giao diện xong, chờ tạo kho GitHub + OAuth |
+| Kho GitHub | `ttledinhnguyen-cmd/clb-doanh-nhan-website` |
+| Trang quản trị `/admin` | ✅ đang chạy, đăng nhập bằng GitHub |
 | Chatbot | ⏸ chưa chốt công nghệ |
 | Chặn Google lập chỉ mục | 🔒 **đang bật** — nhớ tắt khi ra mắt chính thức |
 
