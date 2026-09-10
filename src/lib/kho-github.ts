@@ -120,3 +120,37 @@ export async function ghiNhatKy(
     console.error('Ghi nhật ký thất bại:', e);
   }
 }
+
+export async function xoaFile(env: EnvKho, duongDan: string, sha: string, loiNhan: string) {
+  const res = await fetch(
+    `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${encodeURI(duongDan)}`,
+    {
+      method: 'DELETE',
+      headers: { ...ghHeaders(env), 'content-type': 'application/json' },
+      body: JSON.stringify({ message: loiNhan, sha, branch: nhanh(env) }),
+    },
+  );
+  if (!res.ok) throw new Error(`GitHub xoá file lỗi ${res.status}: ${await res.text()}`);
+}
+
+/** Bỏ dấu tiếng Việt và ký tự lạ để làm tên file / đường dẫn. */
+export function lamSlug(s: string) {
+  return s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\u0111/g, 'd')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+
+/** Chỉ cho mã có vai trò ban thư ký đi tiếp. */
+export async function chiThuKy(env: EnvKho, ma: unknown) {
+  const phien = await kiemTraMa(env, ma);
+  if (!phien) return { loi: json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401) };
+  if (phien.vai_tro !== 'thu-ky') {
+    return { loi: json({ loi: 'Đường dẫn này không có quyền thực hiện thao tác đó.' }, 403) };
+  }
+  return { phien };
+}

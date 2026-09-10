@@ -2,19 +2,24 @@
 import Base from '../layouts/Base.astro';
 
 /**
- * Trang hội viên tự cập nhật hồ sơ.
+ * Trang tự cập nhật nội dung, vào bằng đường dẫn riêng: /cap-nhat?ma=xxxxx
  *
- * Vào bằng đường dẫn riêng có mã bí mật: /cap-nhat?ma=xxxxx
- * Không cần tài khoản, không mật khẩu. Thiết kế ưu tiên điện thoại vì phần lớn
- * hội viên sẽ mở link từ Zalo trên máy.
+ * Hội viên thường chỉ sửa hồ sơ của mình. Mã ban thư ký mở thêm ba việc nữa:
+ * sửa hồ sơ mọi hội viên (kể cả chức vụ), viết tin tức, sửa nội dung trang
+ * hoạt động và thông tin chung của câu lạc bộ.
+ *
+ * Không ai cần tài khoản GitHub — máy chủ ghi hộ bằng khoá bot.
+ * Thiết kế ưu tiên điện thoại vì phần lớn người dùng mở link từ Zalo.
  */
 
 const o =
   'w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]';
 const nhan = 'block text-sm font-semibold text-brand-900';
+const the = 'rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7';
+const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600';
 ---
 
-<Base tieuDe="Cập nhật hồ sơ" khongLapChiMuc anTroLy>
+<Base tieuDe="Cập nhật thông tin" khongLapChiMuc anTroLy>
   <section class="surface-deep relative isolate overflow-hidden">
     <img
       src="/logo-mark.svg"
@@ -23,9 +28,11 @@ const nhan = 'block text-sm font-semibold text-brand-900';
       class="pointer-events-none absolute -right-16 top-8 w-[30rem] max-w-[75%] opacity-[0.07] brightness-0 invert"
     />
     <div class="container-page relative pb-10 pt-28 sm:pt-32 lg:pb-14 lg:pt-40">
-      <p class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-accent-400">Dành cho hội viên</p>
+      <p class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-accent-400">
+        Dành cho hội viên
+      </p>
       <h1 class="mt-3 text-(length:--text-h1) font-extrabold leading-tight text-white">
-        Cập nhật hồ sơ
+        Cập nhật thông tin
       </h1>
       <p id="loi-chao" class="mt-4 text-(length:--text-lead) text-brand-100"></p>
     </div>
@@ -33,22 +40,16 @@ const nhan = 'block text-sm font-semibold text-brand-900';
 
   <section class="py-10 lg:py-16">
     <div class="container-page max-w-3xl">
-      {/* Đang tải */}
       <div id="dang-tai" class="py-16 text-center">
-        <div
-          class="mx-auto h-9 w-9 animate-spin rounded-full border-3 border-brand-200 border-t-brand-600"
-        >
-        </div>
-        <p class="mt-5 text-slate-500">Đang mở hồ sơ…</p>
+        <div class="mx-auto h-9 w-9 animate-spin rounded-full border-3 border-brand-200 border-t-brand-600"></div>
+        <p class="mt-5 text-slate-500">Đang mở…</p>
       </div>
 
-      {/* Không vào được */}
       <div id="khong-vao-duoc" hidden class="rounded-2xl border border-red-200 bg-red-50 p-7 sm:p-9">
-        <h2 class="text-xl font-bold text-red-800">Không mở được hồ sơ</h2>
+        <h2 class="text-xl font-bold text-red-800">Không mở được</h2>
         <p id="ly-do" class="mt-3 text-[0.95rem] leading-relaxed text-red-700"></p>
         <p class="mt-5 text-[0.95rem] leading-relaxed text-slate-600">
-          Anh/chị vui lòng kiểm tra lại đường dẫn đã nhận, hoặc liên hệ ban thư ký câu lạc bộ để
-          được gửi lại.
+          Anh/chị vui lòng kiểm tra lại đường dẫn đã nhận, hoặc liên hệ ban thư ký câu lạc bộ.
         </p>
         <a
           href="/lien-he"
@@ -57,62 +58,68 @@ const nhan = 'block text-sm font-semibold text-brand-900';
         >
       </div>
 
-      {/* Biểu mẫu */}
       <form id="bieu-mau" hidden class="space-y-7">
-        {/* Chọn việc muốn làm — chỉ ban thư ký thấy */}
-        <div id="khoi-che-do" hidden class="flex gap-2">
-          <button
-            type="button"
-            data-che-do="hoi-vien"
-            aria-pressed="true"
-            class="nut-che-do inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 text-[0.9rem] font-bold ring-1 ring-inset transition bg-white text-slate-600 ring-slate-200 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600"
-          >
-            Hồ sơ hội viên
-          </button>
-          <button
-            type="button"
-            data-che-do="trang"
-            aria-pressed="false"
-            class="nut-che-do inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 text-[0.9rem] font-bold ring-1 ring-inset transition bg-white text-slate-600 ring-slate-200 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600"
-          >
-            Nội dung trang
-          </button>
+        {/* Chọn việc — chỉ ban thư ký thấy */}
+        <div id="khoi-che-do" hidden class="rounded-2xl bg-accent-50 p-5 ring-1 ring-accent-100 sm:p-6">
+          <label>
+            <span class="text-sm font-bold text-accent-700">Anh/chị muốn sửa gì?</span>
+            <select id="chon-che-do" class:list={['mt-2.5', o]}>
+              <option value="hoi-vien">Hồ sơ hội viên</option>
+              <option value="tin-tuc">Tin tức</option>
+              <option value="trang">Nội dung trang hoạt động</option>
+              <option value="thong-tin">Thông tin chung của CLB</option>
+            </select>
+          </label>
         </div>
 
-        {/* Chọn hội viên — chỉ ban thư ký thấy */}
-        <div id="khoi-chon-nguoi" hidden class="rounded-2xl bg-accent-50 p-5 ring-1 ring-accent-100 sm:p-6">
+        {/* ── Chọn đối tượng theo từng chế độ ─────────────────────────── */}
+        <div id="khoi-chon-nguoi" hidden class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-900/5 sm:p-6">
           <label>
-            <span class="text-sm font-bold text-accent-700">Chọn hội viên cần sửa</span>
+            <span class={nhan}>Chọn hội viên cần sửa</span>
             <select id="chon-nguoi" class:list={['mt-2.5', o]}>
               <option value="">— Chọn —</option>
             </select>
           </label>
         </div>
 
-        <div id="than-bieu-mau" hidden class="space-y-7">
-          {/* Ảnh chân dung */}
-          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Ảnh chân dung
-            </legend>
+        <div id="khoi-chon-tin" hidden class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-900/5 sm:p-6">
+          <label>
+            <span class={nhan}>Chọn bài viết</span>
+            <select id="chon-tin" class:list={['mt-2.5', o]}>
+              <option value="">— Chọn bài để sửa —</option>
+            </select>
+          </label>
+          <button
+            type="button"
+            id="nut-bai-moi"
+            class="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-600 px-5 text-sm font-bold text-white transition hover:bg-brand-700"
+          >
+            <span class="text-lg leading-none">+</span> Viết bài mới
+          </button>
+        </div>
 
+        <div id="khoi-chon-trang" hidden class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-900/5 sm:p-6">
+          <label>
+            <span class={nhan}>Chọn trang cần sửa</span>
+            <select id="chon-trang" class:list={['mt-2.5', o]}>
+              <option value="">— Chọn —</option>
+            </select>
+          </label>
+        </div>
+
+        {/* ── Biểu mẫu hồ sơ hội viên ─────────────────────────────────── */}
+        <div id="than-hoi-vien" hidden class="space-y-7">
+          <fieldset class={the}>
+            <legend class={legend}>Ảnh chân dung</legend>
             <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-start">
               <div class="mx-auto w-40 shrink-0 sm:mx-0">
                 <div class="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5">
-                  <img
-                    id="xem-truoc"
-                    src="/logo-mark.svg"
-                    alt="Ảnh chân dung hiện tại"
-                    class="aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30"
-                  />
+                  <img id="xem-truoc" src="/logo-mark.svg" alt="" class="aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30" />
                 </div>
                 <p class="mt-2 text-center text-xs text-slate-500">Khung hiển thị trên web</p>
               </div>
-
               <div class="min-w-0 flex-1">
-                <label
-                  class="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl bg-brand-600 px-5 font-semibold text-white transition hover:bg-brand-700 active:bg-brand-800"
-                >
+                <label class="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl bg-brand-600 px-5 font-semibold text-white transition hover:bg-brand-700 active:bg-brand-800">
                   <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9a2 2 0 0 1 2-2h1.6l1-1.6A2 2 0 0 1 9.3 4.5h5.4a2 2 0 0 1 1.7.9l1 1.6H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <circle cx="12" cy="13" r="3.2"></circle>
@@ -121,19 +128,15 @@ const nhan = 'block text-sm font-semibold text-brand-900';
                   <input id="chon-anh" type="file" accept="image/*" class="sr-only" />
                 </label>
                 <p class="mt-3 text-[0.85rem] leading-relaxed text-slate-500">
-                  Chụp dọc, thấy rõ mặt là đẹp nhất. Ảnh sẽ được tự thu nhỏ trước khi gửi nên
-                  không cần chỉnh gì. Xem khung bên cạnh để biết web sẽ hiển thị ra sao.
+                  Ảnh nền trắng, thấy rõ mặt là đẹp nhất. Ảnh sẽ được tự thu nhỏ nên không cần chỉnh gì.
                 </p>
                 <p id="thong-tin-anh" class="mt-2 text-[0.85rem] font-semibold text-brand-700"></p>
               </div>
             </div>
           </fieldset>
 
-          {/* Cá nhân */}
-          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Thông tin cá nhân
-            </legend>
+          <fieldset class={the}>
+            <legend class={legend}>Thông tin cá nhân</legend>
             <div class="mt-5 grid gap-4 sm:grid-cols-3">
               <label class="sm:col-span-2">
                 <span class={nhan}>Họ và tên</span>
@@ -148,14 +151,48 @@ const nhan = 'block text-sm font-semibold text-brand-900';
                 </select>
               </label>
             </div>
-            <p id="chuc-vu-clb" hidden class="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-[0.88rem] text-brand-800"></p>
+            <p id="chuc-vu-xem" hidden class="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-[0.88rem] text-brand-800"></p>
           </fieldset>
 
-          {/* Doanh nghiệp */}
-          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Doanh nghiệp
-            </legend>
+          {/* Chức vụ trong CLB — chỉ ban thư ký sửa được */}
+          <fieldset id="khoi-chuc-vu" hidden class="rounded-2xl border-l-4 border-accent-500 bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class={legend}>Chức vụ trong câu lạc bộ</legend>
+            <p class="mt-4 text-[0.85rem] leading-relaxed text-slate-600">
+              Chỉ ban thư ký sửa được mục này. Hội viên vào link của mình sẽ không thấy.
+            </p>
+            <div class="mt-5 space-y-4">
+              <label class="block">
+                <span class={nhan}>Chức vụ hiển thị</span>
+                <input name="chucVuClb" type="text" placeholder="Ví dụ: Phó Chủ tịch" class:list={['mt-2', o]} />
+                <span class="mt-1.5 block text-xs text-slate-500">Để trống nếu là hội viên thường.</span>
+              </label>
+              <label class="block">
+                <span class={nhan}>Thuộc nhóm nào trong Ban điều hành</span>
+                <select name="capBac" class:list={['mt-2', o]}>
+                  <option value="">Không thuộc Ban điều hành</option>
+                  <option value="chu-tich">Chủ tịch</option>
+                  <option value="pho-chu-tich-thuong-truc">Phó Chủ tịch Thường trực</option>
+                  <option value="pho-chu-tich">Phó Chủ tịch</option>
+                  <option value="pho-chu-tich-danh-du">Phó Chủ tịch Danh dự</option>
+                  <option value="uy-vien">Uỷ viên Ban Chấp hành</option>
+                  <option value="uy-vien-du-khuyet">Uỷ viên dự khuyết BCH</option>
+                </select>
+                <span class="mt-1.5 block text-xs text-slate-500">
+                  Quyết định người này xuất hiện ở nhóm nào trong trang Cơ cấu tổ chức.
+                </span>
+              </label>
+              <label class="block">
+                <span class={nhan}>Thứ tự hiển thị</span>
+                <input name="thuTu" type="number" inputmode="numeric" min="0" max="99999" class:list={['mt-2', o]} />
+                <span class="mt-1.5 block text-xs text-slate-500">
+                  Số nhỏ hiện trước. Hội viên thường để 9999.
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class={the}>
+            <legend class={legend}>Doanh nghiệp</legend>
             <div class="mt-5 grid gap-4 sm:grid-cols-2">
               <label class="sm:col-span-2">
                 <span class={nhan}>Tên doanh nghiệp</span>
@@ -172,7 +209,7 @@ const nhan = 'block text-sm font-semibold text-brand-900';
               </label>
               <label>
                 <span class={nhan}>Năm thành lập</span>
-                <input name="namThanhLap" type="number" inputmode="numeric" min="1900" max="2100" placeholder="2015" class:list={['mt-2', o]} />
+                <input name="namThanhLap" type="number" inputmode="numeric" min="1900" max="2100" class:list={['mt-2', o]} />
               </label>
               <label>
                 <span class={nhan}>Quy mô</span>
@@ -181,14 +218,11 @@ const nhan = 'block text-sm font-semibold text-brand-900';
             </div>
           </fieldset>
 
-          {/* Liên hệ */}
-          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Liên hệ
-            </legend>
+          <fieldset class={the}>
+            <legend class={legend}>Liên hệ</legend>
             <p class="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-[0.85rem] leading-relaxed text-amber-800 ring-1 ring-amber-100">
-              Những thông tin dưới đây hiển thị công khai trên website cho mọi người xem. Mục nào
-              không muốn công khai thì để trống.
+              Những thông tin dưới đây hiển thị công khai trên website. Mục nào không muốn công khai
+              thì để trống.
             </p>
             <div class="mt-5 grid gap-4 sm:grid-cols-2">
               <label>
@@ -213,131 +247,225 @@ const nhan = 'block text-sm font-semibold text-brand-900';
               </label>
               <label>
                 <span class={nhan}>Zalo</span>
-                <input name="zalo" type="text" placeholder="Số Zalo hoặc link" class:list={['mt-2', o]} />
+                <input name="zalo" type="text" class:list={['mt-2', o]} />
               </label>
             </div>
           </fieldset>
 
-          {/* Giới thiệu */}
-          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Giới thiệu doanh nghiệp
-            </legend>
+          <fieldset class={the}>
+            <legend class={legend}>Giới thiệu doanh nghiệp</legend>
             <label class="mt-5 block">
-              <textarea
-                name="gioiThieu"
-                rows="7"
-                placeholder="Doanh nghiệp làm gì, thế mạnh ở đâu, phục vụ khách hàng nào…"
-                class:list={[o]}></textarea>
-              <span id="dem-chu" class="mt-2 block text-right text-xs text-slate-400"></span>
+              <textarea name="gioiThieu" rows="7" placeholder="Doanh nghiệp làm gì, thế mạnh ở đâu…" class:list={[o]}></textarea>
+              <span id="dem-gioi-thieu" class="mt-2 block text-right text-xs text-slate-400"></span>
             </label>
           </fieldset>
 
-          {/* Sản phẩm & khách hàng */}
-          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Sản phẩm và khách hàng
-            </legend>
-
+          <fieldset class={the}>
+            <legend class={legend}>Sản phẩm và khách hàng</legend>
             <div class="mt-5">
               <p class={nhan}>Sản phẩm / dịch vụ chính</p>
               <div id="ds-san-pham" class="mt-2.5 space-y-2.5"></div>
-              <button
-                type="button"
-                data-them="sanPham"
-                class="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-bold text-brand-700 transition hover:bg-brand-50"
-              >
+              <button type="button" data-them="sanPham" class="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-bold text-brand-700 transition hover:bg-brand-50">
                 <span class="text-lg leading-none">+</span> Thêm dòng
               </button>
             </div>
-
             <div class="mt-6">
               <p class={nhan}>Khách hàng / dự án tiêu biểu</p>
               <div id="ds-khach-hang" class="mt-2.5 space-y-2.5"></div>
-              <button
-                type="button"
-                data-them="khachHang"
-                class="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-bold text-brand-700 transition hover:bg-brand-50"
-              >
+              <button type="button" data-them="khachHang" class="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-bold text-brand-700 transition hover:bg-brand-50">
                 <span class="text-lg leading-none">+</span> Thêm dòng
               </button>
             </div>
           </fieldset>
 
-          {/* Ưu đãi */}
           <fieldset class="rounded-2xl border-l-4 border-accent-500 bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Ưu đãi cho hội viên CLB
-            </legend>
+            <legend class={legend}>Ưu đãi cho hội viên CLB</legend>
             <p class="mt-4 text-[0.88rem] leading-relaxed text-slate-600">
               Doanh nghiệp có chính sách ưu đãi riêng cho anh em trong câu lạc bộ thì ghi ở đây.
-              Để trống thì mục này không hiện trên trang.
             </p>
-            <textarea
-              name="uuDaiHoiVien"
-              rows="3"
-              placeholder="Ví dụ: giảm 10% cho hội viên CLB khi sử dụng dịch vụ."
-              class:list={['mt-4', o]}></textarea>
+            <textarea name="uuDaiHoiVien" rows="3" placeholder="Ví dụ: giảm 10% cho hội viên CLB." class:list={['mt-4', o]}></textarea>
           </fieldset>
-
-          <div id="thong-bao" hidden role="status" class="rounded-xl px-5 py-4 text-[0.95rem] font-semibold"></div>
         </div>
 
-        {/* Sửa nội dung trang hoạt động */}
-        <div id="khoi-chon-trang" hidden class="rounded-2xl bg-accent-50 p-5 ring-1 ring-accent-100 sm:p-6">
-          <label>
-            <span class="text-sm font-bold text-accent-700">Chọn trang cần sửa</span>
-            <select id="chon-trang" class:list={['mt-2.5', o]}>
-              <option value="">— Chọn —</option>
-            </select>
-          </label>
-        </div>
-
-        <div id="than-trang" hidden class="space-y-7">
-          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Phần đầu trang
-            </legend>
+        {/* ── Biểu mẫu tin tức ────────────────────────────────────────── */}
+        <div id="than-tin-tuc" hidden class="space-y-7">
+          <fieldset class={the}>
+            <legend class={legend}>Bài viết</legend>
             <div class="mt-5 space-y-4">
               <label class="block">
                 <span class={nhan}>Tiêu đề</span>
-                <input name="tieuDe" type="text" class:list={['mt-2', o]} />
+                <input name="tinTieuDe" type="text" class:list={['mt-2', o]} />
               </label>
               <label class="block">
-                <span class={nhan}>Nhãn nhỏ phía trên tiêu đề</span>
-                <input name="nhanTrang" type="text" placeholder="Hoạt động" class:list={['mt-2', o]} />
+                <span class={nhan}>Tóm tắt</span>
+                <textarea name="tinMoTa" rows="2" placeholder="Một hai câu, hiện ở trang danh sách và khi chia sẻ link." class:list={['mt-2', o]}></textarea>
               </label>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <label>
+                  <span class={nhan}>Ngày đăng</span>
+                  <input name="tinNgay" type="date" class:list={['mt-2', o]} />
+                </label>
+                <label>
+                  <span class={nhan}>Chuyên mục</span>
+                  <select name="tinDanhMuc" class:list={['mt-2', o]}>
+                    <option value="cong-tac-xa-hoi">Công tác xã hội</option>
+                    <option value="phat-trien-thanh-vien">Phát triển thành viên</option>
+                    <option value="van-hoa-the-thao">Văn hoá – Thể thao</option>
+                    <option value="su-kien">Sự kiện CLB</option>
+                  </select>
+                </label>
+              </div>
               <label class="block">
-                <span class={nhan}>Đoạn mô tả ngắn</span>
-                <textarea name="moTaTrang" rows="3" class:list={['mt-2', o]}></textarea>
+                <span class={nhan}>Album ảnh gắn kèm</span>
+                <select name="tinAlbum" class:list={['mt-2', o]}>
+                  <option value="">— Không gắn album —</option>
+                </select>
+                <span class="mt-1.5 block text-xs text-slate-500">
+                  Album chọn ở đây sẽ hiện ở cuối bài viết.
+                </span>
               </label>
             </div>
           </fieldset>
 
-          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
-            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
-              Nội dung
-            </legend>
+          <fieldset class={the}>
+            <legend class={legend}>Ảnh bìa</legend>
+            <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-start">
+              <div class="w-full shrink-0 sm:w-56">
+                <div class="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5">
+                  <img id="xem-truoc-bia" src="/logo-mark.svg" alt="" class="aspect-4/3 w-full bg-slate-100 object-cover p-8 opacity-30" />
+                </div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <label class="flex min-h-13 w-full cursor-pointer items-center justify-center gap-2.5 rounded-xl bg-brand-600 px-5 font-semibold text-white transition hover:bg-brand-700">
+                  <span>Chọn ảnh bìa</span>
+                  <input id="chon-anh-bia" type="file" accept="image/*" class="sr-only" />
+                </label>
+                <p class="mt-3 text-[0.85rem] leading-relaxed text-slate-500">
+                  Ảnh chụp ngang thì đẹp hơn. Để trống cũng được, bài vẫn hiển thị bình thường.
+                </p>
+                <p id="thong-tin-anh-bia" class="mt-2 text-[0.85rem] font-semibold text-brand-700"></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class={the}>
+            <legend class={legend}>Nội dung</legend>
             <p class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-[0.85rem] leading-relaxed text-slate-600">
-              Gõ như gõ Word bình thường. Muốn tạo một tiêu đề mục thì bắt đầu dòng bằng hai
-              dấu thăng và một dấu cách, ví dụ:
-              <code class="rounded bg-white px-1.5 py-0.5 font-mono text-brand-700">## Caravan</code>.
-              Muốn in đậm thì kẹp chữ giữa hai dấu sao mỗi bên.
+              Gõ như gõ Word. Muốn tạo tiêu đề mục thì bắt đầu dòng bằng
+              <code class="rounded bg-white px-1.5 py-0.5 font-mono text-brand-700">##</code> và một
+              dấu cách. In đậm thì kẹp chữ giữa hai dấu sao mỗi bên.
             </p>
-            <textarea name="noiDungTrang" rows="16" class:list={['mt-4 font-mono text-[0.9rem]', o]}></textarea>
-            <span id="dem-chu-trang" class="mt-2 block text-right text-xs text-slate-400"></span>
+            <textarea name="tinNoiDung" rows="14" class:list={['mt-4 font-mono text-[0.9rem]', o]}></textarea>
+            <span id="dem-tin" class="mt-2 block text-right text-xs text-slate-400"></span>
+          </fieldset>
+
+          <div id="khoi-xoa-tin" hidden class="rounded-2xl border border-red-200 bg-red-50 p-5 sm:p-6">
+            <p class="text-sm font-bold text-red-800">Xoá bài viết này</p>
+            <p class="mt-2 text-[0.88rem] leading-relaxed text-red-700">
+              Bài sẽ biến mất khỏi website. Vẫn khôi phục được nếu báo người phụ trách kỹ thuật.
+            </p>
+            <button
+              type="button"
+              id="nut-xoa-tin"
+              class="mt-4 inline-flex min-h-11 items-center rounded-xl bg-red-600 px-5 text-sm font-bold text-white transition hover:bg-red-700"
+            >
+              Xoá bài viết
+            </button>
+          </div>
+        </div>
+
+        {/* ── Biểu mẫu nội dung trang ─────────────────────────────────── */}
+        <div id="than-trang" hidden class="space-y-7">
+          <fieldset class={the}>
+            <legend class={legend}>Phần đầu trang</legend>
+            <div class="mt-5 space-y-4">
+              <label class="block">
+                <span class={nhan}>Tiêu đề</span>
+                <input name="trangTieuDe" type="text" class:list={['mt-2', o]} />
+              </label>
+              <label class="block">
+                <span class={nhan}>Nhãn nhỏ phía trên tiêu đề</span>
+                <input name="trangNhan" type="text" placeholder="Hoạt động" class:list={['mt-2', o]} />
+              </label>
+              <label class="block">
+                <span class={nhan}>Đoạn mô tả ngắn</span>
+                <textarea name="trangMoTa" rows="3" class:list={['mt-2', o]}></textarea>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class={the}>
+            <legend class={legend}>Nội dung</legend>
+            <p class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-[0.85rem] leading-relaxed text-slate-600">
+              Gõ như gõ Word. Tiêu đề mục bắt đầu bằng
+              <code class="rounded bg-white px-1.5 py-0.5 font-mono text-brand-700">##</code> và một
+              dấu cách.
+            </p>
+            <textarea name="trangNoiDung" rows="16" class:list={['mt-4 font-mono text-[0.9rem]', o]}></textarea>
+            <span id="dem-trang" class="mt-2 block text-right text-xs text-slate-400"></span>
           </fieldset>
         </div>
+
+        {/* ── Biểu mẫu thông tin chung ────────────────────────────────── */}
+        <div id="than-thong-tin" hidden class="space-y-7">
+          <fieldset class={the}>
+            <legend class={legend}>Giới thiệu chung</legend>
+            <div class="mt-5 space-y-4">
+              <label class="block">
+                <span class={nhan}>Khẩu hiệu</span>
+                <input name="ttKhauHieu" type="text" class:list={['mt-2', o]} />
+                <span class="mt-1.5 block text-xs text-slate-500">Hiện ở trang chủ và chân trang.</span>
+              </label>
+              <label class="block">
+                <span class={nhan}>Mô tả câu lạc bộ</span>
+                <textarea name="ttMoTa" rows="4" class:list={['mt-2', o]}></textarea>
+                <span class="mt-1.5 block text-xs text-slate-500">
+                  Đoạn này hiện ở chân trang và khi chia sẻ link lên Facebook, Zalo.
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class={the}>
+            <legend class={legend}>Thông tin liên hệ</legend>
+            <p class="mt-4 text-[0.88rem] leading-relaxed text-slate-600">
+              Để trống mục nào thì mục đó không hiện trên web.
+            </p>
+            <div class="mt-5 grid gap-4 sm:grid-cols-2">
+              <label class="sm:col-span-2">
+                <span class={nhan}>Địa chỉ</span>
+                <input name="ttDiaChi" type="text" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Điện thoại</span>
+                <input name="ttDienThoai" type="tel" inputmode="tel" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Email</span>
+                <input name="ttEmail" type="email" inputmode="email" class:list={['mt-2', o]} />
+              </label>
+              <label class="sm:col-span-2">
+                <span class={nhan}>Facebook</span>
+                <input name="ttFacebook" type="url" placeholder="https://facebook.com/…" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>YouTube</span>
+                <input name="ttYoutube" type="url" placeholder="https://" class:list={['mt-2', o]} />
+              </label>
+              <label>
+                <span class={nhan}>Zalo</span>
+                <input name="ttZalo" type="text" class:list={['mt-2', o]} />
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div id="thong-bao" hidden role="status" class="rounded-xl px-5 py-4 text-[0.95rem] font-semibold"></div>
       </form>
     </div>
   </section>
 
-  {/* Thanh lưu dính đáy màn hình — trên điện thoại luôn với tới được */}
-  <div
-    id="thanh-luu"
-    hidden
-    class="sticky bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur-lg"
-  >
+  <div id="thanh-luu" hidden class="sticky bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur-lg">
     <div class="container-page flex max-w-3xl items-center gap-3 py-3.5">
       <p id="trang-thai" class="min-w-0 flex-1 truncate text-[0.85rem] text-slate-500">
         Sửa xong thì bấm Lưu
@@ -356,35 +484,26 @@ const nhan = 'block text-sm font-semibold text-brand-900';
 <script>
   const ma = new URLSearchParams(location.search).get('ma') ?? '';
 
-  const bieuMau = document.getElementById('bieu-mau') as HTMLFormElement;
-  const thanBieuMau = document.getElementById('than-bieu-mau') as HTMLElement;
-  const dangTai = document.getElementById('dang-tai') as HTMLElement;
-  const khongVaoDuoc = document.getElementById('khong-vao-duoc') as HTMLElement;
-  const lyDo = document.getElementById('ly-do')!;
-  const loiChao = document.getElementById('loi-chao')!;
-  const thanhLuu = document.getElementById('thanh-luu') as HTMLElement;
-  const nutLuu = document.getElementById('nut-luu') as HTMLButtonElement;
-  const trangThai = document.getElementById('trang-thai')!;
-  const thongBao = document.getElementById('thong-bao') as HTMLElement;
-  const xemTruoc = document.getElementById('xem-truoc') as HTMLImageElement;
-  const chonAnh = document.getElementById('chon-anh') as HTMLInputElement;
-  const thongTinAnh = document.getElementById('thong-tin-anh')!;
-  const khoiChonNguoi = document.getElementById('khoi-chon-nguoi') as HTMLElement;
-  const chonNguoi = document.getElementById('chon-nguoi') as HTMLSelectElement;
-  const demChu = document.getElementById('dem-chu')!;
-  const chucVuClb = document.getElementById('chuc-vu-clb') as HTMLElement;
+  const $ = (id: string) => document.getElementById(id)!;
+  const bieuMau = $('bieu-mau') as HTMLFormElement;
+  const oNhap = (ten: string) => bieuMau.elements.namedItem(ten) as HTMLInputElement;
+  const oVanBan = (ten: string) => bieuMau.elements.namedItem(ten) as unknown as HTMLTextAreaElement;
+  const oChon = (ten: string) => bieuMau.elements.namedItem(ten) as unknown as HTMLSelectElement;
+  const thongBao = $('thong-bao');
+  const thanhLuu = $('thanh-luu');
+  const nutLuu = $('nut-luu') as HTMLButtonElement;
+  const trangThai = $('trang-thai');
 
-  const khoiCheDo = document.getElementById('khoi-che-do') as HTMLElement;
-  const khoiChonTrang = document.getElementById('khoi-chon-trang') as HTMLElement;
-  const thanTrang = document.getElementById('than-trang') as HTMLElement;
-  const chonTrang = document.getElementById('chon-trang') as HTMLSelectElement;
-  const demChuTrang = document.getElementById('dem-chu-trang')!;
-
-  let anhMoi: string | null = null;
-  let slugHienTai = '';
+  type CheDo = 'hoi-vien' | 'tin-tuc' | 'trang' | 'thong-tin';
+  let cheDo: CheDo = 'hoi-vien';
   let vaiTro = 'hoi-vien';
-  let cheDo: 'hoi-vien' | 'trang' = 'hoi-vien';
-  let slugTrang = '';
+  let slugHienTai = '';
+  let baiMoi = false;
+  let anhMoi: string | null = null;
+  let anhBiaMoi: string | null = null;
+
+  type MucDanhBa = { slug: string; ten: string; doanhNghiep: string; nganhNghe: string };
+  let danhBa: MucDanhBa[] = [];
 
   const TEN_TRANG: Record<string, string> = {
     'cong-tac-xa-hoi': 'Hoạt động công tác xã hội',
@@ -393,10 +512,16 @@ const nhan = 'block text-sm font-semibold text-brand-900';
     'su-kien': 'Sự kiện câu lạc bộ',
   };
 
+  const TRUONG_HO_SO = [
+    'hoTen', 'xungHo', 'chucDanh', 'doanhNghiep', 'nganhNghe', 'namThanhLap', 'quyMo',
+    'dienThoai', 'email', 'website', 'diaChi', 'facebook', 'zalo', 'uuDaiHoiVien', 'gioiThieu',
+  ];
+
+  // ── Tiện ích ─────────────────────────────────────────────────────────────
   const dungLoi = (msg: string) => {
-    dangTai.hidden = true;
-    khongVaoDuoc.hidden = false;
-    lyDo.textContent = msg;
+    $('dang-tai').hidden = true;
+    $('khong-vao-duoc').hidden = false;
+    $('ly-do').textContent = msg;
   };
 
   const bao = (msg: string, ok: boolean) => {
@@ -410,12 +535,72 @@ const nhan = 'block text-sm font-semibold text-brand-900';
     thongBao.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
+  const goi = async (url: string, method: string, body: object) => {
+    const res = await fetch(url, {
+      method,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ma, ...body }),
+    });
+    return { ok: res.ok, ...(await res.json().catch(() => ({}))) } as any;
+  };
+
+  /** Ảnh điện thoại 3–8 MB, thu về cạnh dài 1200px rồi chuyển WebP còn ~150 KB. */
+  async function nenAnh(file: File): Promise<string> {
+    const anh = await createImageBitmap(file);
+    const ti = Math.min(1, 1200 / Math.max(anh.width, anh.height));
+    const w = Math.round(anh.width * ti);
+    const h = Math.round(anh.height * ti);
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext('2d')!.drawImage(anh, 0, 0, w, h);
+    anh.close();
+    const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/webp', 0.82));
+    if (!blob) throw new Error('Không xử lý được ảnh này.');
+    return await new Promise<string>((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(String(fr.result));
+      fr.onerror = () => rej(new Error('Không đọc được ảnh.'));
+      fr.readAsDataURL(blob);
+    });
+  }
+
+  const ganChonAnh = (
+    idInput: string,
+    idXemTruoc: string,
+    idThongTin: string,
+    lopAnh: string,
+    dat: (s: string | null) => void,
+  ) => {
+    const inp = $(idInput) as HTMLInputElement;
+    inp.addEventListener('change', async () => {
+      const file = inp.files?.[0];
+      if (!file) return;
+      $(idThongTin).textContent = 'Đang xử lý ảnh…';
+      try {
+        const s = await nenAnh(file);
+        dat(s);
+        const img = $(idXemTruoc) as HTMLImageElement;
+        img.src = s;
+        img.className = lopAnh;
+        $(idThongTin).textContent = `Đã chọn ảnh mới (${Math.round((s.length * 0.75) / 1024)} KB). Bấm Lưu để áp dụng.`;
+      } catch (e) {
+        dat(null);
+        $(idThongTin).textContent = 'Không dùng được ảnh này, thử ảnh khác giúp tôi.';
+        console.error(e);
+      }
+    });
+  };
+
+  ganChonAnh('chon-anh', 'xem-truoc', 'thong-tin-anh', 'aspect-3/4 w-full object-cover', (s) => (anhMoi = s));
+  ganChonAnh('chon-anh-bia', 'xem-truoc-bia', 'thong-tin-anh-bia', 'aspect-4/3 w-full object-cover', (s) => (anhBiaMoi = s));
+
   // ── Danh sách động (sản phẩm, khách hàng) ────────────────────────────────
   const dongDanhSach = (khoi: HTMLElement, giaTri = '') => {
     const hang = document.createElement('div');
     hang.className = 'flex gap-2';
     hang.innerHTML =
-      '<input type="text" value="" class="w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]">' +
+      '<input type="text" class="w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]">' +
       '<button type="button" class="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-slate-400 transition hover:bg-red-50 hover:text-red-600" aria-label="Xoá dòng">' +
       '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
     (hang.querySelector('input') as HTMLInputElement).value = giaTri;
@@ -426,356 +611,412 @@ const nhan = 'block text-sm font-semibold text-brand-900';
 
   for (const nut of document.querySelectorAll<HTMLButtonElement>('[data-them]')) {
     nut.addEventListener('click', () => {
-      const khoi = document.getElementById(
-        nut.dataset.them === 'sanPham' ? 'ds-san-pham' : 'ds-khach-hang',
-      )!;
-      const hang = dongDanhSach(khoi);
-      (hang.querySelector('input') as HTMLInputElement).focus();
+      const khoi = $(nut.dataset.them === 'sanPham' ? 'ds-san-pham' : 'ds-khach-hang');
+      (dongDanhSach(khoi).querySelector('input') as HTMLInputElement).focus();
     });
   }
 
   const docDanhSach = (id: string) =>
-    [...document.querySelectorAll<HTMLInputElement>(`#${id} input`)]
-      .map((i) => i.value.trim())
-      .filter(Boolean);
+    [...document.querySelectorAll<HTMLInputElement>(`#${id} input`)].map((i) => i.value.trim()).filter(Boolean);
 
-  // ── Nén ảnh ngay trên máy người dùng ─────────────────────────────────────
-  // Ảnh điện thoại thường 3–8 MB, gửi thẳng lên sẽ chậm và nặng kho.
-  // Thu về cạnh dài 1200px rồi chuyển sang WebP, còn khoảng 100–200 KB.
-  async function nenAnh(file: File): Promise<string> {
-    const anh = await createImageBitmap(file);
-    const CANH = 1200;
-    const ti = Math.min(1, CANH / Math.max(anh.width, anh.height));
-    const w = Math.round(anh.width * ti);
-    const h = Math.round(anh.height * ti);
+  // ── Bộ đếm ký tự ─────────────────────────────────────────────────────────
+  const ganDem = (ten: string, idDem: string, max: number) => {
+    const el = oVanBan(ten);
+    const cap = () => {
+      const n = el.value.length;
+      $(idDem).textContent = `${n} / ${max} ký tự`;
+      $(idDem).className = `mt-2 block text-right text-xs ${n > max ? 'font-bold text-red-600' : 'text-slate-400'}`;
+    };
+    el.addEventListener('input', cap);
+    return cap;
+  };
+  const demGioiThieu = ganDem('gioiThieu', 'dem-gioi-thieu', 4000);
+  const demTin = ganDem('tinNoiDung', 'dem-tin', 30000);
+  const demTrang = ganDem('trangNoiDung', 'dem-trang', 20000);
 
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    canvas.getContext('2d')!.drawImage(anh, 0, 0, w, h);
-    anh.close();
+  // ── Chuyển chế độ ────────────────────────────────────────────────────────
+  const MOI_KHOI = [
+    'khoi-chon-nguoi', 'than-hoi-vien',
+    'khoi-chon-tin', 'than-tin-tuc',
+    'khoi-chon-trang', 'than-trang',
+    'than-thong-tin',
+  ];
 
-    const blob = await new Promise<Blob | null>((res) =>
-      canvas.toBlob(res, 'image/webp', 0.82),
-    );
-    if (!blob) throw new Error('Không xử lý được ảnh này.');
+  const anHet = () => {
+    for (const id of MOI_KHOI) $(id).hidden = true;
+    thanhLuu.hidden = true;
+    thongBao.hidden = true;
+  };
 
-    return await new Promise<string>((res, rej) => {
-      const fr = new FileReader();
-      fr.onload = () => res(String(fr.result));
-      fr.onerror = () => rej(new Error('Không đọc được ảnh.'));
-      fr.readAsDataURL(blob);
-    });
-  }
+  const daNap = { 'tin-tuc': false, trang: false };
 
-  chonAnh.addEventListener('change', async () => {
-    const file = chonAnh.files?.[0];
-    if (!file) return;
-    thongTinAnh.textContent = 'Đang xử lý ảnh…';
-    try {
-      anhMoi = await nenAnh(file);
-      xemTruoc.src = anhMoi;
-      xemTruoc.className = 'aspect-3/4 w-full object-cover';
-      const kb = Math.round((anhMoi.length * 0.75) / 1024);
-      thongTinAnh.textContent = `Đã chọn ảnh mới (${kb} KB). Bấm Lưu để áp dụng.`;
-    } catch (e) {
-      anhMoi = null;
-      thongTinAnh.textContent = 'Không dùng được ảnh này, thử ảnh khác giúp tôi.';
-      console.error(e);
+  $('chon-che-do').addEventListener('change', async (e) => {
+    cheDo = (e.target as HTMLSelectElement).value as CheDo;
+    anHet();
+
+    if (cheDo === 'hoi-vien') {
+      $('khoi-chon-nguoi').hidden = false;
+      if (oChonId('chon-nguoi').value) await moHoiVien();
+    } else if (cheDo === 'tin-tuc') {
+      $('khoi-chon-tin').hidden = false;
+      if (!daNap['tin-tuc']) await napTinTuc();
+    } else if (cheDo === 'trang') {
+      $('khoi-chon-trang').hidden = false;
+      if (!daNap.trang) await napTrang();
+    } else {
+      await moThongTin();
     }
   });
 
-  // ── Đổ dữ liệu vào form ──────────────────────────────────────────────────
-  function donHoSo(hoSo: Record<string, unknown>) {
-    slugHienTai = String(hoSo.slug ?? '');
+  const oChonId = (id: string) => $(id) as HTMLSelectElement;
 
-    for (const ten of ['hoTen', 'xungHo', 'chucDanh', 'doanhNghiep', 'nganhNghe', 'namThanhLap', 'quyMo', 'dienThoai', 'email', 'website', 'diaChi', 'facebook', 'zalo', 'uuDaiHoiVien', 'gioiThieu']) {
-      const el = bieuMau.elements.namedItem(ten) as HTMLInputElement | null;
-      if (el) el.value = hoSo[ten] == null ? '' : String(hoSo[ten]);
+  // ── Chế độ: hồ sơ hội viên ───────────────────────────────────────────────
+  function donHoSo(h: Record<string, any>) {
+    slugHienTai = String(h.slug ?? '');
+    for (const t of [...TRUONG_HO_SO, 'chucVuClb', 'capBac', 'thuTu']) {
+      const el = oNhap(t);
+      if (el) el.value = h[t] == null ? '' : String(h[t]);
     }
 
     for (const [khoa, id] of [['sanPham', 'ds-san-pham'], ['khachHang', 'ds-khach-hang']] as const) {
-      const khoi = document.getElementById(id)!;
+      const khoi = $(id);
       khoi.innerHTML = '';
-      const ds = Array.isArray(hoSo[khoa]) ? (hoSo[khoa] as string[]) : [];
+      const ds = Array.isArray(h[khoa]) ? (h[khoa] as string[]) : [];
       if (ds.length === 0) dongDanhSach(khoi);
       else for (const m of ds) dongDanhSach(khoi, m);
     }
 
     anhMoi = null;
-    thongTinAnh.textContent = '';
-    const anhCu = hoSo.anh ? String(hoSo.anh) : `/images/hoi-vien/${slugHienTai}.webp`;
-    xemTruoc.src = anhCu;
-    xemTruoc.className = 'aspect-3/4 w-full object-cover';
-    xemTruoc.onerror = () => {
-      xemTruoc.src = '/logo-mark.svg';
-      xemTruoc.className = 'aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30';
+    $('thong-tin-anh').textContent = '';
+    const img = $('xem-truoc') as HTMLImageElement;
+    img.className = 'aspect-3/4 w-full object-cover';
+    img.onerror = () => {
+      img.src = '/logo-mark.svg';
+      img.className = 'aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30';
     };
+    img.src = h.anh ? String(h.anh) : `/images/hoi-vien/${slugHienTai}.webp`;
 
-    if (hoSo.chucVuClb) {
-      chucVuClb.textContent = `Chức vụ trong CLB: ${hoSo.chucVuClb}. Mục này do câu lạc bộ quản lý, cần đổi thì báo ban thư ký.`;
-      chucVuClb.hidden = false;
-    } else chucVuClb.hidden = true;
+    // Hội viên thường chỉ được xem chức vụ; thư ký mới sửa được.
+    if (vaiTro === 'thu-ky') {
+      $('khoi-chuc-vu').hidden = false;
+      $('chuc-vu-xem').hidden = true;
+    } else {
+      $('khoi-chuc-vu').hidden = true;
+      if (h.chucVuClb) {
+        $('chuc-vu-xem').textContent = `Chức vụ trong CLB: ${h.chucVuClb}. Mục này do câu lạc bộ quản lý, cần đổi thì báo ban thư ký.`;
+        $('chuc-vu-xem').hidden = false;
+      } else $('chuc-vu-xem').hidden = true;
+    }
 
-    capNhatDemChu();
-    thanBieuMau.hidden = false;
+    demGioiThieu();
+    $('than-hoi-vien').hidden = false;
     thanhLuu.hidden = false;
   }
 
-  const oGioiThieu = () => bieuMau.elements.namedItem('gioiThieu') as HTMLTextAreaElement;
-  const capNhatDemChu = () => {
-    const n = oGioiThieu().value.length;
-    demChu.textContent = `${n} / 4000 ký tự`;
-    demChu.className = `mt-2 block text-right text-xs ${n > 4000 ? 'font-bold text-red-600' : 'text-slate-400'}`;
-  };
-
-  // ── Mở hồ sơ ─────────────────────────────────────────────────────────────
-  type MucDanhBa = { slug: string; ten: string; doanhNghiep: string; nganhNghe: string };
-  let danhBa: MucDanhBa[] = [];
-
-  async function moHoSo() {
-    if (!ma) return dungLoi('Đường dẫn thiếu mã truy cập.');
-
-    danhBa = await fetch('/danh-ba.json')
-      .then((r) => (r.ok ? r.json() : []))
-      .catch(() => []);
-
-    try {
-      const res = await fetch('/api/ho-so', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ma }),
-      });
-      const kq = await res.json();
-      if (!res.ok) return dungLoi(kq.loi ?? 'Không mở được hồ sơ.');
-
-      vaiTro = kq.vaiTro;
-      dangTai.hidden = true;
-      bieuMau.hidden = false;
-
-      if (vaiTro === 'thu-ky') {
-        loiChao.textContent =
-          'Chế độ ban thư ký — sửa được hồ sơ mọi hội viên và nội dung các trang hoạt động.';
-        khoiCheDo.hidden = false;
-        khoiChonNguoi.hidden = false;
-        for (const s of kq.danhSach as string[]) {
-          const muc = danhBa.find((m) => m.slug === s);
-          const opt = document.createElement('option');
-          opt.value = s;
-          opt.textContent = muc
-            ? muc.ten + (muc.doanhNghiep ? ` — ${muc.doanhNghiep}` : '')
-            : s;
-          chonNguoi.appendChild(opt);
-        }
-      } else {
-        donHoSo(kq.hoSo);
-        const ten = [kq.hoSo.xungHo, kq.hoSo.hoTen].filter(Boolean).join(' ');
-        loiChao.textContent = `Kính chào ${ten}. Anh/chị sửa thông tin bên dưới rồi bấm Lưu.`;
-      }
-
-      // Gợi ý ngành nghề đã có trong danh bạ, để tên ngành không bị mỗi người
-      // viết một kiểu làm hỏng bộ lọc ở trang Hội viên.
-      const dl = document.getElementById('ds-nganh')!;
-      for (const n of new Set(danhBa.map((m) => m.nganhNghe).filter(Boolean))) {
-        if (n === 'Đang cập nhật') continue;
-        const opt = document.createElement('option');
-        opt.value = n;
-        dl.appendChild(opt);
-      }
-    } catch {
-      dungLoi('Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi thử lại.');
-    }
-  }
-
-  // Ban thư ký chuyển qua lại giữa sửa hồ sơ hội viên và sửa nội dung trang.
-  for (const nut of document.querySelectorAll<HTMLButtonElement>('.nut-che-do')) {
-    nut.addEventListener('click', async () => {
-      cheDo = (nut.dataset.cheDo as 'hoi-vien' | 'trang') ?? 'hoi-vien';
-      for (const n of document.querySelectorAll('.nut-che-do')) {
-        n.setAttribute('aria-pressed', String(n === nut));
-      }
-      thongBao.hidden = true;
-
-      const laTrang = cheDo === 'trang';
-      khoiChonNguoi.hidden = laTrang;
-      thanBieuMau.hidden = true;
-      khoiChonTrang.hidden = !laTrang;
-      thanTrang.hidden = true;
+  async function moHoiVien() {
+    const slug = oChonId('chon-nguoi').value;
+    if (!slug) {
+      $('than-hoi-vien').hidden = true;
       thanhLuu.hidden = true;
-
-      if (laTrang && chonTrang.options.length <= 1) await napDanhSachTrang();
-      else if (!laTrang && chonNguoi.value) chonNguoi.dispatchEvent(new Event('change'));
-    });
+      return;
+    }
+    thongBao.hidden = true;
+    const kq = await goi('/api/ho-so', 'PUT', { slug, layHoSo: true });
+    if (kq.ok) donHoSo(kq.hoSo);
+    else bao(kq.loi ?? 'Không mở được hồ sơ này.', false);
   }
 
-  async function napDanhSachTrang() {
-    const res = await fetch('/api/trang', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ma }),
-    });
-    const kq = await res.json();
-    if (!res.ok) return bao(kq.loi ?? 'Không lấy được danh sách trang.', false);
+  $('chon-nguoi').addEventListener('change', moHoiVien);
+
+  // ── Chế độ: tin tức ──────────────────────────────────────────────────────
+  async function napTinTuc() {
+    const kq = await goi('/api/tin-tuc', 'POST', {});
+    if (!kq.ok) return bao(kq.loi ?? 'Không lấy được danh sách bài viết.', false);
+    const sel = oChonId('chon-tin');
+    sel.innerHTML = '';
+    const dau = document.createElement('option');
+    dau.value = '';
+    dau.textContent = kq.danhSach.length ? '— Chọn bài để sửa —' : 'Chưa có bài viết nào';
+    sel.appendChild(dau);
+    for (const b of kq.danhSach as any[]) {
+      const opt = document.createElement('option');
+      opt.value = b.slug;
+      opt.textContent = `${b.ngay ? String(b.ngay).slice(0, 10) + ' — ' : ''}${b.tieuDe}`;
+      sel.appendChild(opt);
+    }
+    daNap['tin-tuc'] = true;
+  }
+
+  function donBai(b: Record<string, any>) {
+    slugHienTai = String(b.slug ?? '');
+    oNhap('tinTieuDe').value = b.tieuDe ?? '';
+    oVanBan('tinMoTa').value = b.moTa ?? '';
+    oNhap('tinNgay').value = String(b.ngay ?? '').slice(0, 10);
+    oChon('tinDanhMuc').value = b.danhMuc ?? 'su-kien';
+    oChon('tinAlbum').value = b.album ?? '';
+    oVanBan('tinNoiDung').value = b.noiDung ?? '';
+
+    anhBiaMoi = null;
+    $('thong-tin-anh-bia').textContent = '';
+    const img = $('xem-truoc-bia') as HTMLImageElement;
+    if (b.anhBia) {
+      img.src = String(b.anhBia);
+      img.className = 'aspect-4/3 w-full object-cover';
+    } else {
+      img.src = '/logo-mark.svg';
+      img.className = 'aspect-4/3 w-full bg-slate-100 object-cover p-8 opacity-30';
+    }
+
+    demTin();
+    $('khoi-xoa-tin').hidden = baiMoi;
+    $('than-tin-tuc').hidden = false;
+    thanhLuu.hidden = false;
+  }
+
+  $('chon-tin').addEventListener('change', async () => {
+    const slug = oChonId('chon-tin').value;
+    if (!slug) {
+      $('than-tin-tuc').hidden = true;
+      thanhLuu.hidden = true;
+      return;
+    }
+    thongBao.hidden = true;
+    baiMoi = false;
+    const kq = await goi('/api/tin-tuc', 'PUT', { slug });
+    if (kq.ok) donBai(kq.bai);
+    else bao(kq.loi ?? 'Không mở được bài viết.', false);
+  });
+
+  $('nut-bai-moi').addEventListener('click', () => {
+    baiMoi = true;
+    thongBao.hidden = true;
+    oChonId('chon-tin').value = '';
+    donBai({ ngay: new Date().toISOString().slice(0, 10), danhMuc: 'su-kien' });
+    oNhap('tinTieuDe').focus();
+  });
+
+  $('nut-xoa-tin').addEventListener('click', async () => {
+    if (!confirm('Xoá hẳn bài viết này khỏi website?')) return;
+    const kq = await goi('/api/tin-tuc', 'PUT', { slug: slugHienTai, xoa: true });
+    if (!kq.ok) return bao(kq.loi ?? 'Xoá không thành công.', false);
+    $('than-tin-tuc').hidden = true;
+    thanhLuu.hidden = true;
+    daNap['tin-tuc'] = false;
+    await napTinTuc();
+    bao('Đã xoá bài viết. Website sẽ cập nhật sau khoảng 1–2 phút.', true);
+  });
+
+  // ── Chế độ: nội dung trang ───────────────────────────────────────────────
+  async function napTrang() {
+    const kq = await goi('/api/trang', 'POST', {});
+    if (!kq.ok) return bao(kq.loi ?? 'Không lấy được danh sách trang.', false);
+    const sel = oChonId('chon-trang');
     for (const t of kq.danhSach as string[]) {
       const opt = document.createElement('option');
       opt.value = t;
       opt.textContent = TEN_TRANG[t] ?? t;
-      chonTrang.appendChild(opt);
+      sel.appendChild(opt);
     }
+    daNap.trang = true;
   }
 
-  const oNoiDungTrang = () =>
-    bieuMau.elements.namedItem('noiDungTrang') as HTMLTextAreaElement;
-
-  const demTrang = () => {
-    const n = oNoiDungTrang().value.length;
-    demChuTrang.textContent = `${n} / 20000 ký tự`;
-  };
-
-  chonTrang.addEventListener('change', async () => {
-    if (!chonTrang.value) {
-      thanTrang.hidden = true;
+  $('chon-trang').addEventListener('change', async () => {
+    const slug = oChonId('chon-trang').value;
+    if (!slug) {
+      $('than-trang').hidden = true;
       thanhLuu.hidden = true;
       return;
     }
     thongBao.hidden = true;
-    const res = await fetch('/api/trang', {
-      method: 'PUT',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ma, slug: chonTrang.value }),
-    });
-    const kq = await res.json();
-    if (!res.ok) return bao(kq.loi ?? 'Không mở được trang này.', false);
-
+    const kq = await goi('/api/trang', 'PUT', { slug });
+    if (!kq.ok) return bao(kq.loi ?? 'Không mở được trang này.', false);
     const t = kq.noiDung;
-    slugTrang = t.slug;
-    (bieuMau.elements.namedItem('tieuDe') as HTMLInputElement).value = t.tieuDe ?? '';
-    (bieuMau.elements.namedItem('nhanTrang') as HTMLInputElement).value = t.nhan ?? '';
-    (bieuMau.elements.namedItem('moTaTrang') as HTMLTextAreaElement).value = t.moTa ?? '';
-    oNoiDungTrang().value = t.noiDung ?? '';
+    slugHienTai = t.slug;
+    oNhap('trangTieuDe').value = t.tieuDe ?? '';
+    oNhap('trangNhan').value = t.nhan ?? '';
+    oVanBan('trangMoTa').value = t.moTa ?? '';
+    oVanBan('trangNoiDung').value = t.noiDung ?? '';
     demTrang();
-    thanTrang.hidden = false;
+    $('than-trang').hidden = false;
     thanhLuu.hidden = false;
   });
 
-  oNoiDungTrang().addEventListener('input', demTrang);
-
-  chonNguoi.addEventListener('change', async () => {
-    if (!chonNguoi.value) {
-      thanBieuMau.hidden = true;
-      thanhLuu.hidden = true;
-      return;
-    }
-    thongBao.hidden = true;
-    const res = await fetch('/api/ho-so', {
-      method: 'PUT',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ma, slug: chonNguoi.value, layHoSo: true }),
-    });
-    const kq = await res.json();
-    if (res.ok) donHoSo(kq.hoSo);
-    else bao(kq.loi ?? 'Không mở được hồ sơ này.', false);
-  });
-
-  // ── Lưu ──────────────────────────────────────────────────────────────────
-  async function luuTrang() {
-    const duLieu = {
-      tieuDe: (bieuMau.elements.namedItem('tieuDe') as HTMLInputElement).value,
-      nhan: (bieuMau.elements.namedItem('nhanTrang') as HTMLInputElement).value,
-      moTa: (bieuMau.elements.namedItem('moTaTrang') as HTMLTextAreaElement).value,
-      noiDung: oNoiDungTrang().value,
-    };
-    if (!duLieu.tieuDe.trim()) {
-      bao('Tiêu đề trang không được để trống.', false);
-      return false;
-    }
-    const res = await fetch('/api/trang', {
-      method: 'PUT',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ma, slug: slugTrang, duLieu }),
-    });
-    const kq = await res.json();
-    if (!res.ok) throw new Error(kq.loi ?? 'Lưu không thành công.');
-    return kq.khongDoi ? 'khongDoi' : true;
+  // ── Chế độ: thông tin chung ──────────────────────────────────────────────
+  async function moThongTin() {
+    const kq = await goi('/api/thong-tin', 'POST', {});
+    if (!kq.ok) return bao(kq.loi ?? 'Không lấy được thông tin câu lạc bộ.', false);
+    const t = kq.thongTin;
+    oNhap('ttKhauHieu').value = t.khauHieu ?? '';
+    oVanBan('ttMoTa').value = t.moTa ?? '';
+    oNhap('ttDiaChi').value = t['lienHe.diaChi'] ?? '';
+    oNhap('ttDienThoai').value = t['lienHe.dienThoai'] ?? '';
+    oNhap('ttEmail').value = t['lienHe.email'] ?? '';
+    oNhap('ttFacebook').value = t['lienHe.facebook'] ?? '';
+    oNhap('ttYoutube').value = t['lienHe.youtube'] ?? '';
+    oNhap('ttZalo').value = t['lienHe.zalo'] ?? '';
+    $('than-thong-tin').hidden = false;
+    thanhLuu.hidden = false;
   }
 
-  nutLuu.addEventListener('click', async () => {
-    if (cheDo === 'trang') {
-      nutLuu.disabled = true;
-      nutLuu.textContent = 'Đang lưu…';
-      trangThai.textContent = 'Đang gửi lên máy chủ…';
-      thongBao.hidden = true;
-      try {
-        const kq = await luuTrang();
-        if (kq === 'khongDoi') {
-          bao('Không có gì thay đổi so với nội dung hiện tại.', true);
-          trangThai.textContent = 'Không có thay đổi';
-        } else if (kq) {
-          bao(
-            'Đã lưu xong. Website sẽ hiển thị nội dung mới sau khoảng 1–2 phút.',
-            true,
-          );
-          trangThai.textContent = 'Đã lưu';
-        }
-      } catch (e) {
-        bao((e as Error).message, false);
-        trangThai.textContent = 'Lưu chưa được';
-      } finally {
-        nutLuu.disabled = false;
-        nutLuu.textContent = 'Lưu thay đổi';
+  // ── Lưu ──────────────────────────────────────────────────────────────────
+  const luuTheoCheDo = async () => {
+    if (cheDo === 'hoi-vien') {
+      const duLieu: Record<string, unknown> = {};
+      for (const t of TRUONG_HO_SO) {
+        const el = oNhap(t);
+        if (el) duLieu[t] = el.value;
       }
-      return;
+      if (vaiTro === 'thu-ky') {
+        for (const t of ['chucVuClb', 'capBac', 'thuTu']) duLieu[t] = oNhap(t).value;
+      }
+      duLieu.sanPham = docDanhSach('ds-san-pham');
+      duLieu.khachHang = docDanhSach('ds-khach-hang');
+      return goi('/api/ho-so', 'PUT', { slug: slugHienTai, duLieu, ...(anhMoi ? { anh: anhMoi } : {}) });
     }
 
-    if (oGioiThieu().value.length > 4000) {
-      bao('Phần giới thiệu dài quá 4000 ký tự, anh/chị rút ngắn giúp.', false);
-      return;
+    if (cheDo === 'tin-tuc') {
+      const duLieu = {
+        tieuDe: oNhap('tinTieuDe').value,
+        moTa: oVanBan('tinMoTa').value,
+        ngay: oNhap('tinNgay').value,
+        danhMuc: oChon('tinDanhMuc').value,
+        album: oChon('tinAlbum').value,
+        noiDung: oVanBan('tinNoiDung').value,
+      };
+      if (!duLieu.tieuDe.trim()) throw new Error('Bài viết phải có tiêu đề.');
+      return goi('/api/tin-tuc', 'PUT', {
+        slug: slugHienTai,
+        duLieu,
+        moi: baiMoi,
+        ...(anhBiaMoi ? { anhBia: anhBiaMoi } : {}),
+      });
     }
 
+    if (cheDo === 'trang') {
+      const duLieu = {
+        tieuDe: oNhap('trangTieuDe').value,
+        nhan: oNhap('trangNhan').value,
+        moTa: oVanBan('trangMoTa').value,
+        noiDung: oVanBan('trangNoiDung').value,
+      };
+      if (!duLieu.tieuDe.trim()) throw new Error('Tiêu đề trang không được để trống.');
+      return goi('/api/trang', 'PUT', { slug: slugHienTai, duLieu });
+    }
+
+    return goi('/api/thong-tin', 'PUT', {
+      duLieu: {
+        khauHieu: oNhap('ttKhauHieu').value,
+        moTa: oVanBan('ttMoTa').value,
+        'lienHe.diaChi': oNhap('ttDiaChi').value,
+        'lienHe.dienThoai': oNhap('ttDienThoai').value,
+        'lienHe.email': oNhap('ttEmail').value,
+        'lienHe.facebook': oNhap('ttFacebook').value,
+        'lienHe.youtube': oNhap('ttYoutube').value,
+        'lienHe.zalo': oNhap('ttZalo').value,
+      },
+    });
+  };
+
+  nutLuu.addEventListener('click', async () => {
     nutLuu.disabled = true;
+    const chuCu = nutLuu.textContent;
     nutLuu.textContent = 'Đang lưu…';
     trangThai.textContent = 'Đang gửi lên máy chủ…';
     thongBao.hidden = true;
 
-    const duLieu: Record<string, unknown> = {};
-    for (const ten of ['hoTen', 'xungHo', 'chucDanh', 'doanhNghiep', 'nganhNghe', 'namThanhLap', 'quyMo', 'dienThoai', 'email', 'website', 'diaChi', 'facebook', 'zalo', 'uuDaiHoiVien', 'gioiThieu']) {
-      const el = bieuMau.elements.namedItem(ten) as HTMLInputElement | null;
-      if (el) duLieu[ten] = el.value;
-    }
-    duLieu.sanPham = docDanhSach('ds-san-pham');
-    duLieu.khachHang = docDanhSach('ds-khach-hang');
-
     try {
-      const res = await fetch('/api/ho-so', {
-        method: 'PUT',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ma, slug: slugHienTai, duLieu, ...(anhMoi ? { anh: anhMoi } : {}) }),
-      });
-      const kq = await res.json();
-
-      if (!res.ok) throw new Error(kq.loi ?? 'Lưu không thành công.');
+      const kq = await luuTheoCheDo();
+      if (!kq.ok) throw new Error(kq.loi ?? 'Lưu không thành công.');
 
       if (kq.khongDoi) {
-        bao('Không có gì thay đổi so với hồ sơ hiện tại.', true);
+        bao('Không có gì thay đổi so với nội dung hiện tại.', true);
         trangThai.textContent = 'Không có thay đổi';
       } else {
-        bao(
-          'Đã lưu xong. Website sẽ hiển thị thông tin mới sau khoảng 1–2 phút, anh/chị không cần làm gì thêm.',
-          true,
-        );
+        bao('Đã lưu xong. Website sẽ hiển thị nội dung mới sau khoảng 1–2 phút.', true);
         trangThai.textContent = 'Đã lưu';
         anhMoi = null;
-        thongTinAnh.textContent = '';
+        anhBiaMoi = null;
+        $('thong-tin-anh').textContent = '';
+        $('thong-tin-anh-bia').textContent = '';
+
+        if (cheDo === 'tin-tuc' && baiMoi && kq.slug) {
+          // Bài mới đã có mã riêng: chuyển sang chế độ sửa để lần lưu sau không
+          // tạo thêm bài trùng.
+          baiMoi = false;
+          slugHienTai = kq.slug;
+          daNap['tin-tuc'] = false;
+          await napTinTuc();
+          oChonId('chon-tin').value = kq.slug;
+          $('khoi-xoa-tin').hidden = false;
+        }
       }
     } catch (e) {
       bao((e as Error).message, false);
       trangThai.textContent = 'Lưu chưa được';
     } finally {
       nutLuu.disabled = false;
-      nutLuu.textContent = 'Lưu thay đổi';
+      nutLuu.textContent = chuCu;
     }
   });
 
-  oGioiThieu().addEventListener('input', capNhatDemChu);
-  moHoSo();
+  // ── Mở phiên ─────────────────────────────────────────────────────────────
+  async function moPhien() {
+    if (!ma) return dungLoi('Đường dẫn thiếu mã truy cập.');
+
+    danhBa = await fetch('/danh-ba.json').then((r) => (r.ok ? r.json() : [])).catch(() => []);
+
+    try {
+      const kq = await goi('/api/ho-so', 'POST', {});
+      if (!kq.ok) return dungLoi(kq.loi ?? 'Không mở được hồ sơ.');
+
+      vaiTro = kq.vaiTro;
+      $('dang-tai').hidden = true;
+      bieuMau.hidden = false;
+
+      // Gợi ý ngành nghề đã có, để tên ngành không bị mỗi người viết một kiểu.
+      const dl = $('ds-nganh');
+      for (const n of new Set(danhBa.map((m) => m.nganhNghe).filter(Boolean))) {
+        if (n === 'Đang cập nhật') continue;
+        const opt = document.createElement('option');
+        opt.value = n;
+        dl.appendChild(opt);
+      }
+
+      if (vaiTro === 'thu-ky') {
+        $('loi-chao').textContent =
+          'Chế độ ban thư ký — sửa được hồ sơ hội viên, tin tức, nội dung trang và thông tin chung của câu lạc bộ.';
+        $('khoi-che-do').hidden = false;
+        $('khoi-chon-nguoi').hidden = false;
+
+        const sel = oChonId('chon-nguoi');
+        for (const s of kq.danhSach as string[]) {
+          const muc = danhBa.find((m) => m.slug === s);
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = muc ? muc.ten + (muc.doanhNghiep ? ` — ${muc.doanhNghiep}` : '') : s;
+          sel.appendChild(opt);
+        }
+
+        // Danh sách album để gắn vào bài viết
+        const albums = await fetch('/thu-vien.json')
+          .then((r) => (r.ok ? r.json() : []))
+          .catch(() => []);
+        const selAlbum = oChon('tinAlbum');
+        for (const a of albums as any[]) {
+          const opt = document.createElement('option');
+          opt.value = a.slug;
+          opt.textContent = a.ten;
+          selAlbum.appendChild(opt);
+        }
+      } else {
+        donHoSo(kq.hoSo);
+        const ten = [kq.hoSo.xungHo, kq.hoSo.hoTen].filter(Boolean).join(' ');
+        $('loi-chao').textContent = `Kính chào ${ten}. Anh/chị sửa thông tin bên dưới rồi bấm Lưu.`;
+      }
+    } catch {
+      dungLoi('Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi thử lại.');
+    }
+  }
+
+  moPhien();
 </script>

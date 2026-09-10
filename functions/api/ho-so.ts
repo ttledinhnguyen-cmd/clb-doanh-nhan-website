@@ -46,10 +46,25 @@ const TRUONG_CHO_SUA = {
 } as const;
 
 /**
- * Chức vụ trong CLB, cấp bậc và thứ tự hiển thị do câu lạc bộ quyết định nên
- * cố ý không nằm trong bảng trên — hội viên không tự đổi được dù có sửa gói dữ
- * liệu gửi lên.
+ * Chức vụ trong CLB, cấp bậc và thứ tự hiển thị là việc của câu lạc bộ, chỉ ban
+ * thư ký đổi được. Hội viên thường không đổi được dù có sửa gói dữ liệu gửi lên,
+ * vì các trường này chỉ được gộp vào khi phiên có vai trò "thu-ky".
  */
+const TRUONG_THU_KY = {
+  chucVuClb: 'chuoi',
+  capBac: 'capBac',
+  thuTu: 'soThuTu',
+} as const;
+
+const CAP_BAC = [
+  '',
+  'chu-tich',
+  'pho-chu-tich-thuong-truc',
+  'pho-chu-tich',
+  'pho-chu-tich-danh-du',
+  'uy-vien',
+  'uy-vien-du-khuyet',
+];
 
 const GIOI_HAN = { chuoi: 300, vanBan: 4000, danhSach: 20, anhByte: 3_000_000 };
 
@@ -112,7 +127,12 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
   const daDoi: string[] = [];
   let thanMoi = than;
 
-  for (const [khoa, kieu] of Object.entries(TRUONG_CHO_SUA)) {
+  const choSua: Record<string, string> =
+    phien.vai_tro === 'thu-ky'
+      ? { ...TRUONG_CHO_SUA, ...TRUONG_THU_KY }
+      : { ...TRUONG_CHO_SUA };
+
+  for (const [khoa, kieu] of Object.entries(choSua)) {
     if (!(khoa in (body.duLieu ?? {}))) continue;
     const gt = body.duLieu![khoa];
 
@@ -123,6 +143,19 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
         .slice(0, GIOI_HAN.danhSach);
       if (JSON.stringify(fm[khoa] ?? []) !== JSON.stringify(ds)) {
         fm[khoa] = ds;
+        daDoi.push(khoa);
+      }
+    } else if (kieu === 'capBac') {
+      const v = String(gt ?? '');
+      if (CAP_BAC.includes(v) && fm[khoa] !== v) {
+        fm[khoa] = v;
+        daDoi.push(khoa);
+      }
+    } else if (kieu === 'soThuTu') {
+      const n = Number(gt);
+      const hopLe = Number.isInteger(n) && n >= 0 && n <= 99999 ? n : 9999;
+      if (fm[khoa] !== hopLe) {
+        fm[khoa] = hopLe;
         daDoi.push(khoa);
       }
     } else if (kieu === 'so') {
