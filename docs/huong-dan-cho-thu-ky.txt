@@ -60,28 +60,76 @@ mọi người xem. Mục nào không muốn công khai thì cứ để trống.
 PHẦN 2 - DÀNH RIÊNG CHO BAN THƯ KÝ
 ==============================================================================
 
-Link của ban thư ký có thêm hai nút ở đầu trang:
+Link của ban thư ký có thêm ô chọn ở đầu trang: "Anh/chị muốn sửa gì?"
+với bốn việc.
 
-  [ Hồ sơ hội viên ]  [ Nội dung trang ]
 
-SỬA HỒ SƠ CỦA BẤT KỲ HỘI VIÊN NÀO
+VIỆC 1 - HỒ SƠ HỘI VIÊN
 
-1. Chọn nút "Hồ sơ hội viên"
-2. Ô "Chọn hội viên cần sửa" liệt kê tên kèm tên công ty
-3. Chọn người cần sửa, form hiện ra, sửa rồi bấm Lưu
+Chọn "Hồ sơ hội viên", rồi chọn người trong ô bên dưới (danh sách hiện tên
+kèm tên công ty). Sửa được mọi mục như hội viên tự sửa, cộng thêm một khối
+riêng mà hội viên không thấy:
 
-SỬA NỘI DUNG CÁC TRANG HOẠT ĐỘNG
+  Chức vụ hiển thị     ví dụ "Phó Chủ tịch". Để trống nếu là hội viên thường.
+  Thuộc nhóm nào       quyết định người đó nằm ở nhóm nào trong trang
+                       Cơ cấu tổ chức.
+  Thứ tự hiển thị      số nhỏ hiện trước. Hội viên thường để 9999.
 
-1. Chọn nút "Nội dung trang"
-2. Chọn một trong bốn trang:
-     - Hoạt động công tác xã hội
-     - Hoạt động phát triển thành viên
-     - Hoạt động văn hoá - Thể thao
-     - Sự kiện câu lạc bộ
-3. Sửa được: tiêu đề, nhãn nhỏ phía trên tiêu đề, đoạn mô tả, và nội dung
-4. Bấm Lưu thay đổi
+Lưu ý: hai ô "Chức vụ hiển thị" và "Thuộc nhóm nào" phải khớp nhau. Ví dụ ghi
+chức vụ là "Phó Chủ tịch" thì nhóm cũng phải chọn "Phó Chủ tịch", nếu không
+người đó sẽ hiện nhầm chỗ.
 
-CÁCH GÕ NỘI DUNG
+
+VIỆC 2 - TIN TỨC
+
+Chọn "Tin tức".
+
+  Sửa bài có sẵn:  chọn bài trong ô xổ xuống (sắp theo ngày, mới nhất trên cùng)
+  Viết bài mới:    bấm nút "Viết bài mới"
+  Xoá bài:         mở bài ra, kéo xuống cuối, bấm nút đỏ "Xoá bài viết"
+
+Mỗi bài gồm:
+
+  Tiêu đề          bắt buộc
+  Tóm tắt          một hai câu, hiện ở trang danh sách và khi chia sẻ link
+  Ngày đăng        bấm vào ô sẽ hiện lịch để chọn
+  Chuyên mục       chọn một trong bốn mục
+  Album ảnh        chọn album có sẵn để hiện ở cuối bài, hoặc để trống
+  Ảnh bìa          bấm "Chọn ảnh bìa", ảnh ngang thì đẹp hơn
+  Nội dung         gõ như gõ Word
+
+Bài mới sau khi lưu lần đầu sẽ tự xuất hiện trong danh sách, các lần lưu sau
+là sửa tiếp bài đó chứ không tạo bài trùng.
+
+
+VIỆC 3 - NỘI DUNG TRANG HOẠT ĐỘNG
+
+Chọn "Nội dung trang hoạt động", rồi chọn một trong bốn trang:
+
+  - Hoạt động công tác xã hội
+  - Hoạt động phát triển thành viên
+  - Hoạt động văn hoá - Thể thao
+  - Sự kiện câu lạc bộ
+
+Sửa được tiêu đề, nhãn nhỏ phía trên tiêu đề, đoạn mô tả và nội dung.
+Ảnh và tin tức của từng trang tự hiện ở cuối, không cần làm gì thêm.
+
+
+VIỆC 4 - THÔNG TIN CHUNG CỦA CLB
+
+Chọn "Thông tin chung của CLB". Sửa được:
+
+  Khẩu hiệu        hiện ở trang chủ và chân trang. Không được để trống.
+  Mô tả CLB        hiện ở chân trang và khi chia sẻ link lên Facebook, Zalo
+  Địa chỉ          }
+  Điện thoại       }  hiện ở chân trang và trang Liên hệ.
+  Email            }  Để trống mục nào thì mục đó không hiện.
+  Facebook         }
+  YouTube          }
+  Zalo             }
+
+
+CÁCH GÕ NỘI DUNG (áp dụng cho Tin tức và Nội dung trang)
 
 Gõ như gõ Word bình thường. Xuống dòng để tách đoạn.
 
@@ -91,10 +139,6 @@ Muốn tạo một tiêu đề mục thì bắt đầu dòng bằng hai dấu th
 
     Đã tổ chức 10 chuyến, trao tặng hàng nghìn phần quà học tập.
 
-    ## Quỹ học bổng "Nâng bước tương lai"
-
-    Nguồn quỹ đến từ 6 kỳ chương trình nghệ thuật.
-
 Muốn in đậm một cụm chữ thì kẹp giữa hai dấu sao mỗi bên:
 
     Câu lạc bộ đã tổ chức **10 chuyến Caravan** từ ngày thành lập.
@@ -103,9 +147,6 @@ Muốn gạch đầu dòng thì bắt đầu dòng bằng một dấu gạch nga
 
     - Trao quà học tập
     - Trao học bổng
-    - Xây nhà tình thương
-
-Ảnh và tin tức của từng trang tự hiện ở cuối, không cần làm gì thêm.
 
 
 ==============================================================================
