@@ -7,9 +7,10 @@
  * lại khi có ảnh mới. Kết quả ghi vào public/images/ và src/data/thu-vien.json.
  */
 import sharp from 'sharp';
-import { mkdir, readdir, readFile, writeFile, copyFile, access } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile, copyFile, access, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -120,6 +121,7 @@ async function chanDung(src, outBase, daTachNen = false) {
     }
   }
 
+  const ketQua = {};
   for (const [suffix, w] of [['', 1200], ['-sm', 600]]) {
     const h = Math.round(w / TY_LE);
     let pipeline;
@@ -171,9 +173,17 @@ async function chanDung(src, outBase, daTachNen = false) {
       pipeline = sharp(src, { failOn: 'none' }).rotate().extract(vung).resize(w, h);
     }
 
-    await pipeline.webp({ quality: 82, effort: 5 }).toFile(`${outBase}${suffix}.webp`);
+    // Gắn mã băm nội dung vào tên file. Nhờ vậy ảnh đổi thì đường dẫn cũng đổi,
+    // trình duyệt bắt buộc tải bản mới thay vì dùng bản cũ trong bộ nhớ đệm —
+    // và ngược lại, ảnh không đổi thì cache được vĩnh viễn.
+    const buf = await pipeline.webp({ quality: 82, effort: 5 }).toBuffer();
+    const bam = createHash('sha256').update(buf).digest('hex').slice(0, 8);
+    const ten = `${slug}.${bam}${suffix}.webp`;
+    await writeFile(path.join(path.dirname(outBase), ten), buf);
+    ketQua[suffix === '' ? 'lon' : 'nho'] = `/images/hoi-vien/${ten}`;
   }
-  return mode === 'crop' ? `crop x=${((vung.left + vung.width / 2) / width).toFixed(2)}` : mode;
+  const nhan = mode === 'crop' ? `crop x=${((vung.left + vung.width / 2) / width).toFixed(2)}` : mode;
+  return { nhan, ...ketQua };
 }
 
 /** Đọc trường `anhGoc` trong frontmatter của từng hồ sơ hội viên. */
@@ -212,6 +222,7 @@ async function chayChanDung() {
   const dir = path.join(OUT, 'hoi-vien');
   await mkdir(dir, { recursive: true });
   const thieu = [];
+  const bang = {};
   let soDaTach = 0;
 
   for (const nguoi of await docHoSoHoiVien()) {
@@ -225,9 +236,21 @@ async function chayChanDung() {
       continue;
     }
     if (anh.daTach) soDaTach++;
-    const mode = await chanDung(anh.duongDan, path.join(dir, nguoi.slug), anh.daTach);
-    console.log(`  v ${nguoi.slug.padEnd(24)} ${anh.daTach ? '[nen trang] ' : ''}${mode}`);
+    const kq = await chanDung(anh.duongDan, path.join(dir, nguoi.slug), anh.daTach);
+    bang[nguoi.slug] = { lon: kq.lon, nho: kq.nho };
+    console.log(`  v ${nguoi.slug.padEnd(24)} ${anh.daTach ? '[nen trang] ' : ''}${kq.nhan}`);
   }
+
+  // Dọn ảnh của lần chạy trước để thư mục không phình lên theo mỗi lần đổi ảnh.
+  const dangDung = new Set(Object.values(bang).flatMap((x) => [x.lon, x.nho].map((u) => path.basename(u))));
+  for (const f of await readdir(dir)) {
+    if (f.endsWith('.webp') && !dangDung.has(f)) await rm(path.join(dir, f));
+  }
+
+  await writeFile(
+    path.join(ROOT, 'src/data/anh-hoi-vien.json'),
+    JSON.stringify(bang, null, 2) + '\n',
+  );
 
   console.log(`  -> ${soDaTach} anh dung ban da tach nen`);
   if (canhBaoAnhNho.length) {

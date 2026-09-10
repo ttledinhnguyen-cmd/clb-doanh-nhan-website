@@ -1,0 +1,82 @@
+{
+  "bui-thanh-tuan": {
+    "lon": "/images/hoi-vien/bui-thanh-tuan.e3e0ed34.webp",
+    "nho": "/images/hoi-vien/bui-thanh-tuan.79bb9d4b-sm.webp"
+  },
+  "dao-ngoc-thanh": {
+    "lon": "/images/hoi-vien/dao-ngoc-thanh.30f5a955.webp",
+    "nho": "/images/hoi-vien/dao-ngoc-thanh.8f3fdee6-sm.webp"
+  },
+  "kieu-dang-ninh": {
+    "lon": "/images/hoi-vien/kieu-dang-ninh.54c6c711.webp",
+    "nho": "/images/hoi-vien/kieu-dang-ninh.ba62ebcb-sm.webp"
+  },
+  "le-dinh-dung": {
+    "lon": "/images/hoi-vien/le-dinh-dung.6739e2e8.webp",
+    "nho": "/images/hoi-vien/le-dinh-dung.aa02b096-sm.webp"
+  },
+  "ngo-thai-tung-thu": {
+    "lon": "/images/hoi-vien/ngo-thai-tung-thu.f570ae4c.webp",
+    "nho": "/images/hoi-vien/ngo-thai-tung-thu.8efe20ec-sm.webp"
+  },
+  "ngo-trung-ngoc": {
+    "lon": "/images/hoi-vien/ngo-trung-ngoc.e213440d.webp",
+    "nho": "/images/hoi-vien/ngo-trung-ngoc.0727e55a-sm.webp"
+  },
+  "nguyen-hai-nam": {
+    "lon": "/images/hoi-vien/nguyen-hai-nam.693ad5aa.webp",
+    "nho": "/images/hoi-vien/nguyen-hai-nam.9ed17def-sm.webp"
+  },
+  "nguyen-hoang-luan": {
+    "lon": "/images/hoi-vien/nguyen-hoang-luan.8bd1fe0e.webp",
+    "nho": "/images/hoi-vien/nguyen-hoang-luan.f883ca26-sm.webp"
+  },
+  "nguyen-minh-trung": {
+    "lon": "/images/hoi-vien/nguyen-minh-trung.33420daf.webp",
+    "nho": "/images/hoi-vien/nguyen-minh-trung.ff040c36-sm.webp"
+  },
+  "nguyen-nha-nhu-uyen": {
+    "lon": "/images/hoi-vien/nguyen-nha-nhu-uyen.d9e31ba5.webp",
+    "nho": "/images/hoi-vien/nguyen-nha-nhu-uyen.fd8040fb-sm.webp"
+  },
+  "nguyen-quy-chau": {
+    "lon": "/images/hoi-vien/nguyen-quy-chau.d0b421d8.webp",
+    "nho": "/images/hoi-vien/nguyen-quy-chau.312d6aee-sm.webp"
+  },
+  "nguyen-van-khoa": {
+    "lon": "/images/hoi-vien/nguyen-van-khoa.c9cc99fc.webp",
+    "nho": "/images/hoi-vien/nguyen-van-khoa.33b45698-sm.webp"
+  },
+  "phung-vinh-vui": {
+    "lon": "/images/hoi-vien/phung-vinh-vui.5a32ac59.webp",
+    "nho": "/images/hoi-vien/phung-vinh-vui.54e49323-sm.webp"
+  },
+  "ta-thi-thanh": {
+    "lon": "/images/hoi-vien/ta-thi-thanh.41cab5d8.webp",
+    "nho": "/images/hoi-vien/ta-thi-thanh.f38c8f0e-sm.webp"
+  },
+  "tran-anh-hoa": {
+    "lon": "/images/hoi-vien/tran-anh-hoa.db3051f4.webp",
+    "nho": "/images/hoi-vien/tran-anh-hoa.4ab3df77-sm.webp"
+  },
+  "tran-hien-mai": {
+    "lon": "/images/hoi-vien/tran-hien-mai.cc3b974c.webp",
+    "nho": "/images/hoi-vien/tran-hien-mai.21b99d8f-sm.webp"
+  },
+  "truong-quang-vu": {
+    "lon": "/images/hoi-vien/truong-quang-vu.a776e2a4.webp",
+    "nho": "/images/hoi-vien/truong-quang-vu.466bd15e-sm.webp"
+  },
+  "truong-thi-thu-van": {
+    "lon": "/images/hoi-vien/truong-thi-thu-van.84f22395.webp",
+    "nho": "/images/hoi-vien/truong-thi-thu-van.75729330-sm.webp"
+  },
+  "vo-thanh-quyen": {
+    "lon": "/images/hoi-vien/vo-thanh-quyen.ea068490.webp",
+    "nho": "/images/hoi-vien/vo-thanh-quyen.344827bc-sm.webp"
+  },
+  "vo-thi-thanh-kieu": {
+    "lon": "/images/hoi-vien/vo-thi-thanh-kieu.e7448add.webp",
+    "nho": "/images/hoi-vien/vo-thi-thanh-kieu.de728afa-sm.webp"
+  }
+}

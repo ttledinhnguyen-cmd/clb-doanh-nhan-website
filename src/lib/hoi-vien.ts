@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import bangAnh from '../data/anh-hoi-vien.json';
 
 export type HoiVien = CollectionEntry<'hoiVien'>;
 
@@ -61,14 +62,17 @@ export const tenDayDu = (m: HoiVien) =>
 /**
  * Đường dẫn ảnh chân dung của một hội viên.
  *
- * Ưu tiên ảnh thư ký tải lên qua trang quản trị (trường `anh`). Nếu chưa có thì
- * dùng ảnh do scripts/build-assets.mjs cắt sẵn từ kho ảnh gốc của CLB.
- * `nho` là bản 450px chỉ tồn tại với ảnh sinh tự động.
+ * Ưu tiên ảnh tải lên qua /cap-nhat (trường `anh`, tên file đã có sẵn dấu thời
+ * gian). Nếu chưa có thì tra bảng ảnh do scripts/build-assets.mjs sinh ra —
+ * tên file mang mã băm nội dung nên ảnh đổi thì đường dẫn đổi theo, trình duyệt
+ * không bao giờ hiển thị nhầm ảnh cũ trong bộ nhớ đệm.
  */
 export function anhChanDung(m: HoiVien, nho = false) {
   if (m.data.anh) return m.data.anh;
-  return `/images/hoi-vien/${m.id}${nho ? '-sm' : ''}.webp`;
+  const muc = bangAnh[m.id as keyof typeof bangAnh];
+  if (muc) return nho ? muc.nho : muc.lon;
+  return '/logo-mark.svg'; // hội viên mới thêm mà chưa có ảnh
 }
 
 /** Có bản ảnh nhỏ riêng để dùng srcset hay không. */
-export const coAnhNhieuCo = (m: HoiVien) => !m.data.anh;
+export const coAnhNhieuCo = (m: HoiVien) => !m.data.anh && Boolean(bangAnh[m.id as keyof typeof bangAnh]);
