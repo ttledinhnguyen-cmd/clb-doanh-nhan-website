@@ -2,7 +2,7 @@
 hoTen: "Tạ Thị Thanh"
 xungHo: "Bà"
 anhGoc: "TẠ THỊ THANH.png"
-chucVuClb: "CHUC VU KIEM THU"
+chucVuClb: "Uỷ viên dự khuyết BCH"
 capBac: "uy-vien-du-khuyet"
 thuTu: 617
 chucDanh: "Giám đốc"
