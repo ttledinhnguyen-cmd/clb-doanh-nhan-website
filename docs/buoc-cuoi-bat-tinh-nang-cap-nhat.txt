@@ -113,6 +113,12 @@ Lộ link của ai đó:
     npx wrangler d1 execute clb-doanh-nhan --remote -y --file rieng-tu/ma-cap-nhat.sql
   Link cũ mất tác dụng ngay, gửi link mới cho người đó.
 
+Muốn cấp thêm một người có quyền như thư ký (sửa được hồ sơ mọi hội viên):
+    npm run ma -- --thu-ky "Tên người đó"
+  Lệnh này chỉ tạo thêm một mã mới, không đụng tới mã của ai. Kết quả ghi ra
+  file riêng có gắn ngày giờ, file link cũ vẫn nguyên.
+  Nên cấp mỗi người một mã riêng thay vì dùng chung, để nhật ký biết ai sửa gì.
+
 Có hội viên mới cần cấp link:
     npm run ma
   rồi nạp SQL như trên. Lệnh này phát lại mã cho tất cả mọi người, nên phải gửi
