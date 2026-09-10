@@ -10,9 +10,22 @@
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: geolocation=(), microphone=(), camera=()
 
-# Ảnh và font không bao giờ đổi nội dung dưới cùng một tên file
-/images/*
+# Ảnh album và ảnh hội viên tải lên qua /cap-nhat có tên file duy nhất, không
+# bao giờ bị ghi đè, nên cache vĩnh viễn được.
+/images/hoat-dong/*
   Cache-Control: public, max-age=31536000, immutable
+
+/images/tai-len/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Ảnh chân dung do scripts/build-assets.mjs sinh ra thì GIỮ NGUYÊN TÊN mỗi lần
+# chạy lại. Đánh dấu immutable ở đây là sai: người đã vào web sẽ ôm ảnh cũ cả
+# năm dù CLB đã đổi ảnh. Cho cache một ngày, sau đó trình duyệt hỏi lại máy chủ.
+/images/hoi-vien/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/images/*
+  Cache-Control: public, max-age=604800
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
