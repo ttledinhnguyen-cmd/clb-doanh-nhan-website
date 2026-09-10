@@ -54,19 +54,25 @@ Việc này để mỗi khi hội viên bấm Lưu, Cloudflare tự dựng lại
 Không làm bước này thì hồ sơ vẫn được lưu nhưng website sẽ không đổi.
 
 1. Vào https://dash.cloudflare.com
-2. Workers & Pages → chọn dự án clb-doanh-nhan-khanh-hoa
-3. Settings → Build → bấm "Connect to Git"
-4. Chọn kho clb-doanh-nhan-website
-5. Cấu hình build:
-   - Framework preset:        Astro
-   - Build command:           npm run build
-   - Build output directory:  dist
-   - Root directory:          để trống
-6. Lưu lại
+2. Workers & Pages -> chọn dự án clb-doanh-nhan-khanh-hoa
+3. Settings -> mục Build -> bấm nút bên cạnh dòng "Git repository"
+4. Hộp thoại "Connect to a repository" hiện ra, điền:
+
+   Git account              chọn tài khoản GitHub của anh
+   Repository               clb-doanh-nhan-website
+   Production branch        main
+   Framework preset         Astro
+   Build command            npm run build
+   Build output directory   dist
+   Root directory           để nguyên, không mở mục advanced
+
+5. Bấm Connect
+
+Cloudflare sẽ tự chạy một lần dựng đầu tiên, mất khoảng 2-3 phút. Xem tiến độ
+ở tab Deployments. Lần dựng này phải thành công thì mới sang bước 4.
 
 Từ lúc này trở đi không cần chạy lệnh deploy bằng tay nữa. Cứ có thay đổi
 trong kho là Cloudflare tự dựng lại.
-
 
 BƯỚC 4 — PHÁT ĐƯỜNG DẪN CHO HỘI VIÊN
 
