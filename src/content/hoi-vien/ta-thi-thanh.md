@@ -18,5 +18,5 @@ zalo: ""
 sanPham: []
 uuDaiHoiVien: ""
 noiBat: false
-quyMo: "ĐANG THỬ HỆ THỐNG - sẽ xoá ngay"
+quyMo: ""
 ---
