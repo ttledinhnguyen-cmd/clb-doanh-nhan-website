@@ -127,13 +127,14 @@ async function chanDung(src, outBase, daTachNen = false) {
     let pipeline;
 
     if (mode === 'nen-trang') {
-      // Ảnh tách nền gửi về có tỉ lệ rất khác nhau: toàn thân thì hẹp và cao,
-      // nửa người thì ngang. Nếu chỉ 'contain' vào khung 3:4 thì ảnh toàn thân
-      // chỉ chiếm chưa tới một nửa khung, còn lại là lề trắng.
-      // Nên: cắt bỏ viền nền thừa, phóng cho chủ thể choán gần hết khung, rồi
-      // đặt đứng trên đáy như người đứng trên mặt đất.
-      const CHOAN = 0.94; // phần khung mà chủ thể được phép chiếm
-      const DAY = 0.02; // chừa một chút dưới chân
+      // Ảnh tách nền gửi về có tỉ lệ rất khác nhau: người đứng toàn thân thì
+      // hẹp và cao, ảnh nửa người thì ngang.
+      //
+      // Để toàn thân vào khung dọc 3:4 thì mặt bé xíu và nằm sát mép trên, bị
+      // nhãn chức vụ che mất. Nên với ảnh toàn thân ta cắt lấy phần trên,
+      // khoảng từ thắt lưng lên, cho khuôn mặt đủ lớn.
+      const RONG = 0.86; // bề ngang chủ thể so với khung
+      const LE_TREN = 0.06; // chừa khoảng trống trên đầu, tránh nhãn chức vụ
 
       const chuThe = await sharp(src, { failOn: 'none' })
         .rotate()
@@ -144,11 +145,24 @@ async function chanDung(src, outBase, daTachNen = false) {
           sharp(src, { failOn: 'none' }).rotate().toBuffer(),
         );
 
-      const vua = await sharp(chuThe)
-        .resize(Math.round(w * CHOAN), Math.round(h * (CHOAN - DAY)), {
-          fit: 'inside',
-          withoutEnlargement: false,
-        })
+      const { width: cw = 1, height: ch = 1 } = await sharp(chuThe).metadata();
+
+      let ti = (w * RONG) / cw;
+      const chuaDuoc = (h * (1 - LE_TREN)) / ti; // chiều cao chứa được, tính theo px ảnh gốc
+      let nguon = chuThe;
+
+      if (ch > chuaDuoc) {
+        // Người đứng toàn thân: lấy phần trên, phần thân dưới tràn khỏi khung.
+        nguon = await sharp(chuThe)
+          .extract({ left: 0, top: 0, width: cw, height: Math.round(chuaDuoc) })
+          .toBuffer();
+      } else {
+        // Ảnh vốn đã nửa người: phóng cho cao gần hết khung, đừng để lọt thỏm.
+        ti = Math.min(ti, (h * (1 - LE_TREN)) / ch);
+      }
+
+      const vua = await sharp(nguon)
+        .resize({ width: Math.round(cw * ti), withoutEnlargement: false })
         .toBuffer();
       const { width: vw = 0, height: vh = 0 } = await sharp(vua).metadata();
 
@@ -158,7 +172,9 @@ async function chanDung(src, outBase, daTachNen = false) {
         {
           input: vua,
           left: Math.round((w - vw) / 2),
-          top: Math.max(0, h - vh - Math.round(h * DAY)),
+          // Đặt sát đáy: người nửa trên tràn khỏi mép dưới như ảnh chân dung
+          // thông thường, không lơ lửng giữa khung.
+          top: Math.max(0, h - vh),
         },
       ]);
     } else if (mode === 'blur-pad') {
