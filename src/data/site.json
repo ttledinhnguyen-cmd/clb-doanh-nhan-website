@@ -6,7 +6,7 @@
   "ngayThanhLap": "2016-04-02",
   "baoTro": "Liên hiệp Khoa học Doanh nhân Việt Nam",
   "lienHe": {
-    "diaChi": "",
+    "diaChi": "DIA CHI KIEM THU - se xoa ngay",
     "dienThoai": "",
     "email": "",
     "facebook": "",
@@ -14,10 +14,26 @@
     "zalo": ""
   },
   "soLieu": [
-    { "so": "2016", "nhan": "Năm thành lập", "chiTiet": "Ngày 02/04/2016" },
-    { "so": "10", "nhan": "Chuyến Caravan", "chiTiet": "“Trở về tuổi thơ tôi”" },
-    { "so": "6", "nhan": "Kỳ Quê hương biển gọi", "chiTiet": "Gây quỹ học bổng" },
-    { "so": "20", "nhan": "Thành viên Ban điều hành", "chiTiet": "Nhiệm kỳ hiện tại" }
+    {
+      "so": "2016",
+      "nhan": "Năm thành lập",
+      "chiTiet": "Ngày 02/04/2016"
+    },
+    {
+      "so": "10",
+      "nhan": "Chuyến Caravan",
+      "chiTiet": "“Trở về tuổi thơ tôi”"
+    },
+    {
+      "so": "6",
+      "nhan": "Kỳ Quê hương biển gọi",
+      "chiTiet": "Gây quỹ học bổng"
+    },
+    {
+      "so": "20",
+      "nhan": "Thành viên Ban điều hành",
+      "chiTiet": "Nhiệm kỳ hiện tại"
+    }
   ],
   "tieuChi": [
     {
@@ -46,9 +62,21 @@
     "Thúc đẩy xúc tiến thương mại cùng các tỉnh như Khánh Hoà, An Giang, Tây Ninh và các đơn vị bạn."
   ],
   "suKienThuongNien": [
-    { "ten": "Caravan “Trở về tuổi thơ tôi”", "moTa": "Hành trình thiện nguyện thường niên về với học sinh vùng khó khăn." },
-    { "ten": "Chương trình nghệ thuật “Quê hương biển gọi”", "moTa": "Đêm nghệ thuật gây quỹ học bổng “Nâng bước tương lai”." },
-    { "ten": "Họp định kỳ", "moTa": "Sinh hoạt định kỳ, kết nối và chia sẻ cơ hội kinh doanh giữa các hội viên." },
-    { "ten": "Tất niên CLB", "moTa": "Tổng kết năm, tri ân và gắn kết cộng đồng doanh nhân đồng hương." }
+    {
+      "ten": "Caravan “Trở về tuổi thơ tôi”",
+      "moTa": "Hành trình thiện nguyện thường niên về với học sinh vùng khó khăn."
+    },
+    {
+      "ten": "Chương trình nghệ thuật “Quê hương biển gọi”",
+      "moTa": "Đêm nghệ thuật gây quỹ học bổng “Nâng bước tương lai”."
+    },
+    {
+      "ten": "Họp định kỳ",
+      "moTa": "Sinh hoạt định kỳ, kết nối và chia sẻ cơ hội kinh doanh giữa các hội viên."
+    },
+    {
+      "ten": "Tất niên CLB",
+      "moTa": "Tổng kết năm, tri ân và gắn kết cộng đồng doanh nhân đồng hương."
+    }
   ]
 }
