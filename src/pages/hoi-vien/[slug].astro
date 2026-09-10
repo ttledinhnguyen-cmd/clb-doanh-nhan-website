@@ -69,11 +69,11 @@ const coGioiThieu = Boolean(m.body?.trim());
         <div class="grid gap-10 sm:grid-cols-[14rem_1fr] sm:items-end lg:gap-14">
           <img
             src={anhChanDung(m)}
-            srcset={coAnhNhieuCo(m) ? `${anhChanDung(m, true)} 450w, ${anhChanDung(m)} 900w` : undefined}
+            srcset={coAnhNhieuCo(m) ? `${anhChanDung(m, true)} 600w, ${anhChanDung(m)} 1200w` : undefined}
             sizes={coAnhNhieuCo(m) ? '(min-width: 640px) 14rem, 16rem' : undefined}
             alt={`Chân dung ${ten}`}
-            width="900"
-            height="1200"
+            width="1200"
+            height="1600"
             loading="eager"
             fetchpriority="high"
             class="aspect-3/4 w-full max-w-64 rounded-2xl object-cover shadow-2xl shadow-brand-950/50 ring-1 ring-white/10 sm:max-w-56"
@@ -286,8 +286,8 @@ const coGioiThieu = Boolean(m.body?.trim());
                     <img
                       src={anhChanDung(x, coAnhNhieuCo(x))}
                       alt=""
-                      width="450"
-                      height="600"
+                      width="600"
+                      height="800"
                       loading="lazy"
                       decoding="async"
                       class="h-16 w-12 shrink-0 rounded-lg object-cover"

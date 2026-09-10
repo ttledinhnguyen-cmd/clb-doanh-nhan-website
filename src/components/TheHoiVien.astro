@@ -34,11 +34,11 @@ const phu = [chucDanh, doanhNghiep].filter(Boolean).join(' · ');
   <div class="relative aspect-3/4 overflow-hidden">
     <img
       src={anh}
-      srcset={anhNho ? `${anhNho} 450w, ${anh} 900w` : undefined}
+      srcset={anhNho ? `${anhNho} 600w, ${anh} 1200w` : undefined}
       sizes={anhNho ? '(min-width: 1024px) 22rem, (min-width: 640px) 45vw, 90vw' : undefined}
       alt={`Chân dung ${xungHo ? xungHo + ' ' : ''}${hoTen}`}
-      width="900"
-      height="1200"
+      width="1200"
+      height="1600"
       loading={uuTien ? 'eager' : 'lazy'}
       decoding="async"
       class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"

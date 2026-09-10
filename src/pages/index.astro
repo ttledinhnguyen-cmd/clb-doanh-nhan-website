@@ -75,12 +75,12 @@ const chuTich = banDieuHanh.find((m) => m.data.capBac === 'chu-tich');
                 <img
                   src={anhChanDung(chuTich)}
                   srcset={coAnhNhieuCo(chuTich)
-                    ? `${anhChanDung(chuTich, true)} 450w, ${anhChanDung(chuTich)} 900w`
+                    ? `${anhChanDung(chuTich, true)} 600w, ${anhChanDung(chuTich)} 1200w`
                     : undefined}
                   sizes={coAnhNhieuCo(chuTich) ? '(min-width: 1024px) 24rem, 90vw' : undefined}
                   alt={`Chân dung ${chuTich.data.xungHo} ${chuTich.data.hoTen}, ${chuTich.data.chucVuClb} câu lạc bộ`}
-                  width="900"
-                  height="1200"
+                  width="1200"
+                  height="1600"
                   loading="eager"
                   fetchpriority="high"
                   class="aspect-3/4 w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
