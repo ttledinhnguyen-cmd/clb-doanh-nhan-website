@@ -231,7 +231,7 @@ và khoảng 1 phút sau là web cập nhật.
 | Biểu mẫu đăng ký + D1 | ✅ đang chạy |
 | Email báo hồ sơ mới | ⏸ tạm gác, chờ CLB có email chính thức |
 | Kho GitHub | `ttledinhnguyen-cmd/clb-doanh-nhan-website` |
-| Hội viên tự cập nhật `/cap-nhat` | ⏸ code xong, chờ 4 bước ở `docs/buoc-cuoi-bat-tinh-nang-cap-nhat.txt` |
+| Hội viên tự cập nhật `/cap-nhat` | ✅ đang chạy — hội viên sửa hồ sơ, thư ký sửa thêm nội dung 4 trang hoạt động |
 | Trang quản trị `/admin` (Decap) | ✅ chạy, nhưng cần tài khoản GitHub nên chỉ dành cho người kỹ thuật |
 | Chatbot | ⏸ chưa chốt công nghệ |
 | Chặn Google lập chỉ mục | 🔒 **đang bật** — nhớ tắt khi ra mắt chính thức |
