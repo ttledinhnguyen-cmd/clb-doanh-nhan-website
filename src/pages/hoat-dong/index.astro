@@ -1,0 +1,49 @@
+---
+import Base from '../../layouts/Base.astro';
+import HeroTrang from '../../components/HeroTrang.astro';
+import { getCollection } from 'astro:content';
+import thuVien from '../../data/thu-vien.json';
+
+const mang = (await getCollection('trang'))
+  .filter((t) => t.id !== 'su-kien')
+  .sort((a, b) => a.data.thuTu - b.data.thuTu);
+
+const demAnh = (danhMuc: string) =>
+  thuVien.filter((a) => a.danhMuc === danhMuc).reduce((s, a) => s + a.soAnh, 0);
+---
+
+<Base
+  tieuDe="Hoạt động"
+  moTa="Các mảng hoạt động của CLB Doanh nhân Khánh Hòa – Sài Gòn: công tác xã hội, phát triển thành viên, văn hoá thể thao."
+>
+  <HeroTrang
+    nhan="Hoạt động"
+    tieuDe="Các mảng hoạt động của câu lạc bộ"
+    moTa="Ba mảng hoạt động chính, bám sát ba tiêu chí đặt ra từ ngày thành lập."
+    duongDan={[{ ten: 'Hoạt động' }]}
+  />
+
+  <section class="py-14 lg:py-20">
+    <div class="container-page grid gap-6 md:grid-cols-3">
+      {
+        mang.map((m) => (
+          <a
+            href={`/hoat-dong/${m.id}`}
+            class="group reveal flex flex-col rounded-2xl bg-white p-7 shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-brand-900/10 sm:p-8"
+          >
+            <img src="/logo-mark.svg" alt="" class="h-9 w-auto opacity-90" />
+            <h2 class="mt-6 text-xl font-bold transition group-hover:text-brand-600">
+              {m.data.tieuDe}
+            </h2>
+            <p class="mt-3.5 flex-1 text-[0.95rem] leading-relaxed text-slate-600">{m.data.moTa}</p>
+            {demAnh(m.data.danhMucAlbum) > 0 && (
+              <p class="mt-5 text-[0.75rem] font-bold uppercase tracking-[0.14em] text-accent-500">
+                {demAnh(m.data.danhMucAlbum)} hình ảnh
+              </p>
+            )}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Base>

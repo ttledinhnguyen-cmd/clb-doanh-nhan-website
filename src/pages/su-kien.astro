@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import NoiDungTrang from '../components/NoiDungTrang.astro';
+import { getEntry } from 'astro:content';
+
+const muc = await getEntry('trang', 'su-kien');
+if (!muc) throw new Error('Thiếu file src/content/trang/su-kien.md');
+---
+
+<Base tieuDe={muc.data.tieuDe} moTa={muc.data.moTa}>
+  <NoiDungTrang muc={muc} duongDan={[{ ten: muc.data.tieuDe }]} />
+</Base>

@@ -60,6 +60,21 @@ const hoiVien = defineCollection({
   }),
 });
 
+/** Các trang nội dung mà ban thư ký tự sửa được qua /cap-nhat. */
+const trang = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/trang' }),
+  schema: z.object({
+    tieuDe: z.string(),
+    nhan: z.string().default(''),
+    moTa: z.string().default(''),
+    /** Lấy album trong thư viện ảnh thuộc danh mục này để hiện dưới trang. */
+    danhMucAlbum: z.string().default(''),
+    /** Chuyên mục tin tức hiện ở cuối trang. */
+    danhMucTin: z.string().default(''),
+    thuTu: z.number().default(99),
+  }),
+});
+
 const tinTuc = defineCollection({
   // File bắt đầu bằng dấu _ được bỏ qua — dùng cho bài mẫu, bản nháp.
   loader: glob({ pattern: '**/[^_]*.md', base: './src/content/tin-tuc' }),
@@ -74,4 +89,4 @@ const tinTuc = defineCollection({
   }),
 });
 
-export const collections = { hoiVien, tinTuc };
+export const collections = { hoiVien, tinTuc, trang };

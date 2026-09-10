@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import NoiDungTrang from '../../components/NoiDungTrang.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+/** Ba mảng hoạt động. Trang Sự kiện CLB nằm riêng ở /su-kien. */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const ds = (await getCollection('trang')).filter((t) => t.id !== 'su-kien');
+  return ds.map((muc) => ({ params: { slug: muc.id }, props: { muc } }));
+};
+
+const { muc } = Astro.props;
+---
+
+<Base tieuDe={muc.data.tieuDe} moTa={muc.data.moTa}>
+  <NoiDungTrang
+    muc={muc}
+    duongDan={[{ ten: 'Hoạt động', href: '/hoat-dong' }, { ten: muc.data.tieuDe }]}
+  />
+</Base>

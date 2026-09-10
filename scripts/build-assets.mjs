@@ -14,6 +14,10 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.resolve(ROOT, '../CLB/CLB');
+const ANH_GOC = path.join(SRC, 'BAN ĐIỀU HÀNH');
+// Ảnh đã tách nền do CLB gửi lại. Có file ở đây thì ưu tiên dùng, vì nền trắng
+// nhìn gọn hơn hẳn so với ảnh chụp trước backdrop LED sự kiện.
+const ANH_TACH = path.join(SRC, 'BAN ĐIỀU HÀNH - ĐÃ TÁCH NỀN');
 const OUT = path.join(ROOT, 'public/images');
 
 /**
@@ -78,12 +82,16 @@ const TY_LE = 3 / 4; // khung dọc 3:4
 const kep = (v, min, max) => Math.max(min, Math.min(max, v));
 
 /** Cắt ảnh chân dung về khung dọc 3:4, bám theo tiêu điểm đã khai báo. */
-async function chanDung(src, outBase) {
+async function chanDung(src, outBase, daTachNen = false) {
   const slug = path.basename(outBase);
   const tieuDiem = TIEU_DIEM[slug] ?? {};
   const { width, height } = await sharp(src, { failOn: 'none' }).rotate().metadata();
 
-  const mode = tieuDiem.mode ?? (width / height < 0.4 ? 'blur-pad' : 'crop');
+  // Ảnh đã tách nền: đặt trọn người vào khung 3:4 nền trắng, không cắt xén,
+  // vì cắt cover sẽ mất chân hoặc mất đầu tuỳ tỉ lệ ảnh người ta gửi.
+  const mode = daTachNen
+    ? 'nen-trang'
+    : (tieuDiem.mode ?? (width / height < 0.4 ? 'blur-pad' : 'crop'));
   let vung = null;
 
   if (mode === 'crop') {
@@ -102,7 +110,15 @@ async function chanDung(src, outBase) {
     const h = Math.round(w / TY_LE);
     let pipeline;
 
-    if (mode === 'blur-pad') {
+    if (mode === 'nen-trang') {
+      pipeline = sharp(src, { failOn: 'none' })
+        .rotate()
+        .resize(w, h, {
+          fit: 'contain',
+          background: { r: 255, g: 255, b: 255, alpha: 1 },
+        })
+        .flatten({ background: '#ffffff' });
+    } else if (mode === 'blur-pad') {
       const nen = await sharp(src)
         .resize(w, h, { fit: 'cover', position: 'attention' })
         .blur(28)
@@ -132,19 +148,48 @@ async function docHoSoHoiVien() {
   return ho;
 }
 
+/**
+ * Tìm ảnh của một hội viên, ưu tiên bản đã tách nền do CLB gửi lại.
+ *
+ * Bản tách nền thường lưu đuôi khác ảnh gốc (.jpg -> .png) nên so khớp theo
+ * tên không tính phần đuôi.
+ */
+async function timAnh(anhGoc) {
+  const khongDuoi = anhGoc.replace(/\.[^.]+$/, '');
+  if (await exists(ANH_TACH)) {
+    for (const f of await readdir(ANH_TACH)) {
+      if (f.replace(/\.[^.]+$/, '') === khongDuoi) {
+        return { duongDan: path.join(ANH_TACH, f), daTach: true };
+      }
+    }
+  }
+  const goc = path.join(ANH_GOC, anhGoc);
+  return (await exists(goc)) ? { duongDan: goc, daTach: false } : null;
+}
+
 async function chayChanDung() {
   const dir = path.join(OUT, 'hoi-vien');
   await mkdir(dir, { recursive: true });
   const thieu = [];
+  let soDaTach = 0;
 
   for (const nguoi of await docHoSoHoiVien()) {
-    if (!nguoi.anhGoc) { thieu.push(`${nguoi.slug} (chưa khai báo ảnh)`); continue; }
-    const src = path.join(SRC, 'BAN ĐIỀU HÀNH', nguoi.anhGoc);
-    if (!(await exists(src))) { thieu.push(`${nguoi.slug} → ${nguoi.anhGoc}`); continue; }
-    const mode = await chanDung(src, path.join(dir, nguoi.slug));
-    console.log(`  ✓ ${nguoi.slug.padEnd(24)} ${mode}`);
+    if (!nguoi.anhGoc) {
+      thieu.push(`${nguoi.slug} (chưa khai báo ảnh)`);
+      continue;
+    }
+    const anh = await timAnh(nguoi.anhGoc);
+    if (!anh) {
+      thieu.push(`${nguoi.slug} -> ${nguoi.anhGoc}`);
+      continue;
+    }
+    if (anh.daTach) soDaTach++;
+    const mode = await chanDung(anh.duongDan, path.join(dir, nguoi.slug), anh.daTach);
+    console.log(`  v ${nguoi.slug.padEnd(24)} ${anh.daTach ? '[nen trang] ' : ''}${mode}`);
   }
-  if (thieu.length) console.warn('  ! thiếu ảnh gốc:\n    - ' + thieu.join('\n    - '));
+
+  console.log(`  -> ${soDaTach} anh dung ban da tach nen`);
+  if (thieu.length) console.warn('  ! thieu anh goc:\n    - ' + thieu.join('\n    - '));
 }
 
 async function chayThuVien() {

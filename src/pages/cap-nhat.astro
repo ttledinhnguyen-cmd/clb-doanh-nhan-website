@@ -59,6 +59,26 @@ const nhan = 'block text-sm font-semibold text-brand-900';
 
       {/* Biểu mẫu */}
       <form id="bieu-mau" hidden class="space-y-7">
+        {/* Chọn việc muốn làm — chỉ ban thư ký thấy */}
+        <div id="khoi-che-do" hidden class="flex gap-2">
+          <button
+            type="button"
+            data-che-do="hoi-vien"
+            aria-pressed="true"
+            class="nut-che-do inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 text-[0.9rem] font-bold ring-1 ring-inset transition bg-white text-slate-600 ring-slate-200 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600"
+          >
+            Hồ sơ hội viên
+          </button>
+          <button
+            type="button"
+            data-che-do="trang"
+            aria-pressed="false"
+            class="nut-che-do inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-4 text-[0.9rem] font-bold ring-1 ring-inset transition bg-white text-slate-600 ring-slate-200 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600"
+          >
+            Nội dung trang
+          </button>
+        </div>
+
         {/* Chọn hội viên — chỉ ban thư ký thấy */}
         <div id="khoi-chon-nguoi" hidden class="rounded-2xl bg-accent-50 p-5 ring-1 ring-accent-100 sm:p-6">
           <label>
@@ -262,6 +282,52 @@ const nhan = 'block text-sm font-semibold text-brand-900';
 
           <div id="thong-bao" hidden role="status" class="rounded-xl px-5 py-4 text-[0.95rem] font-semibold"></div>
         </div>
+
+        {/* Sửa nội dung trang hoạt động */}
+        <div id="khoi-chon-trang" hidden class="rounded-2xl bg-accent-50 p-5 ring-1 ring-accent-100 sm:p-6">
+          <label>
+            <span class="text-sm font-bold text-accent-700">Chọn trang cần sửa</span>
+            <select id="chon-trang" class:list={['mt-2.5', o]}>
+              <option value="">— Chọn —</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="than-trang" hidden class="space-y-7">
+          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Phần đầu trang
+            </legend>
+            <div class="mt-5 space-y-4">
+              <label class="block">
+                <span class={nhan}>Tiêu đề</span>
+                <input name="tieuDe" type="text" class:list={['mt-2', o]} />
+              </label>
+              <label class="block">
+                <span class={nhan}>Nhãn nhỏ phía trên tiêu đề</span>
+                <input name="nhanTrang" type="text" placeholder="Hoạt động" class:list={['mt-2', o]} />
+              </label>
+              <label class="block">
+                <span class={nhan}>Đoạn mô tả ngắn</span>
+                <textarea name="moTaTrang" rows="3" class:list={['mt-2', o]}></textarea>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
+            <legend class="px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600">
+              Nội dung
+            </legend>
+            <p class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-[0.85rem] leading-relaxed text-slate-600">
+              Gõ như gõ Word bình thường. Muốn tạo một tiêu đề mục thì bắt đầu dòng bằng hai
+              dấu thăng và một dấu cách, ví dụ:
+              <code class="rounded bg-white px-1.5 py-0.5 font-mono text-brand-700">## Caravan</code>.
+              Muốn in đậm thì kẹp chữ giữa hai dấu sao mỗi bên.
+            </p>
+            <textarea name="noiDungTrang" rows="16" class:list={['mt-4 font-mono text-[0.9rem]', o]}></textarea>
+            <span id="dem-chu-trang" class="mt-2 block text-right text-xs text-slate-400"></span>
+          </fieldset>
+        </div>
       </form>
     </div>
   </section>
@@ -308,9 +374,24 @@ const nhan = 'block text-sm font-semibold text-brand-900';
   const demChu = document.getElementById('dem-chu')!;
   const chucVuClb = document.getElementById('chuc-vu-clb') as HTMLElement;
 
+  const khoiCheDo = document.getElementById('khoi-che-do') as HTMLElement;
+  const khoiChonTrang = document.getElementById('khoi-chon-trang') as HTMLElement;
+  const thanTrang = document.getElementById('than-trang') as HTMLElement;
+  const chonTrang = document.getElementById('chon-trang') as HTMLSelectElement;
+  const demChuTrang = document.getElementById('dem-chu-trang')!;
+
   let anhMoi: string | null = null;
   let slugHienTai = '';
   let vaiTro = 'hoi-vien';
+  let cheDo: 'hoi-vien' | 'trang' = 'hoi-vien';
+  let slugTrang = '';
+
+  const TEN_TRANG: Record<string, string> = {
+    'cong-tac-xa-hoi': 'Hoạt động công tác xã hội',
+    'phat-trien-thanh-vien': 'Hoạt động phát triển thành viên',
+    'van-hoa-the-thao': 'Hoạt động văn hoá – Thể thao',
+    'su-kien': 'Sự kiện câu lạc bộ',
+  };
 
   const dungLoi = (msg: string) => {
     dangTai.hidden = true;
@@ -473,7 +554,9 @@ const nhan = 'block text-sm font-semibold text-brand-900';
       bieuMau.hidden = false;
 
       if (vaiTro === 'thu-ky') {
-        loiChao.textContent = 'Chế độ ban thư ký — chọn hội viên cần sửa ở bên dưới.';
+        loiChao.textContent =
+          'Chế độ ban thư ký — sửa được hồ sơ mọi hội viên và nội dung các trang hoạt động.';
+        khoiCheDo.hidden = false;
         khoiChonNguoi.hidden = false;
         for (const s of kq.danhSach as string[]) {
           const muc = danhBa.find((m) => m.slug === s);
@@ -504,6 +587,79 @@ const nhan = 'block text-sm font-semibold text-brand-900';
     }
   }
 
+  // Ban thư ký chuyển qua lại giữa sửa hồ sơ hội viên và sửa nội dung trang.
+  for (const nut of document.querySelectorAll<HTMLButtonElement>('.nut-che-do')) {
+    nut.addEventListener('click', async () => {
+      cheDo = (nut.dataset.cheDo as 'hoi-vien' | 'trang') ?? 'hoi-vien';
+      for (const n of document.querySelectorAll('.nut-che-do')) {
+        n.setAttribute('aria-pressed', String(n === nut));
+      }
+      thongBao.hidden = true;
+
+      const laTrang = cheDo === 'trang';
+      khoiChonNguoi.hidden = laTrang;
+      thanBieuMau.hidden = true;
+      khoiChonTrang.hidden = !laTrang;
+      thanTrang.hidden = true;
+      thanhLuu.hidden = true;
+
+      if (laTrang && chonTrang.options.length <= 1) await napDanhSachTrang();
+      else if (!laTrang && chonNguoi.value) chonNguoi.dispatchEvent(new Event('change'));
+    });
+  }
+
+  async function napDanhSachTrang() {
+    const res = await fetch('/api/trang', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ma }),
+    });
+    const kq = await res.json();
+    if (!res.ok) return bao(kq.loi ?? 'Không lấy được danh sách trang.', false);
+    for (const t of kq.danhSach as string[]) {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = TEN_TRANG[t] ?? t;
+      chonTrang.appendChild(opt);
+    }
+  }
+
+  const oNoiDungTrang = () =>
+    bieuMau.elements.namedItem('noiDungTrang') as HTMLTextAreaElement;
+
+  const demTrang = () => {
+    const n = oNoiDungTrang().value.length;
+    demChuTrang.textContent = `${n} / 20000 ký tự`;
+  };
+
+  chonTrang.addEventListener('change', async () => {
+    if (!chonTrang.value) {
+      thanTrang.hidden = true;
+      thanhLuu.hidden = true;
+      return;
+    }
+    thongBao.hidden = true;
+    const res = await fetch('/api/trang', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ma, slug: chonTrang.value }),
+    });
+    const kq = await res.json();
+    if (!res.ok) return bao(kq.loi ?? 'Không mở được trang này.', false);
+
+    const t = kq.noiDung;
+    slugTrang = t.slug;
+    (bieuMau.elements.namedItem('tieuDe') as HTMLInputElement).value = t.tieuDe ?? '';
+    (bieuMau.elements.namedItem('nhanTrang') as HTMLInputElement).value = t.nhan ?? '';
+    (bieuMau.elements.namedItem('moTaTrang') as HTMLTextAreaElement).value = t.moTa ?? '';
+    oNoiDungTrang().value = t.noiDung ?? '';
+    demTrang();
+    thanTrang.hidden = false;
+    thanhLuu.hidden = false;
+  });
+
+  oNoiDungTrang().addEventListener('input', demTrang);
+
   chonNguoi.addEventListener('change', async () => {
     if (!chonNguoi.value) {
       thanBieuMau.hidden = true;
@@ -522,7 +678,55 @@ const nhan = 'block text-sm font-semibold text-brand-900';
   });
 
   // ── Lưu ──────────────────────────────────────────────────────────────────
+  async function luuTrang() {
+    const duLieu = {
+      tieuDe: (bieuMau.elements.namedItem('tieuDe') as HTMLInputElement).value,
+      nhan: (bieuMau.elements.namedItem('nhanTrang') as HTMLInputElement).value,
+      moTa: (bieuMau.elements.namedItem('moTaTrang') as HTMLTextAreaElement).value,
+      noiDung: oNoiDungTrang().value,
+    };
+    if (!duLieu.tieuDe.trim()) {
+      bao('Tiêu đề trang không được để trống.', false);
+      return false;
+    }
+    const res = await fetch('/api/trang', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ma, slug: slugTrang, duLieu }),
+    });
+    const kq = await res.json();
+    if (!res.ok) throw new Error(kq.loi ?? 'Lưu không thành công.');
+    return kq.khongDoi ? 'khongDoi' : true;
+  }
+
   nutLuu.addEventListener('click', async () => {
+    if (cheDo === 'trang') {
+      nutLuu.disabled = true;
+      nutLuu.textContent = 'Đang lưu…';
+      trangThai.textContent = 'Đang gửi lên máy chủ…';
+      thongBao.hidden = true;
+      try {
+        const kq = await luuTrang();
+        if (kq === 'khongDoi') {
+          bao('Không có gì thay đổi so với nội dung hiện tại.', true);
+          trangThai.textContent = 'Không có thay đổi';
+        } else if (kq) {
+          bao(
+            'Đã lưu xong. Website sẽ hiển thị nội dung mới sau khoảng 1–2 phút.',
+            true,
+          );
+          trangThai.textContent = 'Đã lưu';
+        }
+      } catch (e) {
+        bao((e as Error).message, false);
+        trangThai.textContent = 'Lưu chưa được';
+      } finally {
+        nutLuu.disabled = false;
+        nutLuu.textContent = 'Lưu thay đổi';
+      }
+      return;
+    }
+
     if (oGioiThieu().value.length > 4000) {
       bao('Phần giới thiệu dài quá 4000 ký tự, anh/chị rút ngắn giúp.', false);
       return;

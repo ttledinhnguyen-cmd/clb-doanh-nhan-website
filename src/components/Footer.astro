@@ -5,10 +5,19 @@ const cot = [
   {
     tieuDe: 'Câu lạc bộ',
     muc: [
-      { ten: 'Giới thiệu', href: '/gioi-thieu' },
-      { ten: 'Cơ cấu tổ chức', href: '/co-cau-to-chuc' },
+      { ten: 'Lịch sử hình thành', href: '/gioi-thieu#lich-su' },
       { ten: 'Tiêu chí hoạt động', href: '/gioi-thieu#tieu-chi' },
       { ten: 'Thành tựu nổi bật', href: '/gioi-thieu#thanh-tuu' },
+      { ten: 'Cơ cấu tổ chức', href: '/co-cau-to-chuc' },
+    ],
+  },
+  {
+    tieuDe: 'Hoạt động',
+    muc: [
+      { ten: 'Công tác xã hội', href: '/hoat-dong/cong-tac-xa-hoi' },
+      { ten: 'Phát triển thành viên', href: '/hoat-dong/phat-trien-thanh-vien' },
+      { ten: 'Văn hoá – Thể thao', href: '/hoat-dong/van-hoa-the-thao' },
+      { ten: 'Sự kiện câu lạc bộ', href: '/su-kien' },
     ],
   },
   {
@@ -16,7 +25,7 @@ const cot = [
     muc: [
       { ten: 'Danh sách hội viên', href: '/hoi-vien' },
       { ten: 'Đăng ký gia nhập', href: '/dang-ky' },
-      { ten: 'Tin tức hoạt động', href: '/tin-tuc' },
+      { ten: 'Tin tức', href: '/tin-tuc' },
       { ten: 'Thư viện ảnh', href: '/thu-vien' },
     ],
   },
@@ -33,7 +42,7 @@ const nam = new Date().getFullYear();
   />
 
   <div class="container-page relative py-16 lg:py-20">
-    <div class="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
+    <div class="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.1fr]">
       <div>
         <img src="/logo-mark.svg" alt="" width="269" height="180" class="h-14 w-auto brightness-0 invert" />
         <p class="mt-5 text-lg font-bold text-white">{site.ten}</p>

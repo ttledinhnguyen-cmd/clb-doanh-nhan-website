@@ -1,0 +1,125 @@
+---
+/**
+ * Khung chung cho các trang nội dung do ban thư ký tự sửa
+ * (Công tác xã hội, Phát triển thành viên, Văn hoá – Thể thao, Sự kiện CLB).
+ */
+import HeroTrang from './HeroTrang.astro';
+import { render, getCollection, type CollectionEntry } from 'astro:content';
+import { DANH_MUC_TIN } from '../content.config';
+import thuVien from '../data/thu-vien.json';
+
+interface Props {
+  muc: CollectionEntry<'trang'>;
+  duongDan: { ten: string; href?: string }[];
+}
+const { muc, duongDan } = Astro.props;
+const d = muc.data;
+const { Content } = await render(muc);
+
+const album = d.danhMucAlbum ? thuVien.filter((a) => a.danhMuc === d.danhMucAlbum) : [];
+const baiViet = d.danhMucTin
+  ? (await getCollection('tinTuc'))
+      .filter((b) => b.data.danhMuc === d.danhMucTin)
+      .sort((a, b) => b.data.ngay.valueOf() - a.data.ngay.valueOf())
+      .slice(0, 3)
+  : [];
+
+const ngayVn = (x: Date) =>
+  x.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+---
+
+<HeroTrang nhan={d.nhan} tieuDe={d.tieuDe} moTa={d.moTa} duongDan={duongDan} />
+
+<section class="py-12 lg:py-16">
+  <div class="container-page">
+    <div
+      class="mx-auto max-w-3xl space-y-5 text-(length:--text-lead) leading-relaxed text-slate-600 [&_a]:font-semibold [&_a]:text-brand-600 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-11 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-brand-900 [&_h3]:mt-9 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-brand-900 [&_li]:ml-5 [&_li]:list-disc [&_strong]:font-bold [&_strong]:text-brand-800"
+    >
+      <Content />
+    </div>
+  </div>
+</section>
+
+{
+  album.length > 0 && (
+    <section class="border-t border-slate-200 bg-slate-50 py-14 lg:py-20">
+      <div class="container-page">
+        <h2 class="rule-accent text-(length:--text-h2)">Hình ảnh</h2>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {album.map((a) => (
+            <a
+              href={`/thu-vien/${a.slug}`}
+              class="group reveal relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+            >
+              <img
+                src={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}-thumb.webp`}
+                alt={a.ten}
+                width="640"
+                height="480"
+                loading="lazy"
+                decoding="async"
+                class="aspect-4/3 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/35 to-transparent" />
+              <div class="absolute inset-x-0 bottom-0 p-5">
+                <p class="text-[0.75rem] font-bold uppercase tracking-[0.14em] text-accent-400">
+                  {a.soAnh} hình ảnh
+                </p>
+                <h3 class="mt-1.5 text-base font-bold leading-snug text-white">{a.ten}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  baiViet.length > 0 && (
+    <section class="border-t border-slate-200 py-14 lg:py-20">
+      <div class="container-page">
+        <h2 class="rule-accent text-(length:--text-h2)">Tin tức liên quan</h2>
+        <div class="mt-10 grid gap-6 sm:grid-cols-3">
+          {baiViet.map((b) => (
+            <a
+              href={`/tin-tuc/${b.id}`}
+              class="group rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <p class="text-[0.75rem] font-bold uppercase tracking-[0.14em] text-accent-500">
+                {DANH_MUC_TIN[b.data.danhMuc as keyof typeof DANH_MUC_TIN]}
+              </p>
+              <h3 class="mt-2.5 text-base font-bold leading-snug transition group-hover:text-brand-600">
+                {b.data.tieuDe}
+              </h3>
+              <time datetime={b.data.ngay.toISOString()} class="mt-4 block text-xs font-semibold text-slate-400">
+                {ngayVn(b.data.ngay)}
+              </time>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  album.length === 0 && baiViet.length === 0 && (
+    <section class="border-t border-slate-200 py-14">
+      <div class="container-page">
+        <div class="mx-auto max-w-2xl rounded-2xl border border-dashed border-brand-200 bg-brand-50/60 p-8 text-center sm:p-10">
+          <img src="/logo-mark.svg" alt="" class="mx-auto h-10 w-auto opacity-40" />
+          <p class="mt-5 text-[0.95rem] leading-relaxed text-slate-600">
+            Hình ảnh và tin tức của mảng hoạt động này đang được cập nhật.
+          </p>
+          <a
+            href="/thu-vien"
+            class="mt-6 inline-flex min-h-11 items-center rounded-full bg-brand-600 px-6 text-sm font-bold text-white transition hover:bg-brand-700"
+          >
+            Xem thư viện ảnh
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
