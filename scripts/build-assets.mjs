@@ -79,6 +79,9 @@ const exists = (p) => access(p).then(() => true, () => false);
 
 const TY_LE = 3 / 4; // khung dọc 3:4
 
+const canhBaoAnhNho = [];
+const canhBaoKhungHep = [];
+
 const kep = (v, min, max) => Math.max(min, Math.min(max, v));
 
 /** Cắt ảnh chân dung về khung dọc 3:4, bám theo tiêu điểm đã khai báo. */
@@ -92,6 +95,17 @@ async function chanDung(src, outBase, daTachNen = false) {
   const mode = daTachNen
     ? 'nen-trang'
     : (tieuDiem.mode ?? (width / height < 0.4 ? 'blur-pad' : 'crop'));
+
+  // Khung lớn nhất xuất ra là 1200x1600. Ảnh nguồn nhỏ hơn thì phải phóng to,
+  // nhìn sẽ mờ trên màn hình điện thoại đời mới.
+  if (width < 1200 || height < 1600) {
+    canhBaoAnhNho.push(`${slug}: ${width}x${height} (nên từ 1200x1600 trở lên)`);
+  }
+
+  // Chủ thể quá hẹp so với khung dọc 3:4 thì hai bên sẽ thừa nhiều nền trắng.
+  if (daTachNen && width / height < 0.55) {
+    canhBaoKhungHep.push(`${slug}: tỉ lệ ${(width / height).toFixed(2)} — nên cắt từ ngang hông trở lên`);
+  }
   let vung = null;
 
   if (mode === 'crop') {
@@ -106,18 +120,45 @@ async function chanDung(src, outBase, daTachNen = false) {
     }
   }
 
-  for (const [suffix, w] of [['', 900], ['-sm', 450]]) {
+  for (const [suffix, w] of [['', 1200], ['-sm', 600]]) {
     const h = Math.round(w / TY_LE);
     let pipeline;
 
     if (mode === 'nen-trang') {
-      pipeline = sharp(src, { failOn: 'none' })
+      // Ảnh tách nền gửi về có tỉ lệ rất khác nhau: toàn thân thì hẹp và cao,
+      // nửa người thì ngang. Nếu chỉ 'contain' vào khung 3:4 thì ảnh toàn thân
+      // chỉ chiếm chưa tới một nửa khung, còn lại là lề trắng.
+      // Nên: cắt bỏ viền nền thừa, phóng cho chủ thể choán gần hết khung, rồi
+      // đặt đứng trên đáy như người đứng trên mặt đất.
+      const CHOAN = 0.94; // phần khung mà chủ thể được phép chiếm
+      const DAY = 0.02; // chừa một chút dưới chân
+
+      const chuThe = await sharp(src, { failOn: 'none' })
         .rotate()
-        .resize(w, h, {
-          fit: 'contain',
-          background: { r: 255, g: 255, b: 255, alpha: 1 },
+        .trim({ threshold: 12 })
+        .toBuffer()
+        .catch(() =>
+          // Ảnh không có viền đồng nhất để cắt thì dùng nguyên bản.
+          sharp(src, { failOn: 'none' }).rotate().toBuffer(),
+        );
+
+      const vua = await sharp(chuThe)
+        .resize(Math.round(w * CHOAN), Math.round(h * (CHOAN - DAY)), {
+          fit: 'inside',
+          withoutEnlargement: false,
         })
-        .flatten({ background: '#ffffff' });
+        .toBuffer();
+      const { width: vw = 0, height: vh = 0 } = await sharp(vua).metadata();
+
+      pipeline = sharp({
+        create: { width: w, height: h, channels: 3, background: '#ffffff' },
+      }).composite([
+        {
+          input: vua,
+          left: Math.round((w - vw) / 2),
+          top: Math.max(0, h - vh - Math.round(h * DAY)),
+        },
+      ]);
     } else if (mode === 'blur-pad') {
       const nen = await sharp(src)
         .resize(w, h, { fit: 'cover', position: 'attention' })
@@ -189,6 +230,12 @@ async function chayChanDung() {
   }
 
   console.log(`  -> ${soDaTach} anh dung ban da tach nen`);
+  if (canhBaoAnhNho.length) {
+    console.warn('  ! anh nho hon khung xuat ra, se bi mo:\n    - ' + canhBaoAnhNho.join('\n    - '));
+  }
+  if (canhBaoKhungHep.length) {
+    console.warn('  ! chu the qua hep so voi khung 3:4, hai ben se thua nen trang:\n    - ' + canhBaoKhungHep.join('\n    - '));
+  }
   if (thieu.length) console.warn('  ! thieu anh goc:\n    - ' + thieu.join('\n    - '));
 }
 
