@@ -5,6 +5,10 @@
  * `variant="tuDong"` dùng trong header — logo hiển thị màu sáng khi header còn
  * trong suốt trên hero nền xanh đậm, và trở lại màu gốc khi header dính lên đầu
  * trang (thẻ cha đặt `data-dinh` và `class="group/hdr"`).
+ *
+ * Dưới 360px (máy 320px đời cũ) logo thu nhỏ lại một nấc và giãn chữ hẹp bớt:
+ * logo khoá shrink-0 nên nếu để nguyên khổ, nút menu bên cạnh bị bóp từ 44px
+ * xuống còn 24px, bấm rất dễ trượt.
  */
 interface Props {
   variant?: 'toi' | 'sang' | 'tuDong';
@@ -31,7 +35,7 @@ const phuTheo = {
 
 <a
   href="/"
-  class:list={['group flex shrink-0 items-center gap-3', className]}
+  class:list={['group -my-1 flex shrink-0 items-center gap-3 py-1', className]}
   aria-label="Trang chủ CLB Doanh nhân Khánh Hòa – Sài Gòn"
 >
   <img
@@ -40,7 +44,7 @@ const phuTheo = {
     width="269"
     height="180"
     class:list={[
-      'h-9 w-auto transition duration-500 group-hover:scale-105 sm:h-10',
+      'h-8 w-auto transition duration-500 group-hover:scale-105 min-[360px]:h-9 sm:h-10',
       anhTheo[variant],
     ]}
   />
@@ -48,7 +52,12 @@ const phuTheo = {
     <span class:list={['text-[0.94rem] font-extrabold tracking-tight transition-colors sm:text-base', tenTheo[variant]]}>
       CLB Doanh nhân
     </span>
-    <span class:list={['mt-1 text-[0.75rem] font-semibold tracking-[0.18em] transition-colors sm:text-[0.72rem]', phuTheo[variant]]}>
+    <span
+      class:list={[
+        'mt-1 text-[0.75rem] font-semibold tracking-[0.1em] transition-colors min-[360px]:tracking-[0.18em] sm:text-[0.72rem]',
+        phuTheo[variant],
+      ]}
+    >
       KHÁNH HÒA – SÀI GÒN
     </span>
   </span>

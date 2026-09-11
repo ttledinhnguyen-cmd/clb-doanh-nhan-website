@@ -162,12 +162,17 @@ const anhTapThe = `/images/hoat-dong/${ANH_TAP_THE.album}/${ANH_TAP_THE.anh}.web
   {/* Ban điều hành */}
   <section class="py-20 lg:py-28">
     <div class="container-page">
+      {/* basis-80 đặt bề ngang tối thiểu 20rem cho khối tiêu đề. Thiếu nó,
+          flex-1 (tức flex-basis 0) để khối chữ co xuống gần bằng 0 và nhường
+          hết chỗ cho cái nút không co được, trên điện thoại thành ra mỗi chữ
+          một dòng. Có basis-80 thì khi màn hình hẹp, nút tự rớt xuống dòng
+          dưới và khối chữ được trọn bề ngang. */}
       <div class="flex flex-wrap items-end justify-between gap-6">
         <TieuDeMuc
           nhan="Cơ cấu tổ chức"
           tieuDe="Ban điều hành câu lạc bộ"
           moTa="Đội ngũ dẫn dắt các hoạt động kết nối, xúc tiến thương mại và công tác xã hội của CLB."
-          class="flex-1"
+          class="min-w-0 flex-1 basis-80"
         />
         <a
           href="/co-cau-to-chuc"
