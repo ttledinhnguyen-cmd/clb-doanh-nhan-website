@@ -2,9 +2,11 @@
 /**
  * Thẻ chân dung hội viên.
  *
- * Ảnh chân dung đã tách nền trắng nên phần chữ để hẳn xuống dưới ảnh, không
- * phủ gradient tối lên ảnh như trước — phủ tối lên nền trắng làm nửa dưới ảnh
- * xám đục và nuốt mất chân người.
+ * Ảnh chân dung đã tách nền trắng nên toàn bộ phần chữ để hẳn xuống dưới ảnh,
+ * không phủ gì lên ảnh cả: phủ gradient tối lên nền trắng làm nửa dưới ảnh xám
+ * đục và nuốt mất chân người, còn nhãn chức vụ đặt đè lên góc ảnh thì che mất
+ * vai và tóc. Thứ tự phần chữ: tên, chức vụ trong CLB, chức danh · doanh
+ * nghiệp, rồi ngành nghề ghim ở đáy thẻ.
  */
 interface Props {
   slug: string;
@@ -37,7 +39,7 @@ const phu = [chucDanh, doanhNghiep].filter(Boolean).join(' · ');
   href={`/hoi-vien/${slug}`}
   class="group reveal flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-brand-900/15"
 >
-  <div class="relative aspect-3/4 overflow-hidden bg-slate-50">
+  <div class="aspect-3/4 overflow-hidden bg-slate-50">
     <img
       src={anh}
       srcset={anhNho ? `${anhNho} 600w, ${anh} 1200w` : undefined}
@@ -49,21 +51,26 @@ const phu = [chucDanh, doanhNghiep].filter(Boolean).join(' · ');
       decoding="async"
       class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
     />
-
-    {
-      vaiTro && (
-        <span class="absolute left-4 top-4 rounded-full bg-accent-500 px-3 py-1.5 text-[0.75rem] font-bold uppercase tracking-wide text-white shadow-md shadow-accent-900/25">
-          {vaiTro}
-        </span>
-      )
-    }
   </div>
 
   <div class="flex flex-1 flex-col border-t border-slate-100 p-5">
     <h3 class="text-lg font-bold leading-tight text-brand-900 transition-colors group-hover:text-brand-600">
       {hoTen}
     </h3>
-    {phu && <p class="mt-1.5 line-clamp-2 text-[0.85rem] leading-snug text-slate-500">{phu}</p>}
+    {
+      vaiTro && (
+        <p class="mt-2.5">
+          {/* Cùng hình dạng với nhãn ngành nghề ở đáy thẻ, chỉ khác màu: chức
+              vụ cam đậm, ngành nghề xanh nhạt. Bo góc vừa chứ không bo tròn
+              hẳn, để chức vụ dài như "Uỷ viên dự khuyết Ban Chấp hành" xuống
+              hai dòng vẫn ra hình cái nhãn. */}
+          <span class="inline-block rounded-md bg-accent-500 px-2.5 py-1 text-[0.75rem] font-bold uppercase leading-tight tracking-wide text-white">
+            {vaiTro}
+          </span>
+        </p>
+      )
+    }
+    {phu && <p class="mt-2.5 line-clamp-2 text-[0.85rem] leading-snug text-slate-500">{phu}</p>}
     {
       nganhNghe && (
         <p class="mt-auto pt-4">
