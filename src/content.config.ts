@@ -24,9 +24,10 @@ const hoiVien = defineCollection({
     hoTen: z.string(),
     xungHo: z.string().default(''),
 
-    // Ảnh chân dung. Để trống thì dùng ảnh do scripts/build-assets.mjs sinh ra
-    // tại /images/hoi-vien/<mã hội viên>.webp. Ảnh thư ký tải lên qua trang
-    // quản trị sẽ nằm ở đây và được ưu tiên.
+    // Ảnh chân dung tải lên qua trang /cap-nhat; có thì luôn được ưu tiên.
+    // Để trống thì dùng ảnh do scripts/build-assets.mjs sinh ra — tên file mang
+    // mã băm nội dung nên phải tra bảng src/data/anh-hoi-vien.json (qua hàm
+    // anhChanDung), tuyệt đối không tự ghép <mã hội viên>.webp.
     anh: z.string().default(''),
     anhGoc: z.string().default(''),
 

@@ -502,7 +502,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
   let anhMoi: string | null = null;
   let anhBiaMoi: string | null = null;
 
-  type MucDanhBa = { slug: string; ten: string; doanhNghiep: string; nganhNghe: string };
+  type MucDanhBa = { slug: string; ten: string; doanhNghiep: string; nganhNghe: string; anh: string };
   let danhBa: MucDanhBa[] = [];
 
   const TEN_TRANG: Record<string, string> = {
@@ -689,12 +689,21 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
     anhMoi = null;
     $('thong-tin-anh').textContent = '';
     const img = $('xem-truoc') as HTMLImageElement;
-    img.className = 'aspect-3/4 w-full object-cover';
-    img.onerror = () => {
+    const chuaCoAnh = () => {
+      img.onerror = null;
       img.src = '/logo-mark.svg';
       img.className = 'aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30';
     };
-    img.src = h.anh ? String(h.anh) : `/images/hoi-vien/${slugHienTai}.webp`;
+
+    // Ảnh do scripts/build-assets.mjs sinh ra mang mã băm nội dung trong tên
+    // file, nên phải tra danh bạ chứ không ghép `${slug}.webp`: ghép tay sẽ trỏ
+    // vào file cũ mà trình duyệt còn giữ trong bộ nhớ đệm cả năm.
+    const nguonAnh = h.anh ? String(h.anh) : danhBa.find((m) => m.slug === slugHienTai)?.anh;
+    if (nguonAnh) {
+      img.className = 'aspect-3/4 w-full object-cover';
+      img.onerror = chuaCoAnh;
+      img.src = nguonAnh;
+    } else chuaCoAnh();
 
     // Hội viên thường chỉ được xem chức vụ; thư ký mới sửa được.
     if (vaiTro === 'thu-ky') {
