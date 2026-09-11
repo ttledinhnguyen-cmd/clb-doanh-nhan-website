@@ -10,8 +10,13 @@ const banDieuHanh = await layBanDieuHanh();
 const noiBat = banDieuHanh.slice(0, 4);
 const albumNoiBat = thuVien.slice(0, 3);
 
-// Ảnh hero là chân dung Chủ tịch đương nhiệm — tự đổi theo dữ liệu, không ghi cứng tên.
-const chuTich = banDieuHanh.find((m) => m.data.capBac === 'chu-tich');
+/**
+ * Ảnh tập thể mở đầu trang chủ. Muốn thay ảnh khác thì sửa hai giá trị dưới:
+ * `album` là mã album trong thư viện, `anh` là tên file ảnh trong album đó.
+ */
+const ANH_TAP_THE = { album: 'caravan-tro-ve-tuoi-tho-toi-lan-10', anh: '033' };
+const albumTapThe = thuVien.find((a) => a.slug === ANH_TAP_THE.album);
+const anhTapThe = `/images/hoat-dong/${ANH_TAP_THE.album}/${ANH_TAP_THE.anh}.webp`;
 ---
 
 <Base>
@@ -24,10 +29,8 @@ const chuTich = banDieuHanh.find((m) => m.data.capBac === 'chu-tich');
       class="pointer-events-none absolute -right-24 top-16 w-[46rem] max-w-[85%] opacity-[0.07] brightness-0 invert"
     />
 
-    <div
-      class="container-page relative grid items-center gap-14 pb-20 pt-32 sm:pt-36 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:pb-28 lg:pt-44"
-    >
-      <div>
+    <div class="container-page relative pb-16 pt-28 sm:pt-32 lg:pb-20 lg:pt-36">
+      <div class="max-w-4xl">
         <p
           class="reveal inline-flex items-center gap-2.5 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-brand-100 ring-1 ring-inset ring-white/15 backdrop-blur"
         >
@@ -35,22 +38,26 @@ const chuTich = banDieuHanh.find((m) => m.data.capBac === 'chu-tich');
           Thành lập 02/04/2016
         </p>
 
-        <h1 class="reveal mt-7 text-(length:--text-hero) font-extrabold leading-[1.05] text-white">
-          Câu lạc bộ<br />
-          <span class="text-accent-500">Doanh nhân</span><br />
-          Khánh Hòa – Sài Gòn
+        {/* Mỗi vế tên câu lạc bộ nằm trọn một dòng, không để chữ lẻ rớt xuống
+            dòng dưới. Cỡ chữ --text-hero co theo bề ngang màn hình vừa đủ để
+            dòng dài nhất ("Câu lạc bộ Doanh nhân") luôn vừa khung. */}
+        <h1 class="reveal mt-7 text-(length:--text-hero) font-extrabold leading-[1.1] text-white">
+          <span class="block whitespace-nowrap">
+            Câu lạc bộ <span class="text-accent-500">Doanh nhân</span>
+          </span>
+          <span class="block whitespace-nowrap">Khánh Hòa – Sài Gòn</span>
         </h1>
 
-        <p class="reveal mt-7 max-w-xl text-(length:--text-lead) leading-relaxed text-brand-100">
+        <p class="reveal mt-6 max-w-xl text-(length:--text-lead) leading-relaxed text-brand-100">
           Nơi hội tụ những người con Khánh Hòa đang lập nghiệp tại TP. Hồ Chí Minh — cùng giao lưu,
           hợp tác và chung tay dựng xây quê hương.
         </p>
 
-        <p class="reveal mt-6 text-sm font-bold uppercase tracking-[0.14em] text-accent-400">
+        <p class="reveal mt-5 text-sm font-bold uppercase tracking-[0.14em] text-accent-400">
           {site.khauHieu}
         </p>
 
-        <div class="reveal mt-10 flex flex-wrap gap-4">
+        <div class="reveal mt-9 flex flex-wrap gap-4">
           <a
             href="/dang-ky"
             class="rounded-full bg-accent-500 px-7 py-3.5 text-[0.95rem] font-bold text-white shadow-xl shadow-accent-500/25 transition hover:-translate-y-0.5 hover:bg-accent-600"
@@ -64,46 +71,47 @@ const chuTich = banDieuHanh.find((m) => m.data.capBac === 'chu-tich');
         </div>
       </div>
 
-      {
-        chuTich && (
-          <div class="reveal relative mx-auto w-full max-w-sm lg:mx-0 lg:ml-auto">
-            {/* Ảnh Chủ tịch đã tách nền trắng nên phần chữ để dưới ảnh, không
-                phủ tối lên ảnh — phủ tối lên nền trắng sẽ nuốt mất chân người. */}
-            <a
-              href={`/hoi-vien/${chuTich.id}`}
-              class="group block overflow-hidden rounded-3xl bg-white shadow-2xl shadow-brand-950/50 ring-1 ring-white/10"
+      {/* Ảnh tập thể trải hết bề ngang cho thấy rõ từng người. Khung 2/1 cắt bớt
+          trần nhà và sàn; điểm neo 65% theo chiều dọc để giữ trọn hàng ngồi
+          dưới cùng mà không lấy quá nhiều phần trần. */}
+      <a
+        href={albumTapThe ? `/thu-vien/${albumTapThe.slug}` : '/thu-vien'}
+        class="group reveal mt-12 block overflow-hidden rounded-3xl shadow-2xl shadow-brand-950/50 ring-1 ring-white/10 lg:mt-14"
+      >
+        <div class="relative">
+          <img
+            src={anhTapThe}
+            alt="Tập thể hội viên câu lạc bộ Doanh nhân Khánh Hòa – Sài Gòn"
+            width="1600"
+            height="978"
+            loading="eager"
+            fetchpriority="high"
+            class="aspect-2/1 w-full object-cover object-[center_65%] transition-transform duration-700 group-hover:scale-[1.02]"
+          />
+          <div
+            class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-4 bg-gradient-to-t from-brand-950/85 via-brand-950/35 to-transparent p-5 pt-16 sm:p-7 sm:pt-20"
+          >
+            <p class="text-sm font-bold text-white sm:text-base">Tập thể hội viên câu lạc bộ</p>
+            <span
+              class="hidden shrink-0 items-center gap-1.5 rounded-full bg-white/15 px-4 py-2 text-[0.8rem] font-semibold text-white ring-1 ring-inset ring-white/25 backdrop-blur transition group-hover:bg-white/25 sm:inline-flex"
             >
-              <div class="overflow-hidden bg-slate-50">
-                <img
-                  src={anhChanDung(chuTich)}
-                  srcset={coAnhNhieuCo(chuTich)
-                    ? `${anhChanDung(chuTich, true)} 600w, ${anhChanDung(chuTich)} 1200w`
-                    : undefined}
-                  sizes={coAnhNhieuCo(chuTich) ? '(min-width: 1024px) 24rem, 90vw' : undefined}
-                  alt={`Chân dung ${chuTich.data.xungHo} ${chuTich.data.hoTen}, ${chuTich.data.chucVuClb} câu lạc bộ`}
-                  width="1200"
-                  height="1600"
-                  loading="eager"
-                  fetchpriority="high"
-                  class="aspect-3/4 w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                />
-              </div>
-
-              <div class="border-t border-slate-100 p-6 sm:p-7">
-                <p class="text-[0.75rem] font-bold uppercase tracking-[0.18em] text-accent-600">
-                  {chuTich.data.chucVuClb} câu lạc bộ
-                </p>
-                <p class="mt-2 text-xl font-extrabold leading-tight text-brand-900 sm:text-2xl">
-                  {chuTich.data.hoTen}
-                </p>
-                <p class="mt-2 text-[0.85rem] leading-snug text-slate-500">
-                  {chuTich.data.chucDanh} {chuTich.data.doanhNghiep}
-                </p>
-              </div>
-            </a>
+              Xem thư viện ảnh
+              <svg
+                viewBox="0 0 24 24"
+                class="h-3.5 w-3.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </span>
           </div>
-        )
-      }
+        </div>
+      </a>
     </div>
   </section>
 

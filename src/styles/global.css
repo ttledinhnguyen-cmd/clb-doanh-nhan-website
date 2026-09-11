@@ -35,7 +35,9 @@
 
   --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
 
-  --text-hero: clamp(2.25rem, 1.2rem + 4.2vw, 4.5rem);
+  /* Co theo bề ngang màn hình để dòng "Câu lạc bộ Doanh nhân" ở trang chủ
+     luôn nằm trọn một dòng, kể cả trên điện thoại 320px. */
+  --text-hero: clamp(1.35rem, 7.6vw - 2px, 4.5rem);
   --text-h1:   clamp(1.85rem, 1.1rem + 2.8vw, 3.25rem);
   --text-h2:   clamp(1.5rem, 1.05rem + 1.8vw, 2.4rem);
   --text-lead: clamp(1.02rem, 0.95rem + 0.4vw, 1.2rem);
