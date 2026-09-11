@@ -8,7 +8,7 @@ backend:
   name: github
   repo: ttledinhnguyen-cmd/clb-doanh-nhan-website
   branch: main
-  base_url: https://clb-doanh-nhan-khanh-hoa.pages.dev
+  base_url: https://kh-sg.com
   auth_endpoint: oauth
   commit_messages:
     create: 'Thêm {{collection}} "{{slug}}"'
@@ -21,7 +21,7 @@ locale: vi
 media_folder: public/images/tai-len
 public_folder: /images/tai-len
 
-site_url: https://clb-doanh-nhan-khanh-hoa.pages.dev
+site_url: https://kh-sg.com
 logo_url: /logo-mark.svg
 
 collections:

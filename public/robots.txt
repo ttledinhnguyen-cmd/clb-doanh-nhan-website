@@ -6,4 +6,4 @@
 User-agent: *
 Disallow: /
 
-Sitemap: https://clb-doanh-nhan-khanh-hoa.pages.dev/sitemap-index.xml
+Sitemap: https://kh-sg.com/sitemap-index.xml

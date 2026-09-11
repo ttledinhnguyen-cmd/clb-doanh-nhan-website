@@ -5,10 +5,13 @@ import tailwindcss from '@tailwindcss/vite';
 
 // Địa chỉ gốc của website. Astro lấy giá trị này để dựng link canonical, thẻ
 // og:url, og:image và sitemap — sai một ký tự là Zalo/Facebook không lấy được
-// ảnh xem trước. KHI CLB TRỎ TÊN MIỀN RIÊNG VÀO thì đổi dòng dưới thành tên
-// miền đó (không có dấu / ở cuối) rồi đẩy lại.
+// ảnh xem trước. Không có dấu / ở cuối.
+//
+// Tên miền chính thức từ 11/09/2026. Bản cũ clb-doanh-nhan-khanh-hoa.pages.dev
+// vẫn chạy song song nhưng chỉ là địa chỉ dự phòng; mọi link chia sẻ ra ngoài
+// đều trỏ về kh-sg.com.
 export default defineConfig({
-  site: 'https://clb-doanh-nhan-khanh-hoa.pages.dev',
+  site: 'https://kh-sg.com',
   trailingSlash: 'ignore',
   output: 'static',
   integrations: [
