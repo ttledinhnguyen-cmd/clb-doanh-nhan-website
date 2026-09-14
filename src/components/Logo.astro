@@ -1,64 +1,52 @@
 ---
 /**
- * Bộ nhận diện ngang: biểu tượng cánh yến + tên CLB.
+ * Logo câu lạc bộ.
  *
- * `variant="tuDong"` dùng trong header — logo hiển thị màu sáng khi header còn
- * trong suốt trên hero nền xanh đậm, và trở lại màu gốc khi header dính lên đầu
- * trang (thẻ cha đặt `data-dinh` và `class="group/hdr"`).
+ * Dùng đúng logo gốc của CLB (chuyển nguyên nét từ file .ai), xếp thành bản
+ * nằm ngang bằng scripts/tao-logo.mjs — không gõ lại tên CLB bằng font khác.
  *
- * Dưới 360px (máy 320px đời cũ) logo thu nhỏ lại một nấc và giãn chữ hẹp bớt:
- * logo khoá shrink-0 nên nếu để nguyên khổ, nút menu bên cạnh bị bóp từ 44px
- * xuống còn 24px, bấm rất dễ trượt.
+ * `variant="tuDong"` dùng trong header: header còn trong suốt trên nền xanh đậm
+ * thì hiện bản trắng, header dính lên đầu trang (thẻ cha đặt `data-dinh` và
+ * class "group/hdr") thì hiện bản màu gốc.
  */
 interface Props {
-  variant?: 'toi' | 'sang' | 'tuDong';
+  variant?: 'mau' | 'trang' | 'tuDong';
   class?: string;
 }
-const { variant = 'toi', class: className = '' } = Astro.props;
+const { variant = 'mau', class: className = '' } = Astro.props;
 
-const anhTheo = {
-  toi: '',
-  sang: 'brightness-0 invert',
-  tuDong: 'brightness-0 invert group-data-dinh/hdr:brightness-100 group-data-dinh/hdr:invert-0',
-};
-const tenTheo = {
-  toi: 'text-brand-800',
-  sang: 'text-white',
-  tuDong: 'text-white group-data-dinh/hdr:text-brand-800',
-};
-const phuTheo = {
-  toi: 'text-accent-500',
-  sang: 'text-accent-400',
-  tuDong: 'text-accent-400 group-data-dinh/hdr:text-accent-500',
-};
+// Tỉ lệ khung của logo-ngang.svg: 399.407 x 79.5.
+const RONG = 399;
+const CAO = 80;
+// Dưới 360px (máy 320px đời cũ) hạ một nấc để nút menu bên cạnh giữ đủ 44px.
+const lopCao = 'h-10 w-auto min-[360px]:h-11 sm:h-12';
 ---
 
 <a
   href="/"
-  class:list={['group -my-1 flex shrink-0 items-center gap-3 py-1', className]}
+  class:list={['-my-1 flex shrink-0 items-center py-1', className]}
   aria-label="Trang chủ CLB Doanh nhân Khánh Hòa – Sài Gòn"
 >
-  <img
-    src="/logo-mark.svg"
-    alt=""
-    width="269"
-    height="180"
-    class:list={[
-      'h-8 w-auto transition duration-500 group-hover:scale-105 min-[360px]:h-9 sm:h-10',
-      anhTheo[variant],
-    ]}
-  />
-  <span class="flex flex-col leading-none">
-    <span class:list={['text-[0.94rem] font-extrabold tracking-tight transition-colors sm:text-base', tenTheo[variant]]}>
-      CLB Doanh nhân
-    </span>
-    <span
-      class:list={[
-        'mt-1 text-[0.75rem] font-semibold tracking-[0.1em] transition-colors min-[360px]:tracking-[0.18em] sm:text-[0.72rem]',
-        phuTheo[variant],
-      ]}
-    >
-      KHÁNH HÒA – SÀI GÒN
-    </span>
-  </span>
+  {
+    variant !== 'mau' && (
+      <img
+        src="/logo-ngang-trang.svg"
+        alt=""
+        width={RONG}
+        height={CAO}
+        class:list={[lopCao, variant === 'tuDong' && 'group-data-dinh/hdr:hidden']}
+      />
+    )
+  }
+  {
+    variant !== 'trang' && (
+      <img
+        src="/logo-ngang.svg"
+        alt=""
+        width={RONG}
+        height={CAO}
+        class:list={[lopCao, variant === 'tuDong' && 'hidden group-data-dinh/hdr:block']}
+      />
+    )
+  }
 </a>
