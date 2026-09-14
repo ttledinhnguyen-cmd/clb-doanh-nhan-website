@@ -64,6 +64,7 @@ collections:
           required: false,
           hint: 'Mã album trong thư viện, ví dụ: giai-cuu-bi-do-2023. Để trống nếu không có.',
         }
+      - { name: hinhAnh, label: Hình ảnh hoạt động, widget: list, required: false, field: { name: anh, label: Ảnh, widget: image } }
       - { name: noiBat, label: Bài nổi bật, widget: boolean, default: false, required: false }
       - { name: body, label: Nội dung, widget: markdown }
 
@@ -139,7 +140,8 @@ collections:
       - { name: sanPham, label: Sản phẩm / dịch vụ chính, widget: list, required: false, field: { name: ten, label: Tên, widget: string } }
       - { name: khachHang, label: Khách hàng / dự án tiêu biểu, widget: list, required: false, field: { name: ten, label: Tên, widget: string } }
       - { name: uuDaiHoiVien, label: Ưu đãi dành cho hội viên CLB, widget: text, required: false }
-      - { name: anhDoanhNghiep, label: Hình ảnh doanh nghiệp, widget: list, required: false, field: { name: anh, label: Ảnh, widget: image } }
+      - { name: anhDoanhNghiep, label: Hình ảnh sản phẩm / dịch vụ, widget: list, required: false, field: { name: anh, label: Ảnh, widget: image } }
+      - { name: chuThichAnh, label: Chú thích ảnh sản phẩm, widget: list, required: false, hint: 'Mỗi dòng là chú thích của một ảnh ở mục trên, đúng thứ tự.', field: { name: chuThich, label: Chú thích, widget: string } }
       - { name: noiBat, label: Hiển thị nổi bật, widget: boolean, default: false, required: false }
       - { name: body, label: Giới thiệu doanh nghiệp, widget: markdown, required: false }
 

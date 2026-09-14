@@ -1,26 +1,36 @@
 /**
- * Cloudflare Pages Function — hội viên tự cập nhật hồ sơ của mình.
+ * Cloudflare Pages Function — hồ sơ hội viên.
  *
  * Người dùng KHÔNG cần tài khoản GitHub. Họ mở đường dẫn riêng có mã bí mật,
  * sửa thông tin, bấm lưu; hàm này kiểm tra mã rồi thay mặt họ ghi vào kho
  * GitHub bằng khoá bot. Cloudflare thấy commit mới thì tự dựng lại website.
  *
- *   POST  { ma }                     → lấy hồ sơ để hiện lên form
- *   PUT   { ma, slug, layHoSo }      → thư ký xem hồ sơ người khác
- *   PUT   { ma, slug, duLieu, anh? } → lưu thay đổi
+ *   POST  { ma }                                    → mở phiên, lấy hồ sơ
+ *   PUT   { ma, slug, layHoSo }                     → thư ký xem hồ sơ người khác
+ *   PUT   { ma, slug, duLieu, anh?, anhMoi? }       → lưu thay đổi
+ *   PUT   { ma, moi: true, duLieu, anh?, anhMoi? }  → thư ký thêm hội viên mới
+ *   PUT   { ma, slug, xoa: true }                   → thư ký xoá hội viên
+ *
+ * Ảnh sản phẩm được tải lên trước qua /api/anh, mỗi ảnh một lượt; `anhMoi` chỉ
+ * mang mã blob. Mọi thứ của một lần bấm Lưu vào đúng một commit.
  */
 import {
   type EnvKho,
+  type ThayDoiFile,
   json,
   kiemTraMa,
   thieuCauHinh,
   docFile,
-  ghiFile,
   lietKeThuMuc,
-  sangBase64,
   ghiNhatKy,
+  ghiMotCommit,
+  LoiXungDot,
+  lamSlug,
+  taoBlob,
+  tachAnh,
+  chotBoAnh,
 } from '../../src/lib/kho-github';
-import { docFrontmatter, vietFrontmatter } from '../../src/lib/frontmatter';
+import { type BanGhi, docFrontmatter, vietFrontmatter } from '../../src/lib/frontmatter';
 
 const THU_MUC = 'src/content/hoi-vien';
 
@@ -66,7 +76,46 @@ const CAP_BAC = [
   'uy-vien-du-khuyet',
 ];
 
-const GIOI_HAN = { chuoi: 300, vanBan: 4000, danhSach: 20, anhByte: 3_000_000 };
+const GIOI_HAN = { chuoi: 300, vanBan: 4000, danhSach: 20, anhSanPham: 12, chuThich: 120 };
+
+/** Hồ sơ trống cho hội viên mới: đủ trường, cùng thứ tự với các file có sẵn. */
+const hoSoTrong = (): BanGhi => ({
+  hoTen: '',
+  xungHo: '',
+  anh: '',
+  chucVuClb: '',
+  capBac: '',
+  thuTu: 9999,
+  chucDanh: '',
+  doanhNghiep: '',
+  nganhNghe: 'Đang cập nhật',
+  namThanhLap: null,
+  quyMo: '',
+  dienThoai: '',
+  email: '',
+  website: '',
+  diaChi: '',
+  facebook: '',
+  zalo: '',
+  namGiaNhap: null,
+  sanPham: [],
+  khachHang: [],
+  uuDaiHoiVien: '',
+  anhDoanhNghiep: [],
+  chuThichAnh: [],
+  noiBat: false,
+});
+
+type YeuCau = {
+  ma?: string;
+  slug?: string;
+  duLieu?: Record<string, unknown>;
+  anh?: string;
+  anhMoi?: unknown;
+  layHoSo?: boolean;
+  moi?: boolean;
+  xoa?: boolean;
+};
 
 const docHoSo = async (env: EnvKho, slug: string) => {
   const f = await docFile(env, `${THU_MUC}/${slug}.md`);
@@ -75,66 +124,17 @@ const docHoSo = async (env: EnvKho, slug: string) => {
   return { hoSo: { slug, ...fm, gioiThieu: than.trim() }, sha: f.sha, raw: f.noiDung };
 };
 
-// ─── POST: mở phiên, lấy hồ sơ ──────────────────────────────────────────────
-
-export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => {
-  if (thieuCauHinh(env)) return json({ loi: 'Hệ thống cập nhật hồ sơ chưa được kích hoạt.' }, 503);
-
-  const body = (await request.json().catch(() => ({}))) as { ma?: string };
-  const phien = await kiemTraMa(env, body.ma);
-  if (!phien) return json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401);
-
-  if (phien.vai_tro === 'thu-ky') {
-    // Thư ký chọn được bất kỳ hội viên nào nên cần danh sách để hiển thị.
-    const ds = await lietKeThuMuc(env, THU_MUC);
-    const slugs = ds
-      .filter((x) => x.name.endsWith('.md') && !x.name.startsWith('_'))
-      .map((x) => x.name.replace(/\.md$/, ''))
-      .sort();
-    return json({ vaiTro: 'thu-ky', danhSach: slugs, hoSo: null });
-  }
-
-  const kq = await docHoSo(env, phien.slug);
-  if (!kq) return json({ loi: 'Không tìm thấy hồ sơ.' }, 404);
-  return json({ vaiTro: 'hoi-vien', danhSach: [phien.slug], hoSo: kq.hoSo });
-};
-
-// ─── PUT: xem hoặc lưu hồ sơ ────────────────────────────────────────────────
-
-export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
-  if (thieuCauHinh(env)) return json({ loi: 'Hệ thống cập nhật hồ sơ chưa được kích hoạt.' }, 503);
-
-  const body = (await request.json().catch(() => ({}))) as {
-    ma?: string;
-    slug?: string;
-    duLieu?: Record<string, unknown>;
-    anh?: string;
-    layHoSo?: boolean;
-  };
-
-  const phien = await kiemTraMa(env, body.ma);
-  if (!phien) return json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401);
-
-  const slug = phien.vai_tro === 'thu-ky' ? String(body.slug ?? '') : phien.slug;
-  if (!/^[a-z0-9-]{2,80}$/.test(slug)) return json({ loi: 'Mã hội viên không hợp lệ.' }, 400);
-
-  const kq = await docHoSo(env, slug);
-  if (!kq) return json({ loi: 'Không tìm thấy hồ sơ.' }, 404);
-
-  if (body.layHoSo) return json({ hoSo: kq.hoSo });
-
-  const { fm, than } = docFrontmatter(kq.raw);
+/** Gộp dữ liệu gửi lên vào frontmatter. Trả các trường đã đổi và thân bài mới. */
+function apDung(fm: BanGhi, than: string, duLieu: Record<string, unknown>, laThuKy: boolean) {
   const daDoi: string[] = [];
   let thanMoi = than;
-
-  const choSua: Record<string, string> =
-    phien.vai_tro === 'thu-ky'
-      ? { ...TRUONG_CHO_SUA, ...TRUONG_THU_KY }
-      : { ...TRUONG_CHO_SUA };
+  const choSua: Record<string, string> = laThuKy
+    ? { ...TRUONG_CHO_SUA, ...TRUONG_THU_KY }
+    : { ...TRUONG_CHO_SUA };
 
   for (const [khoa, kieu] of Object.entries(choSua)) {
-    if (!(khoa in (body.duLieu ?? {}))) continue;
-    const gt = body.duLieu![khoa];
+    if (!(khoa in duLieu)) continue;
+    const gt = duLieu[khoa];
 
     if (kieu === 'danhSach') {
       const ds = (Array.isArray(gt) ? gt : [])
@@ -179,39 +179,175 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
       }
     }
   }
+  return { daDoi, thanMoi };
+}
 
-  // Ảnh chân dung: trình duyệt đã nén sẵn thành WebP rồi gửi dạng data URL.
-  let coAnh = false;
-  if (typeof body.anh === 'string' && body.anh.startsWith('data:image/webp;base64,')) {
-    const b64 = body.anh.slice('data:image/webp;base64,'.length).replace(/\s/g, '');
-    if (!/^[A-Za-z0-9+/=]+$/.test(b64)) return json({ loi: 'Ảnh gửi lên không hợp lệ.' }, 400);
-    if (b64.length * 0.75 > GIOI_HAN.anhByte) return json({ loi: 'Ảnh quá lớn.' }, 413);
-
-    const tenAnh = `${slug}-${Date.now()}.webp`;
-    await ghiFile(env, `public/images/tai-len/${tenAnh}`, b64, null, `Ảnh chân dung mới của ${slug}`);
+/**
+ * Ảnh chân dung (gửi kèm dạng data URL) và bộ ảnh sản phẩm (đã tải lên trước).
+ * Thêm các file cần ghi vào `thayDoi`. Trả Response nếu ảnh gửi lên hỏng.
+ */
+async function xuLyAnh(
+  env: EnvKho,
+  slug: string,
+  fm: BanGhi,
+  body: YeuCau,
+  daDoi: string[],
+  thayDoi: ThayDoiFile[],
+): Promise<Response | null> {
+  if (typeof body.anh === 'string') {
+    const a = tachAnh(body.anh);
+    if ('loi' in a) return json({ loi: `Ảnh chân dung: ${a.loi}` }, 400);
+    const tenAnh = `${slug}-${Date.now()}.${a.duoi}`;
+    thayDoi.push({ duongDan: `public/images/tai-len/${tenAnh}`, blob: await taoBlob(env, a.b64) });
     fm.anh = `/images/tai-len/${tenAnh}`;
     daDoi.push('anh');
-    coAnh = true;
   }
 
-  if (daDoi.length === 0) return json({ ok: true, khongDoi: true });
+  if (body.duLieu && Array.isArray(body.duLieu.anhDoanhNghiep)) {
+    const kq = chotBoAnh(
+      fm.anhDoanhNghiep,
+      body.duLieu.anhDoanhNghiep,
+      body.anhMoi,
+      GIOI_HAN.anhSanPham,
+      GIOI_HAN.chuThich,
+    );
+    if (JSON.stringify(fm.anhDoanhNghiep ?? []) !== JSON.stringify(kq.ds)) {
+      fm.anhDoanhNghiep = kq.ds;
+      daDoi.push('anhDoanhNghiep');
+    }
+    if (JSON.stringify(fm.chuThichAnh ?? []) !== JSON.stringify(kq.chuThich)) {
+      fm.chuThichAnh = kq.chuThich;
+      daDoi.push('chuThichAnh');
+    }
+    thayDoi.push(...kq.thayDoi);
+  }
+  return null;
+}
 
-  await ghiFile(
-    env,
-    `${THU_MUC}/${slug}.md`,
-    sangBase64(vietFrontmatter(fm, thanMoi)),
-    kq.sha,
-    `Cập nhật hồ sơ ${fm.hoTen || slug} (${daDoi.join(', ')})`,
-  );
+// ─── POST: mở phiên, lấy hồ sơ ──────────────────────────────────────────────
 
-  await ghiNhatKy(
-    env,
-    phien.slug,
-    slug,
-    daDoi.join(','),
-    coAnh,
-    request.headers.get('cf-connecting-ip') ?? '',
-  );
+export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => {
+  if (thieuCauHinh(env)) return json({ loi: 'Hệ thống cập nhật hồ sơ chưa được kích hoạt.' }, 503);
 
-  return json({ ok: true, daDoi });
+  const body = (await request.json().catch(() => ({}))) as { ma?: string };
+  const phien = await kiemTraMa(env, body.ma);
+  if (!phien) return json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401);
+
+  if (phien.vai_tro === 'thu-ky') {
+    // Thư ký chọn được bất kỳ hội viên nào nên cần danh sách để hiển thị.
+    const ds = await lietKeThuMuc(env, THU_MUC);
+    const slugs = ds
+      .filter((x) => x.name.endsWith('.md') && !x.name.startsWith('_'))
+      .map((x) => x.name.replace(/\.md$/, ''))
+      .sort();
+    return json({ vaiTro: 'thu-ky', danhSach: slugs, hoSo: null });
+  }
+
+  const kq = await docHoSo(env, phien.slug);
+  if (!kq) return json({ loi: 'Không tìm thấy hồ sơ.' }, 404);
+  return json({ vaiTro: 'hoi-vien', danhSach: [phien.slug], hoSo: kq.hoSo });
+};
+
+// ─── PUT: xem, lưu, thêm, xoá ───────────────────────────────────────────────
+
+export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
+  if (thieuCauHinh(env)) return json({ loi: 'Hệ thống cập nhật hồ sơ chưa được kích hoạt.' }, 503);
+
+  const body = (await request.json().catch(() => ({}))) as YeuCau;
+
+  const phien = await kiemTraMa(env, body.ma);
+  if (!phien) return json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401);
+  const laThuKy = phien.vai_tro === 'thu-ky';
+  const ip = request.headers.get('cf-connecting-ip') ?? '';
+  const khongCoQuyen = () => json({ loi: 'Đường dẫn này không có quyền thực hiện thao tác đó.' }, 403);
+
+  try {
+    // ── Thêm hội viên mới ─────────────────────────────────────────────────
+    if (body.moi) {
+      if (!laThuKy) return khongCoQuyen();
+      const hoTen = String(body.duLieu?.hoTen ?? '').trim();
+      if (!hoTen) return json({ loi: 'Hội viên mới phải có họ và tên.' }, 400);
+
+      let slug = lamSlug(hoTen);
+      if (slug.length < 2) slug = `hoi-vien-${Date.now()}`;
+      // Trùng tên người đã có thì thêm số phía sau, không bao giờ ghi đè hồ sơ cũ.
+      const dangCo = new Set(
+        (await lietKeThuMuc(env, THU_MUC)).map((x) => x.name.replace(/\.md$/, '')),
+      );
+      if (dangCo.has(slug)) {
+        let n = 2;
+        while (dangCo.has(`${slug}-${n}`)) n++;
+        slug = `${slug}-${n}`;
+      }
+
+      const fm = hoSoTrong();
+      const { thanMoi } = apDung(fm, '', body.duLieu ?? {}, true);
+      if (!String(fm.nganhNghe ?? '').trim()) fm.nganhNghe = 'Đang cập nhật';
+
+      const thayDoi: ThayDoiFile[] = [];
+      const loiAnh = await xuLyAnh(env, slug, fm, body, [], thayDoi);
+      if (loiAnh) return loiAnh;
+
+      // shaCu = null: chắc chắn file chưa tồn tại lúc ghi.
+      thayDoi.push({ duongDan: `${THU_MUC}/${slug}.md`, noiDung: vietFrontmatter(fm, thanMoi), shaCu: null });
+      await ghiMotCommit(env, thayDoi, `Thêm hội viên ${hoTen}`);
+      await ghiNhatKy(env, phien.slug, slug, 'tao-moi', Boolean(fm.anh), ip);
+      return json({ ok: true, slug });
+    }
+
+    const slug = laThuKy ? String(body.slug ?? '') : phien.slug;
+    if (!/^[a-z0-9-]{2,80}$/.test(slug)) return json({ loi: 'Mã hội viên không hợp lệ.' }, 400);
+
+    const kq = await docHoSo(env, slug);
+    if (!kq) return json({ loi: 'Không tìm thấy hồ sơ.' }, 404);
+
+    if (body.layHoSo) return json({ hoSo: kq.hoSo });
+
+    // ── Xoá hội viên ──────────────────────────────────────────────────────
+    if (body.xoa) {
+      if (!laThuKy) return khongCoQuyen();
+      await ghiMotCommit(
+        env,
+        [{ duongDan: `${THU_MUC}/${slug}.md`, xoa: true }],
+        `Xoá hội viên ${String((kq.hoSo as Record<string, unknown>).hoTen ?? '') || slug}`,
+      );
+      // Link riêng của người đã xoá cũng thôi dùng được. Không đụng tới mã ban thư ký.
+      try {
+        await env
+          .DB!.prepare("DELETE FROM ma_cap_nhat WHERE slug = ? AND vai_tro != 'thu-ky'")
+          .bind(slug)
+          .run();
+      } catch (e) {
+        console.error('Thu hồi link của hội viên đã xoá thất bại:', e);
+      }
+      await ghiNhatKy(env, phien.slug, slug, 'xoa', false, ip);
+      return json({ ok: true, daXoa: true });
+    }
+
+    // ── Lưu thay đổi ──────────────────────────────────────────────────────
+    const { fm, than } = docFrontmatter(kq.raw);
+    const { daDoi, thanMoi } = apDung(fm, than, body.duLieu ?? {}, laThuKy);
+
+    const thayDoi: ThayDoiFile[] = [];
+    const loiAnh = await xuLyAnh(env, slug, fm, body, daDoi, thayDoi);
+    if (loiAnh) return loiAnh;
+
+    if (daDoi.length === 0) return json({ ok: true, khongDoi: true });
+
+    thayDoi.push({ duongDan: `${THU_MUC}/${slug}.md`, noiDung: vietFrontmatter(fm, thanMoi), shaCu: kq.sha });
+    await ghiMotCommit(env, thayDoi, `Cập nhật hồ sơ ${fm.hoTen || slug} (${daDoi.join(', ')})`);
+    await ghiNhatKy(
+      env,
+      phien.slug,
+      slug,
+      daDoi.join(','),
+      daDoi.includes('anh') || daDoi.includes('anhDoanhNghiep'),
+      ip,
+    );
+    return json({ ok: true, daDoi });
+  } catch (e) {
+    if (e instanceof LoiXungDot) return json({ loi: e.message }, 409);
+    console.error('Lưu hồ sơ lỗi:', e);
+    return json({ loi: 'Máy chủ gặp lỗi khi lưu. Anh/chị thử lại sau ít phút.' }, 500);
+  }
 };

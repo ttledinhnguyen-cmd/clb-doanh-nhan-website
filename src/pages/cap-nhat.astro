@@ -4,9 +4,10 @@ import Base from '../layouts/Base.astro';
 /**
  * Trang tự cập nhật nội dung, vào bằng đường dẫn riêng: /cap-nhat?ma=xxxxx
  *
- * Hội viên thường chỉ sửa hồ sơ của mình. Mã ban thư ký mở thêm ba việc nữa:
- * sửa hồ sơ mọi hội viên (kể cả chức vụ), viết tin tức, sửa nội dung trang
- * hoạt động và thông tin chung của câu lạc bộ.
+ * Hội viên thường chỉ sửa hồ sơ của mình (kể cả ảnh sản phẩm, dịch vụ). Mã ban
+ * thư ký mở thêm: thêm, sửa, xoá hồ sơ mọi hội viên (kể cả chức vụ); đăng bài
+ * cho từng mục hoạt động; sửa phần giới thiệu các trang hoạt động và thông tin
+ * chung của câu lạc bộ.
  *
  * Không ai cần tài khoản GitHub — máy chủ ghi hộ bằng khoá bot.
  * Thiết kế ưu tiên điện thoại vì phần lớn người dùng mở link từ Zalo.
@@ -17,6 +18,10 @@ const o =
 const nhan = 'block text-sm font-semibold text-brand-900';
 const the = 'rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7';
 const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-600';
+const nutMuc =
+  'flex min-h-12 items-center justify-center rounded-xl bg-white px-3 text-center text-[0.9rem] font-semibold leading-tight text-slate-700 ring-1 ring-inset ring-slate-200 transition hover:ring-brand-300 aria-pressed:bg-brand-600 aria-pressed:text-white aria-pressed:ring-brand-600';
+const nutThemAnh =
+  'mt-4 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-brand-300 bg-brand-50/60 px-5 text-sm font-bold text-brand-700 transition hover:bg-brand-50';
 ---
 
 <Base tieuDe="Cập nhật thông tin" khongLapChiMuc anTroLy>
@@ -62,14 +67,18 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
         {/* Chọn việc — chỉ ban thư ký thấy */}
         <div id="khoi-che-do" hidden class="rounded-2xl bg-accent-50 p-5 ring-1 ring-accent-100 sm:p-6">
           <label>
-            <span class="text-sm font-bold text-accent-700">Anh/chị muốn sửa gì?</span>
+            <span class="text-sm font-bold text-accent-700">Anh/chị muốn làm gì?</span>
             <select id="chon-che-do" class:list={['mt-2.5', o]}>
-              <option value="hoi-vien">Hồ sơ hội viên</option>
-              <option value="tin-tuc">Tin tức</option>
-              <option value="trang">Nội dung trang hoạt động</option>
+              <option value="hoi-vien">Hồ sơ hội viên (thêm, sửa, xoá)</option>
+              <option value="tin-tuc">Đăng bài cho các mục hoạt động</option>
+              <option value="trang">Sửa phần giới thiệu đầu trang hoạt động</option>
               <option value="thong-tin">Thông tin chung của CLB</option>
             </select>
           </label>
+          <p class="mt-3 text-[0.85rem] leading-relaxed text-accent-700">
+            Muốn đăng bài cho Công tác xã hội, Phát triển thành viên, Văn hoá – Thể thao hay Sự kiện
+            CLB thì chọn <strong>Đăng bài cho các mục hoạt động</strong>.
+          </p>
         </div>
 
         {/* ── Chọn đối tượng theo từng chế độ ─────────────────────────── */}
@@ -80,22 +89,42 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
               <option value="">— Chọn —</option>
             </select>
           </label>
+          <button
+            type="button"
+            id="nut-hoi-vien-moi"
+            class="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 text-sm font-bold text-white transition hover:bg-brand-700"
+          >
+            <span class="text-lg leading-none">+</span> Thêm hội viên mới
+          </button>
+          <p
+            id="ghi-chu-hoi-vien-moi"
+            hidden
+            class="mt-3 rounded-xl bg-emerald-50 px-4 py-3 text-[0.88rem] font-semibold leading-relaxed text-emerald-800 ring-1 ring-inset ring-emerald-200"
+          >
+            Đang thêm hội viên mới. Điền họ tên và các thông tin có sẵn bên dưới, rồi bấm Lưu.
+          </p>
         </div>
 
         <div id="khoi-chon-tin" hidden class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-900/5 sm:p-6">
-          <label>
-            <span class={nhan}>Chọn bài viết</span>
-            <select id="chon-tin" class:list={['mt-2.5', o]}>
-              <option value="">— Chọn bài để sửa —</option>
-            </select>
-          </label>
+          <p class={nhan}>Chọn mục hoạt động</p>
+          <div id="chon-muc" class="mt-2.5 grid grid-cols-2 gap-2.5" role="group" aria-label="Chọn mục hoạt động">
+            <button type="button" data-muc="cong-tac-xa-hoi" aria-pressed="true" class={nutMuc}>Công tác xã hội</button>
+            <button type="button" data-muc="phat-trien-thanh-vien" aria-pressed="false" class={nutMuc}>Phát triển thành viên</button>
+            <button type="button" data-muc="van-hoa-the-thao" aria-pressed="false" class={nutMuc}>Văn hoá – Thể thao</button>
+            <button type="button" data-muc="su-kien" aria-pressed="false" class={nutMuc}>Sự kiện CLB</button>
+          </div>
+
           <button
             type="button"
             id="nut-bai-moi"
-            class="mt-3 inline-flex min-h-11 items-center gap-2 rounded-xl bg-brand-600 px-5 text-sm font-bold text-white transition hover:bg-brand-700"
+            class="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 text-center text-sm font-bold text-white transition hover:bg-brand-700"
           >
-            <span class="text-lg leading-none">+</span> Viết bài mới
+            <span class="text-lg leading-none">+</span>
+            <span id="nhan-bai-moi">Viết bài mới cho mục Công tác xã hội</span>
           </button>
+
+          <p class="mt-6 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Bài đã đăng trong mục</p>
+          <ul id="ds-bai" class="mt-2.5 space-y-2"></ul>
         </div>
 
         <div id="khoi-chon-trang" hidden class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-900/5 sm:p-6">
@@ -278,6 +307,20 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
             </div>
           </fieldset>
 
+          <fieldset class={the}>
+            <legend class={legend}>Hình ảnh sản phẩm, dịch vụ</legend>
+            <p class="mt-4 text-[0.85rem] leading-relaxed text-slate-500">
+              Tối đa 12 ảnh, chọn được nhiều ảnh cùng lúc. Mỗi ảnh ghi một dòng chú thích ngắn, ví dụ
+              tên sản phẩm; không ghi cũng được.
+            </p>
+            <div id="bo-anh-san-pham" class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3"></div>
+            <label class={nutThemAnh}>
+              <span class="text-lg leading-none">+</span> Thêm ảnh sản phẩm
+              <input id="chon-anh-san-pham" type="file" accept="image/*" multiple class="sr-only" />
+            </label>
+            <p id="thong-tin-anh-san-pham" class="mt-2 text-[0.85rem] font-semibold text-brand-700"></p>
+          </fieldset>
+
           <fieldset class="rounded-2xl border-l-4 border-accent-500 bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7">
             <legend class={legend}>Ưu đãi cho hội viên CLB</legend>
             <p class="mt-4 text-[0.88rem] leading-relaxed text-slate-600">
@@ -285,6 +328,21 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
             </p>
             <textarea name="uuDaiHoiVien" rows="3" placeholder="Ví dụ: giảm 10% cho hội viên CLB." class:list={['mt-4', o]}></textarea>
           </fieldset>
+
+          <div id="khoi-xoa-hoi-vien" hidden class="rounded-2xl border border-red-200 bg-red-50 p-5 sm:p-6">
+            <p class="text-sm font-bold text-red-800">Xoá hội viên này khỏi website</p>
+            <p class="mt-2 text-[0.88rem] leading-relaxed text-red-700">
+              Hồ sơ biến mất khỏi danh sách hội viên và trang Cơ cấu tổ chức; đường dẫn riêng của người
+              này cũng thôi dùng được. Vẫn khôi phục được nếu báo người phụ trách kỹ thuật.
+            </p>
+            <button
+              type="button"
+              id="nut-xoa-hoi-vien"
+              class="mt-4 inline-flex min-h-11 items-center rounded-xl bg-red-600 px-5 text-sm font-bold text-white transition hover:bg-red-700"
+            >
+              Xoá hội viên
+            </button>
+          </div>
         </div>
 
         {/* ── Biểu mẫu tin tức ────────────────────────────────────────── */}
@@ -306,7 +364,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
                   <input name="tinNgay" type="date" class:list={['mt-2', o]} />
                 </label>
                 <label>
-                  <span class={nhan}>Chuyên mục</span>
+                  <span class={nhan}>Thuộc mục hoạt động</span>
                   <select name="tinDanhMuc" class:list={['mt-2', o]}>
                     <option value="cong-tac-xa-hoi">Công tác xã hội</option>
                     <option value="phat-trien-thanh-vien">Phát triển thành viên</option>
@@ -349,13 +407,27 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
           </fieldset>
 
           <fieldset class={the}>
+            <legend class={legend}>Hình ảnh hoạt động</legend>
+            <p class="mt-4 text-[0.85rem] leading-relaxed text-slate-500">
+              Tối đa 30 ảnh, chọn được nhiều ảnh cùng lúc. Ảnh hiện thành lưới ở cuối bài, bấm vào để
+              xem phóng to.
+            </p>
+            <div id="bo-anh-bai-viet" class="mt-5 grid grid-cols-3 gap-2.5 sm:grid-cols-4"></div>
+            <label class={nutThemAnh}>
+              <span class="text-lg leading-none">+</span> Thêm ảnh hoạt động
+              <input id="chon-anh-bai-viet" type="file" accept="image/*" multiple class="sr-only" />
+            </label>
+            <p id="thong-tin-anh-bai-viet" class="mt-2 text-[0.85rem] font-semibold text-brand-700"></p>
+          </fieldset>
+
+          <fieldset class={the}>
             <legend class={legend}>Nội dung</legend>
             <p class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-[0.85rem] leading-relaxed text-slate-600">
               Gõ như gõ Word. Muốn tạo tiêu đề mục thì bắt đầu dòng bằng
               <code class="rounded bg-white px-1.5 py-0.5 font-mono text-brand-700">##</code> và một
               dấu cách. In đậm thì kẹp chữ giữa hai dấu sao mỗi bên.
             </p>
-            <textarea name="tinNoiDung" rows="14" class:list={['mt-4 font-mono text-[0.9rem]', o]}></textarea>
+            <textarea name="tinNoiDung" rows="14" class:list={['mt-4 font-mono sm:text-[0.9rem]', o]}></textarea>
             <span id="dem-tin" class="mt-2 block text-right text-xs text-slate-400"></span>
           </fieldset>
 
@@ -401,7 +473,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
               <code class="rounded bg-white px-1.5 py-0.5 font-mono text-brand-700">##</code> và một
               dấu cách.
             </p>
-            <textarea name="trangNoiDung" rows="16" class:list={['mt-4 font-mono text-[0.9rem]', o]}></textarea>
+            <textarea name="trangNoiDung" rows="16" class:list={['mt-4 font-mono sm:text-[0.9rem]', o]}></textarea>
             <span id="dem-trang" class="mt-2 block text-right text-xs text-slate-400"></span>
           </fieldset>
         </div>
@@ -499,6 +571,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
   let vaiTro = 'hoi-vien';
   let slugHienTai = '';
   let baiMoi = false;
+  let hoiVienMoi = false;
   let anhMoi: string | null = null;
   let anhBiaMoi: string | null = null;
 
@@ -510,6 +583,19 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
     'phat-trien-thanh-vien': 'Hoạt động phát triển thành viên',
     'van-hoa-the-thao': 'Hoạt động văn hoá – Thể thao',
     'su-kien': 'Sự kiện câu lạc bộ',
+  };
+
+  const TEN_MUC: Record<string, string> = {
+    'cong-tac-xa-hoi': 'Công tác xã hội',
+    'phat-trien-thanh-vien': 'Phát triển thành viên',
+    'van-hoa-the-thao': 'Văn hoá – Thể thao',
+    'su-kien': 'Sự kiện CLB',
+  };
+
+  /** Ngày hôm nay theo giờ máy người dùng (không phải giờ UTC). */
+  const homNay = () => {
+    const d = new Date();
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   };
 
   const TRUONG_HO_SO = [
@@ -544,25 +630,48 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
     return { ok: res.ok, ...(await res.json().catch(() => ({}))) } as any;
   };
 
-  /** Ảnh điện thoại 3–8 MB, thu về cạnh dài 1200px rồi chuyển WebP còn ~150 KB. */
-  async function nenAnh(file: File): Promise<string> {
-    const anh = await createImageBitmap(file);
-    const ti = Math.min(1, 1200 / Math.max(anh.width, anh.height));
-    const w = Math.round(anh.width * ti);
-    const h = Math.round(anh.height * ti);
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    canvas.getContext('2d')!.drawImage(anh, 0, 0, w, h);
-    anh.close();
-    const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/webp', 0.82));
-    if (!blob) throw new Error('Không xử lý được ảnh này.');
-    return await new Promise<string>((res, rej) => {
+  const docDataUrl = (blob: Blob) =>
+    new Promise<string>((res, rej) => {
       const fr = new FileReader();
       fr.onload = () => res(String(fr.result));
       fr.onerror = () => rej(new Error('Không đọc được ảnh.'));
       fr.readAsDataURL(blob);
     });
+
+  /**
+   * Thu ảnh về cạnh dài `canhDai` px rồi nén lại ngay trên máy người dùng.
+   *
+   * Ưu tiên WebP. Safari (iPhone, Mac) không nén được WebP: xin WebP thì nó lặng
+   * lẽ trả PNG nặng gấp nhiều lần và máy chủ từ chối, nên thấy kết quả không
+   * phải WebP là chuyển sang JPEG.
+   */
+  async function veLai(anh: ImageBitmap, canhDai: number, chatLuong: number): Promise<string> {
+    const ti = Math.min(1, canhDai / Math.max(anh.width, anh.height));
+    const w = Math.round(anh.width * ti);
+    const h = Math.round(anh.height * ti);
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+    // Lót nền trắng: ảnh PNG trong suốt mà nén JPEG thì phần trong suốt thành đen.
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(anh, 0, 0, w, h);
+    const lay = (kieu: string) => new Promise<Blob | null>((r) => canvas.toBlob(r, kieu, chatLuong));
+    let blob = await lay('image/webp');
+    if (!blob || blob.type !== 'image/webp') blob = await lay('image/jpeg');
+    if (!blob) throw new Error('Không xử lý được ảnh này.');
+    return docDataUrl(blob);
+  }
+
+  /** Ảnh điện thoại 3–8 MB, thu về cạnh dài 1200px, còn khoảng 150–300 KB. */
+  async function nenAnh(file: File): Promise<string> {
+    const anh = await createImageBitmap(file);
+    try {
+      return await veLai(anh, 1200, 0.82);
+    } finally {
+      anh.close();
+    }
   }
 
   const ganChonAnh = (
@@ -594,6 +703,167 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
 
   ganChonAnh('chon-anh', 'xem-truoc', 'thong-tin-anh', 'aspect-3/4 w-full object-cover', (s) => (anhMoi = s));
   ganChonAnh('chon-anh-bia', 'xem-truoc-bia', 'thong-tin-anh-bia', 'aspect-4/3 w-full object-cover', (s) => (anhBiaMoi = s));
+
+  // ── Bộ ảnh: ảnh sản phẩm của hội viên, ảnh hoạt động trong bài viết ───────
+  /**
+   * Mỗi ảnh trong bộ: `anh` là đường dẫn trên web — ảnh đã lưu, hoặc ảnh vừa
+   * tải lên mà chưa lưu thành công. Ảnh vừa chọn giữ `lon`, `nho` (dữ liệu đã
+   * nén) cho tới lúc tải lên; tải lên rồi thì giữ mã blob để lần lưu sau gửi
+   * lại, phòng khi lần lưu trước hỏng giữa chừng mà ảnh chưa vào website.
+   */
+  type AnhTrongBo = {
+    anh: string;
+    xem: string;
+    chuThich: string;
+    lon?: string;
+    nho?: string;
+    blobLon?: string;
+    blobNho?: string;
+  };
+  type LoaiBo = 'san-pham' | 'bai-viet';
+  const CAU_HINH_BO = {
+    'san-pham': { khung: 'bo-anh-san-pham', chon: 'chon-anh-san-pham', thongTin: 'thong-tin-anh-san-pham', toiDa: 12, coChuThich: true },
+    'bai-viet': { khung: 'bo-anh-bai-viet', chon: 'chon-anh-bai-viet', thongTin: 'thong-tin-anh-bai-viet', toiDa: 30, coChuThich: false },
+  } as const;
+  const boAnh: Record<LoaiBo, AnhTrongBo[]> = { 'san-pham': [], 'bai-viet': [] };
+
+  /** Ảnh đã lưu xem bằng bản nhỏ cho nhẹ; ảnh cũ không có bản nhỏ thì lấy ảnh lớn. */
+  const banNho = (url: string) => url.replace(/\.(webp|jpg)$/, '-nho.$1');
+
+  function veBo(loai: LoaiBo) {
+    const ch = CAU_HINH_BO[loai];
+    const khung = $(ch.khung);
+    khung.innerHTML = '';
+    boAnh[loai].forEach((x, i) => {
+      const oAnh = document.createElement('div');
+      oAnh.className = 'relative overflow-hidden rounded-xl bg-white ring-1 ring-slate-900/10';
+
+      const img = document.createElement('img');
+      img.className = 'aspect-4/3 w-full bg-slate-100 object-cover';
+      img.alt = '';
+      if (x.anh && x.xem !== x.anh) {
+        img.onerror = () => {
+          img.onerror = null;
+          img.src = x.anh;
+        };
+      }
+      img.src = x.xem;
+      oAnh.appendChild(img);
+
+      if (!x.anh || x.blobLon) {
+        const moi = document.createElement('span');
+        moi.className = 'absolute left-1.5 top-1.5 rounded-md bg-accent-500 px-1.5 py-0.5 text-[0.75rem] font-bold text-white';
+        moi.textContent = 'Mới';
+        oAnh.appendChild(moi);
+      }
+
+      const xoa = document.createElement('button');
+      xoa.type = 'button';
+      xoa.className = 'absolute right-1.5 top-1.5 grid h-10 w-10 place-items-center rounded-full bg-white/95 text-red-600 shadow-md ring-1 ring-slate-900/10 transition hover:bg-red-50';
+      xoa.setAttribute('aria-label', `Bỏ ảnh ${i + 1}`);
+      xoa.innerHTML =
+        '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+      xoa.addEventListener('click', () => {
+        boAnh[loai].splice(i, 1);
+        veBo(loai);
+      });
+      oAnh.appendChild(xoa);
+
+      if (ch.coChuThich) {
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.maxLength = 120;
+        inp.placeholder = 'Chú thích (không bắt buộc)';
+        inp.value = x.chuThich;
+        inp.className =
+          'block w-full border-0 border-t border-slate-100 bg-white px-3 py-2.5 text-base text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.9rem]';
+        inp.addEventListener('input', () => (x.chuThich = inp.value));
+        oAnh.appendChild(inp);
+      }
+      khung.appendChild(oAnh);
+    });
+    $(ch.thongTin).textContent = boAnh[loai].length ? `${boAnh[loai].length} / ${ch.toiDa} ảnh` : '';
+  }
+
+  function napBo(loai: LoaiBo, ds: unknown, chuThich: unknown = []) {
+    const dsUrl = Array.isArray(ds) ? ds.map(String) : [];
+    const dsChu = Array.isArray(chuThich) ? chuThich.map(String) : [];
+    boAnh[loai] = dsUrl.map((anh, i) => ({ anh, xem: banNho(anh), chuThich: dsChu[i] ?? '' }));
+    veBo(loai);
+  }
+
+  for (const loai of Object.keys(CAU_HINH_BO) as LoaiBo[]) {
+    const ch = CAU_HINH_BO[loai];
+    const inp = $(ch.chon) as HTMLInputElement;
+    inp.addEventListener('change', async () => {
+      const tep = [...(inp.files ?? [])];
+      inp.value = '';
+      if (!tep.length) return;
+      const conCho = ch.toiDa - boAnh[loai].length;
+      if (conCho <= 0) {
+        $(ch.thongTin).textContent = `Đã đủ ${ch.toiDa} ảnh. Bỏ bớt ảnh cũ rồi mới thêm được.`;
+        return;
+      }
+      const lay = tep.slice(0, conCho);
+      let hong = 0;
+      for (const [k, f] of lay.entries()) {
+        $(ch.thongTin).textContent = `Đang xử lý ảnh ${k + 1} / ${lay.length}…`;
+        try {
+          const bitmap = await createImageBitmap(f);
+          try {
+            const lon = await veLai(bitmap, 1600, 0.82);
+            const nho = await veLai(bitmap, 600, 0.76);
+            boAnh[loai].push({ anh: '', xem: nho, chuThich: '', lon, nho });
+          } finally {
+            bitmap.close();
+          }
+        } catch (e) {
+          hong++;
+          console.error(e);
+        }
+      }
+      veBo(loai);
+      const ghiChu = [
+        tep.length > lay.length ? `chỉ lấy ${lay.length} ảnh vì tối đa ${ch.toiDa} ảnh` : '',
+        hong ? `${hong} ảnh không đọc được, thử ảnh khác giúp tôi` : '',
+      ]
+        .filter(Boolean)
+        .join('; ');
+      $(ch.thongTin).textContent =
+        `${boAnh[loai].length} / ${ch.toiDa} ảnh. Bấm Lưu để đăng ảnh mới lên web.` + (ghiChu ? ` (${ghiChu})` : '');
+    });
+  }
+
+  /**
+   * Tải ảnh mới trong bộ lên máy chủ, mỗi ảnh một lượt, rồi trả dữ liệu gửi kèm
+   * lúc lưu: danh sách ảnh giữ lại đúng thứ tự, và mã blob của các ảnh mới.
+   */
+  async function chuanBiBo(loai: LoaiBo) {
+    const ds = boAnh[loai];
+    const canTai = ds.filter((x) => !x.anh);
+    for (const [k, x] of canTai.entries()) {
+      trangThai.textContent = `Đang tải ảnh ${k + 1} / ${canTai.length} lên…`;
+      const kq = await goi('/api/anh', 'POST', { loai, lon: x.lon, nho: x.nho });
+      if (!kq.ok) throw new Error(kq.loi ?? 'Tải ảnh lên không thành công.');
+      Object.assign(x, { anh: kq.anh, blobLon: kq.blobLon, blobNho: kq.blobNho, lon: undefined, nho: undefined });
+    }
+    trangThai.textContent = 'Đang lưu…';
+    return {
+      danhSach: ds.map((x) => (CAU_HINH_BO[loai].coChuThich ? { anh: x.anh, chuThich: x.chuThich } : x.anh)),
+      anhMoi: ds
+        .filter((x) => x.blobLon)
+        .map((x) => ({ anh: x.anh, blobLon: x.blobLon, blobNho: x.blobNho })),
+    };
+  }
+
+  /** Lưu xong: ảnh mới thành ảnh đã lưu, bỏ mã blob và nhãn "Mới". */
+  const chotBo = (loai: LoaiBo) => {
+    for (const x of boAnh[loai]) {
+      delete x.blobLon;
+      delete x.blobNho;
+    }
+    veBo(loai);
+  };
 
   // ── Danh sách động (sản phẩm, khách hàng) ────────────────────────────────
   const dongDanhSach = (khoi: HTMLElement, giaTri = '') => {
@@ -688,6 +958,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
 
     anhMoi = null;
     $('thong-tin-anh').textContent = '';
+    napBo('san-pham', h.anhDoanhNghiep, h.chuThichAnh);
     const img = $('xem-truoc') as HTMLImageElement;
     const chuaCoAnh = () => {
       img.onerror = null;
@@ -704,6 +975,9 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
       img.onerror = chuaCoAnh;
       img.src = nguonAnh;
     } else chuaCoAnh();
+
+    $('ghi-chu-hoi-vien-moi').hidden = !hoiVienMoi;
+    $('khoi-xoa-hoi-vien').hidden = vaiTro !== 'thu-ky' || hoiVienMoi;
 
     // Hội viên thường chỉ được xem chức vụ; thư ký mới sửa được.
     if (vaiTro === 'thu-ky') {
@@ -724,6 +998,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
 
   async function moHoiVien() {
     const slug = oChonId('chon-nguoi').value;
+    hoiVienMoi = false;
     if (!slug) {
       $('than-hoi-vien').hidden = true;
       thanhLuu.hidden = true;
@@ -737,23 +1012,109 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
 
   $('chon-nguoi').addEventListener('change', moHoiVien);
 
-  // ── Chế độ: tin tức ──────────────────────────────────────────────────────
+  $('nut-hoi-vien-moi').addEventListener('click', () => {
+    hoiVienMoi = true;
+    thongBao.hidden = true;
+    oChonId('chon-nguoi').value = '';
+    donHoSo({ slug: '', thuTu: 9999, nganhNghe: '' });
+    oNhap('hoTen').focus();
+  });
+
+  $('nut-xoa-hoi-vien').addEventListener('click', async () => {
+    const ten = oNhap('hoTen').value.trim() || slugHienTai;
+    if (!confirm(`Xoá hẳn hội viên "${ten}" khỏi website?`)) return;
+    const kq = await goi('/api/ho-so', 'PUT', { slug: slugHienTai, xoa: true });
+    if (!kq.ok) return bao(kq.loi ?? 'Xoá không thành công.', false);
+    oChonId('chon-nguoi').querySelector(`option[value="${slugHienTai}"]`)?.remove();
+    oChonId('chon-nguoi').value = '';
+    slugHienTai = '';
+    $('than-hoi-vien').hidden = true;
+    thanhLuu.hidden = true;
+    bao(`Đã xoá hội viên ${ten}. Website sẽ cập nhật sau khoảng 1–2 phút.`, true);
+  });
+
+  // ── Chế độ: bài viết theo mục hoạt động ──────────────────────────────────
+  type BaiTomTat = { slug: string; tieuDe: string; ngay: string; danhMuc: string; anhBia: string; soAnh: number };
+  let dsBai: BaiTomTat[] = [];
+  let mucDangChon = 'cong-tac-xa-hoi';
+
+  const ngayVn = (s: string) => {
+    const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    return m ? `${m[3]}/${m[2]}/${m[1]}` : '';
+  };
+
+  function veDsBai() {
+    const ul = $('ds-bai');
+    ul.innerHTML = '';
+    const trongMuc = dsBai.filter((b) => b.danhMuc === mucDangChon);
+    if (!trongMuc.length) {
+      const li = document.createElement('li');
+      li.className = 'rounded-xl border border-dashed border-slate-300 bg-white px-4 py-5 text-center text-[0.9rem] text-slate-500';
+      li.textContent = daNap['tin-tuc']
+        ? `Mục ${TEN_MUC[mucDangChon]} chưa có bài nào. Bấm nút phía trên để viết bài đầu tiên.`
+        : 'Đang tải danh sách bài…';
+      ul.appendChild(li);
+      return;
+    }
+    for (const b of trongMuc) {
+      const li = document.createElement('li');
+      const nut = document.createElement('button');
+      nut.type = 'button';
+      nut.className =
+        'flex w-full items-center gap-3 rounded-xl bg-white p-2.5 text-left ring-1 ring-slate-900/5 transition hover:ring-brand-300 aria-[current=true]:ring-2 aria-[current=true]:ring-brand-500';
+      nut.setAttribute('aria-current', String(!baiMoi && b.slug === slugHienTai));
+
+      const anh = document.createElement('img');
+      anh.alt = '';
+      anh.className = b.anhBia
+        ? 'h-14 w-18 shrink-0 rounded-lg bg-brand-50 object-cover'
+        : 'h-14 w-18 shrink-0 rounded-lg bg-brand-50 object-contain p-3 opacity-40';
+      anh.src = b.anhBia || '/logo-mark.svg';
+
+      const chu = document.createElement('span');
+      chu.className = 'min-w-0 flex-1';
+      const td = document.createElement('span');
+      td.className = 'line-clamp-2 block text-[0.95rem] font-semibold leading-snug text-brand-900';
+      td.textContent = b.tieuDe;
+      const phu = document.createElement('span');
+      phu.className = 'mt-1 block text-[0.8rem] text-slate-500';
+      phu.textContent = [ngayVn(b.ngay), b.soAnh ? `${b.soAnh} ảnh` : ''].filter(Boolean).join(' · ');
+      chu.append(td, phu);
+
+      nut.append(anh, chu);
+      nut.addEventListener('click', () => moBai(b.slug));
+      li.appendChild(nut);
+      ul.appendChild(li);
+    }
+  }
+
+  function chonMuc(muc: string) {
+    mucDangChon = muc;
+    for (const n of document.querySelectorAll<HTMLButtonElement>('#chon-muc [data-muc]')) {
+      n.setAttribute('aria-pressed', String(n.dataset.muc === muc));
+    }
+    $('nhan-bai-moi').textContent = `Viết bài mới cho mục ${TEN_MUC[muc]}`;
+    veDsBai();
+  }
+
+  for (const n of document.querySelectorAll<HTMLButtonElement>('#chon-muc [data-muc]')) {
+    n.addEventListener('click', () => {
+      $('than-tin-tuc').hidden = true;
+      thanhLuu.hidden = true;
+      thongBao.hidden = true;
+      slugHienTai = '';
+      chonMuc(n.dataset.muc!);
+    });
+  }
+
   async function napTinTuc() {
+    // Lần đầu mở thì hiện chữ "Đang tải danh sách bài…" trong lúc chờ máy chủ.
+    if (!daNap['tin-tuc']) veDsBai();
     const kq = await goi('/api/tin-tuc', 'POST', {});
     if (!kq.ok) return bao(kq.loi ?? 'Không lấy được danh sách bài viết.', false);
-    const sel = oChonId('chon-tin');
-    sel.innerHTML = '';
-    const dau = document.createElement('option');
-    dau.value = '';
-    dau.textContent = kq.danhSach.length ? '— Chọn bài để sửa —' : 'Chưa có bài viết nào';
-    sel.appendChild(dau);
-    for (const b of kq.danhSach as any[]) {
-      const opt = document.createElement('option');
-      opt.value = b.slug;
-      opt.textContent = `${b.ngay ? String(b.ngay).slice(0, 10) + ' — ' : ''}${b.tieuDe}`;
-      sel.appendChild(opt);
-    }
+    dsBai = kq.danhSach;
     daNap['tin-tuc'] = true;
+    veDsBai();
   }
 
   function donBai(b: Record<string, any>) {
@@ -761,7 +1122,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
     oNhap('tinTieuDe').value = b.tieuDe ?? '';
     oVanBan('tinMoTa').value = b.moTa ?? '';
     oNhap('tinNgay').value = String(b.ngay ?? '').slice(0, 10);
-    oChon('tinDanhMuc').value = b.danhMuc ?? 'su-kien';
+    oChon('tinDanhMuc').value = b.danhMuc ?? mucDangChon;
     oChon('tinAlbum').value = b.album ?? '';
     oVanBan('tinNoiDung').value = b.noiDung ?? '';
 
@@ -775,32 +1136,28 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
       img.src = '/logo-mark.svg';
       img.className = 'aspect-4/3 w-full bg-slate-100 object-cover p-8 opacity-30';
     }
+    napBo('bai-viet', b.hinhAnh);
 
     demTin();
     $('khoi-xoa-tin').hidden = baiMoi;
     $('than-tin-tuc').hidden = false;
     thanhLuu.hidden = false;
+    veDsBai();
   }
 
-  $('chon-tin').addEventListener('change', async () => {
-    const slug = oChonId('chon-tin').value;
-    if (!slug) {
-      $('than-tin-tuc').hidden = true;
-      thanhLuu.hidden = true;
-      return;
-    }
+  async function moBai(slug: string) {
     thongBao.hidden = true;
     baiMoi = false;
     const kq = await goi('/api/tin-tuc', 'PUT', { slug });
-    if (kq.ok) donBai(kq.bai);
-    else bao(kq.loi ?? 'Không mở được bài viết.', false);
-  });
+    if (!kq.ok) return bao(kq.loi ?? 'Không mở được bài viết.', false);
+    donBai(kq.bai);
+    $('than-tin-tuc').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   $('nut-bai-moi').addEventListener('click', () => {
     baiMoi = true;
     thongBao.hidden = true;
-    oChonId('chon-tin').value = '';
-    donBai({ ngay: new Date().toISOString().slice(0, 10), danhMuc: 'su-kien' });
+    donBai({ ngay: homNay(), danhMuc: mucDangChon });
     oNhap('tinTieuDe').focus();
   });
 
@@ -810,7 +1167,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
     if (!kq.ok) return bao(kq.loi ?? 'Xoá không thành công.', false);
     $('than-tin-tuc').hidden = true;
     thanhLuu.hidden = true;
-    daNap['tin-tuc'] = false;
+    slugHienTai = '';
     await napTinTuc();
     bao('Đã xoá bài viết. Website sẽ cập nhật sau khoảng 1–2 phút.', true);
   });
@@ -875,16 +1232,26 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
         const el = oNhap(t);
         if (el) duLieu[t] = el.value;
       }
+      if (hoiVienMoi && !String(duLieu.hoTen ?? '').trim()) throw new Error('Hội viên mới phải có họ và tên.');
       if (vaiTro === 'thu-ky') {
         for (const t of ['chucVuClb', 'capBac', 'thuTu']) duLieu[t] = oNhap(t).value;
       }
       duLieu.sanPham = docDanhSach('ds-san-pham');
       duLieu.khachHang = docDanhSach('ds-khach-hang');
-      return goi('/api/ho-so', 'PUT', { slug: slugHienTai, duLieu, ...(anhMoi ? { anh: anhMoi } : {}) });
+      // Ảnh sản phẩm tải lên trước, từng ảnh một, rồi mới gửi hồ sơ.
+      const bo = await chuanBiBo('san-pham');
+      duLieu.anhDoanhNghiep = bo.danhSach;
+      return goi('/api/ho-so', 'PUT', {
+        slug: slugHienTai,
+        moi: hoiVienMoi,
+        duLieu,
+        anhMoi: bo.anhMoi,
+        ...(anhMoi ? { anh: anhMoi } : {}),
+      });
     }
 
     if (cheDo === 'tin-tuc') {
-      const duLieu = {
+      const duLieu: Record<string, unknown> = {
         tieuDe: oNhap('tinTieuDe').value,
         moTa: oVanBan('tinMoTa').value,
         ngay: oNhap('tinNgay').value,
@@ -892,11 +1259,14 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
         album: oChon('tinAlbum').value,
         noiDung: oVanBan('tinNoiDung').value,
       };
-      if (!duLieu.tieuDe.trim()) throw new Error('Bài viết phải có tiêu đề.');
+      if (!String(duLieu.tieuDe).trim()) throw new Error('Bài viết phải có tiêu đề.');
+      const bo = await chuanBiBo('bai-viet');
+      duLieu.hinhAnh = bo.danhSach;
       return goi('/api/tin-tuc', 'PUT', {
         slug: slugHienTai,
         duLieu,
         moi: baiMoi,
+        anhMoi: bo.anhMoi,
         ...(anhBiaMoi ? { anhBia: anhBiaMoi } : {}),
       });
     }
@@ -948,15 +1318,39 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
         $('thong-tin-anh').textContent = '';
         $('thong-tin-anh-bia').textContent = '';
 
-        if (cheDo === 'tin-tuc' && baiMoi && kq.slug) {
-          // Bài mới đã có mã riêng: chuyển sang chế độ sửa để lần lưu sau không
-          // tạo thêm bài trùng.
-          baiMoi = false;
-          slugHienTai = kq.slug;
-          daNap['tin-tuc'] = false;
+        if (cheDo === 'hoi-vien') {
+          chotBo('san-pham');
+          if (hoiVienMoi && kq.slug) {
+            // Hội viên mới đã có mã riêng: chuyển sang chế độ sửa để lần lưu sau
+            // không tạo thêm một hồ sơ trùng.
+            hoiVienMoi = false;
+            slugHienTai = kq.slug;
+            const sel = oChonId('chon-nguoi');
+            const opt = document.createElement('option');
+            const dn = oNhap('doanhNghiep').value.trim();
+            opt.value = kq.slug;
+            opt.textContent =
+              [oNhap('xungHo').value, oNhap('hoTen').value.trim()].filter(Boolean).join(' ') + (dn ? ` — ${dn}` : '');
+            sel.appendChild(opt);
+            sel.value = kq.slug;
+            $('ghi-chu-hoi-vien-moi').hidden = true;
+            $('khoi-xoa-hoi-vien').hidden = false;
+          }
+        }
+
+        if (cheDo === 'tin-tuc') {
+          chotBo('bai-viet');
+          if (baiMoi && kq.slug) {
+            // Bài mới đã có mã riêng: chuyển sang chế độ sửa để lần lưu sau không
+            // tạo thêm bài trùng.
+            baiMoi = false;
+            slugHienTai = kq.slug;
+            $('khoi-xoa-tin').hidden = false;
+          }
+          // Bài vừa đổi sang mục khác thì chuyển theo, cho bài khỏi "biến mất".
+          const muc = oChon('tinDanhMuc').value;
+          if (muc !== mucDangChon) chonMuc(muc);
           await napTinTuc();
-          oChonId('chon-tin').value = kq.slug;
-          $('khoi-xoa-tin').hidden = false;
         }
       }
     } catch (e) {
@@ -993,7 +1387,7 @@ const legend = 'px-1.5 text-sm font-bold uppercase tracking-[0.14em] text-accent
 
       if (vaiTro === 'thu-ky') {
         $('loi-chao').textContent =
-          'Chế độ ban thư ký — sửa được hồ sơ hội viên, tin tức, nội dung trang và thông tin chung của câu lạc bộ.';
+          'Chế độ ban thư ký — thêm, sửa, xoá hội viên; đăng bài cho từng mục hoạt động; sửa phần giới thiệu các trang và thông tin chung của câu lạc bộ.';
         $('khoi-che-do').hidden = false;
         $('khoi-chon-nguoi').hidden = false;
 

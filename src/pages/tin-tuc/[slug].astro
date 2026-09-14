@@ -3,6 +3,8 @@ import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
 import { DANH_MUC_TIN } from '../../content.config';
 import thuVien from '../../data/thu-vien.json';
+import { boAnh } from '../../lib/anh';
+import LuoiAnh from '../../components/LuoiAnh.astro';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -16,17 +18,24 @@ const { Content } = await render(b);
 
 const tenDanhMuc = DANH_MUC_TIN[d.danhMuc as keyof typeof DANH_MUC_TIN];
 const album = d.album ? thuVien.find((a) => a.slug === d.album) : undefined;
+const hinhAnh = boAnh(d.hinhAnh);
+// Trang của mục hoạt động chứa bài này; Sự kiện CLB nằm riêng ở /su-kien.
+const trangMuc = d.danhMuc === 'su-kien' ? '/su-kien' : `/hoat-dong/${d.danhMuc}`;
 
 const khac = (await getCollection('tinTuc'))
   .filter((x) => x.id !== b.id)
-  .sort((x, y) => y.data.ngay.valueOf() - x.data.ngay.valueOf())
+  .sort(
+    (x, y) =>
+      Number(y.data.danhMuc === d.danhMuc) - Number(x.data.danhMuc === d.danhMuc) ||
+      y.data.ngay.valueOf() - x.data.ngay.valueOf(),
+  )
   .slice(0, 3);
 
 const ngayVn = (x: Date) =>
   x.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 ---
 
-<Base tieuDe={d.tieuDe} moTa={d.moTa} anh={d.anhBia || undefined}>
+<Base tieuDe={d.tieuDe} moTa={d.moTa} anh={d.anhBia || d.hinhAnh[0] || undefined}>
   <article>
     <section class="surface-deep relative isolate overflow-hidden">
       <img
@@ -40,7 +49,7 @@ const ngayVn = (x: Date) =>
           <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-brand-200">
             <li><a href="/" class="transition hover:text-white">Trang chủ</a></li>
             <li aria-hidden="true" class="text-brand-400">/</li>
-            <li><a href="/tin-tuc" class="transition hover:text-white">Tin tức</a></li>
+            <li><a href={trangMuc} class="transition hover:text-white">{tenDanhMuc}</a></li>
           </ol>
         </nav>
 
@@ -79,6 +88,19 @@ const ngayVn = (x: Date) =>
         </div>
       </div>
     </section>
+
+    {
+      hinhAnh.length > 0 && (
+        <section class="border-t border-slate-200 py-14 lg:py-20">
+          <div class="container-page">
+            <h2 class="rule-accent text-(length:--text-h2)">Hình ảnh hoạt động</h2>
+            <div class="mt-10">
+              <LuoiAnh id="anh-bai-viet" anh={hinhAnh} ten={d.tieuDe} />
+            </div>
+          </div>
+        </section>
+      )
+    }
 
     {
       album && (

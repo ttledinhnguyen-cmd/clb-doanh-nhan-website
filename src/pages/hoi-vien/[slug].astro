@@ -2,6 +2,8 @@
 import Base from '../../layouts/Base.astro';
 import { render } from 'astro:content';
 import { layHoiVien, tenDayDu, anhChanDung, coAnhNhieuCo } from '../../lib/hoi-vien';
+import { boAnh } from '../../lib/anh';
+import LuoiAnh from '../../components/LuoiAnh.astro';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () =>
@@ -38,6 +40,7 @@ const thongTinDn = [
 
 const chuaCoLienHe = lienHe.length === 0;
 const coGioiThieu = Boolean(m.body?.trim());
+const anhSanPham = boAnh(d.anhDoanhNghiep, d.chuThichAnh);
 ---
 
 <Base
@@ -161,6 +164,17 @@ const coGioiThieu = Boolean(m.body?.trim());
           }
 
           {
+            anhSanPham.length > 0 && (
+              <div class="mt-12">
+                <h2 class="rule-accent text-(length:--text-h2)">Hình ảnh sản phẩm, dịch vụ</h2>
+                <div class="mt-8">
+                  <LuoiAnh id="anh-san-pham" anh={anhSanPham} ten={d.doanhNghiep || ten} />
+                </div>
+              </div>
+            )
+          }
+
+          {
             d.khachHang.length > 0 && (
               <div class="mt-12">
                 <h2 class="rule-accent text-(length:--text-h2)">Khách hàng & dự án tiêu biểu</h2>
@@ -184,24 +198,6 @@ const coGioiThieu = Boolean(m.body?.trim());
             )
           }
 
-          {
-            d.anhDoanhNghiep.length > 0 && (
-              <div class="mt-12">
-                <h2 class="rule-accent text-(length:--text-h2)">Hình ảnh doanh nghiệp</h2>
-                <div class="mt-8 grid gap-4 sm:grid-cols-2">
-                  {d.anhDoanhNghiep.map((a) => (
-                    <img
-                      src={a}
-                      alt={`Hình ảnh ${d.doanhNghiep || d.hoTen}`}
-                      loading="lazy"
-                      decoding="async"
-                      class="aspect-4/3 w-full rounded-xl object-cover ring-1 ring-slate-900/5"
-                    />
-                  ))}
-                </div>
-              </div>
-            )
-          }
         </div>
 
         {/* Cột thông tin */}

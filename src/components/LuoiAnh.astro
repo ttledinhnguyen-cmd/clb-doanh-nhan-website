@@ -1,0 +1,199 @@
+---
+/**
+ * Lưới ảnh bấm vào xem phóng to — dùng cho ảnh sản phẩm của hội viên và ảnh
+ * trong bài viết hoạt động.
+ *
+ * Lưới hiện bản thu nhỏ; khung phóng to mới tải ảnh lớn. Trên điện thoại vuốt
+ * ngang để lật ảnh, nút lật nằm ở đáy cho khỏi che ảnh. Một trang có mấy lưới
+ * cũng được, mỗi lưới một `id` riêng.
+ */
+interface Props {
+  id: string;
+  /** Tên dùng làm chữ thay thế cho ảnh không có chú thích. */
+  ten: string;
+  anh: { lon: string; nho?: string; chuThich?: string }[];
+}
+const { id, ten, anh } = Astro.props;
+const nhieuAnh = anh.length > 1;
+---
+
+<ul data-luoi-anh={id} class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+  {
+    anh.map((a, i) => (
+      <li>
+        <button
+          type="button"
+          data-lon={a.lon}
+          data-chu-thich={a.chuThich || undefined}
+          class="group block w-full overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5 transition hover:-translate-y-1 hover:shadow-lg"
+          aria-label={`Xem ảnh ${i + 1} trên ${anh.length}${a.chuThich ? ': ' + a.chuThich : ''}`}
+        >
+          <img
+            src={a.nho ?? a.lon}
+            alt={a.chuThich || `${ten} — ảnh ${i + 1}`}
+            width="600"
+            height="450"
+            loading="lazy"
+            decoding="async"
+            class="aspect-4/3 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </button>
+        {a.chuThich && (
+          <p class="mt-2 px-0.5 text-[0.9rem] font-semibold leading-snug text-slate-700">{a.chuThich}</p>
+        )}
+      </li>
+    ))
+  }
+</ul>
+
+<dialog
+  id={`${id}-khung`}
+  class="max-h-none max-w-none bg-transparent backdrop:bg-brand-950/92 backdrop:backdrop-blur-sm"
+>
+  <div class="fixed inset-0 flex flex-col">
+    <div class="flex items-center justify-between gap-4 px-4 py-4 text-white sm:px-6">
+      <p class="text-sm font-semibold" data-so></p>
+      <button
+        type="button"
+        data-dong
+        class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/10 transition hover:bg-white/25"
+        aria-label="Đóng"
+      >
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="relative flex min-h-0 flex-1 items-center justify-center px-4 sm:px-16">
+      <img
+        data-anh-lon
+        src=""
+        alt=""
+        draggable="false"
+        class="max-h-full max-w-full touch-pan-y rounded-lg object-contain select-none"
+      />
+      {
+        nhieuAnh && (
+          <>
+            <button
+              type="button"
+              data-lat="-1"
+              class="absolute left-4 hidden h-12 w-12 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/25 sm:grid"
+              aria-label="Ảnh trước"
+            >
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              data-lat="1"
+              class="absolute right-4 hidden h-12 w-12 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/25 sm:grid"
+              aria-label="Ảnh sau"
+            >
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            </button>
+          </>
+        )
+      }
+    </div>
+
+    <p data-chu class="px-6 pt-4 text-center text-[0.95rem] font-semibold text-white empty:hidden"></p>
+
+    {
+      nhieuAnh ? (
+        <div class="flex items-center justify-center gap-5 px-4 pb-6 pt-5 sm:hidden">
+          <button
+            type="button"
+            data-lat="-1"
+            class="grid h-14 w-14 place-items-center rounded-full bg-white/12 text-white active:bg-white/30"
+            aria-label="Ảnh trước"
+          >
+            <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <p class="text-xs text-brand-200">Vuốt để lật ảnh</p>
+          <button
+            type="button"
+            data-lat="1"
+            class="grid h-14 w-14 place-items-center rounded-full bg-white/12 text-white active:bg-white/30"
+            aria-label="Ảnh sau"
+          >
+            <svg viewBox="0 0 24 24" class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      ) : (
+        <div class="h-6" />
+      )
+    }
+  </div>
+</dialog>
+
+<script>
+  for (const luoi of document.querySelectorAll<HTMLElement>('[data-luoi-anh]')) {
+    const khung = document.getElementById(`${luoi.dataset.luoiAnh}-khung`) as HTMLDialogElement | null;
+    if (!khung || khung.dataset.daGan) continue;
+    khung.dataset.daGan = '1';
+
+    const nut = [...luoi.querySelectorAll<HTMLButtonElement>('[data-lon]')];
+    const anhLon = khung.querySelector<HTMLImageElement>('[data-anh-lon]')!;
+    const so = khung.querySelector<HTMLElement>('[data-so]')!;
+    const chu = khung.querySelector<HTMLElement>('[data-chu]')!;
+    let i = 0;
+
+    const hien = (k: number) => {
+      i = (k + nut.length) % nut.length;
+      anhLon.src = nut[i].dataset.lon ?? '';
+      anhLon.alt = nut[i].querySelector('img')?.alt ?? '';
+      so.textContent = nut.length > 1 ? `Ảnh ${i + 1} / ${nut.length}` : '';
+      chu.textContent = nut[i].dataset.chuThich ?? '';
+    };
+
+    nut.forEach((b, k) =>
+      b.addEventListener('click', () => {
+        hien(k);
+        khung.showModal();
+      }),
+    );
+    khung.querySelector('[data-dong]')!.addEventListener('click', () => khung.close());
+    for (const b of khung.querySelectorAll<HTMLButtonElement>('[data-lat]')) {
+      b.addEventListener('click', () => hien(i + Number(b.dataset.lat)));
+    }
+    khung.addEventListener('click', (e) => {
+      if (e.target === khung) khung.close();
+    });
+    khung.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') hien(i - 1);
+      if (e.key === 'ArrowRight') hien(i + 1);
+    });
+
+    // Vuốt ngang để lật ảnh; chỉ tính khi rõ ràng ngang hơn dọc, để không cướp
+    // thao tác cuộn của người dùng.
+    let x0 = 0;
+    let y0 = 0;
+    khung.addEventListener(
+      'touchstart',
+      (e) => {
+        x0 = e.changedTouches[0].clientX;
+        y0 = e.changedTouches[0].clientY;
+      },
+      { passive: true },
+    );
+    khung.addEventListener(
+      'touchend',
+      (e) => {
+        if (nut.length < 2) return;
+        const dx = e.changedTouches[0].clientX - x0;
+        const dy = e.changedTouches[0].clientY - y0;
+        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) hien(dx < 0 ? i + 1 : i - 1);
+      },
+      { passive: true },
+    );
+  }
+</script>

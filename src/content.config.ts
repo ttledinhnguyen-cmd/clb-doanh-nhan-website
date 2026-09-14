@@ -56,7 +56,10 @@ const hoiVien = defineCollection({
     sanPham: z.array(z.string()).default([]),
     khachHang: z.array(z.string()).default([]),
     uuDaiHoiVien: z.string().default(''),
+    // Ảnh sản phẩm, dịch vụ. `chuThichAnh` là chú thích từng ảnh, cùng thứ tự;
+    // rỗng nếu không ảnh nào có chú thích.
     anhDoanhNghiep: z.array(z.string()).default([]),
+    chuThichAnh: z.array(z.string()).default([]),
     noiBat: z.boolean().default(false),
   }),
 });
@@ -86,6 +89,8 @@ const tinTuc = defineCollection({
     danhMuc: z.enum(Object.keys(DANH_MUC_TIN) as [string, ...string[]]),
     anhBia: z.string().default(''),
     album: z.string().default(''),
+    /** Ảnh ban thư ký tải lên kèm bài, hiện thành lưới ảnh cuối bài. */
+    hinhAnh: z.array(z.string()).default([]),
     noiBat: z.boolean().default(false),
   }),
 });
