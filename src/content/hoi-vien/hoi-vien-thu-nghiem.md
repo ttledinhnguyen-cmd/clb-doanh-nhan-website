@@ -23,10 +23,8 @@ khachHang: []
 uuDaiHoiVien: ""
 anhDoanhNghiep:
   - "/images/tai-len/sp-1789401800903-8fff6129.webp"
-  - "/images/tai-len/sp-1789401801651-1f3ad0e8.jpg"
 chuThichAnh:
-  - "Sản phẩm thử A"
-  - ""
+  - "Sản phẩm thử A đã sửa"
 noiBat: false
 ---
 
