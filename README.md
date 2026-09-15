@@ -44,10 +44,10 @@ website/
 │  ├─ logo-full.svg      Logo đầy đủ (biểu tượng + chữ)
 │  └─ logo-mark.svg      Chỉ biểu tượng cánh yến
 ├─ functions/            Cloudflare Pages Functions
-│  ├─ api/dang-ky.ts     Nhận hồ sơ đăng ký hội viên
+│  ├─ api/              Ghi nội dung từ trang /cap-nhat (hồ sơ, bài viết, ảnh…)
 │  ├─ oauth/index.ts     Đăng nhập GitHub cho /admin (bước 1)
 │  └─ callback/index.ts  Đăng nhập GitHub cho /admin (bước 2)
-├─ schema/dang-ky.sql    Lệnh tạo bảng D1 lưu hồ sơ đăng ký
+├─ schema/              Lệnh tạo bảng D1 (mã đường dẫn riêng, nhật ký sửa)
 └─ scripts/              Script xử lý ảnh & kiểm tra
 ```
 
@@ -149,45 +149,19 @@ Sau đó mỗi lần lưu bài trong `/admin`, Cloudflare tự build lại, khô
 Khi có tên miền riêng, sửa `site:` trong `astro.config.mjs`, `base_url` và `site_url` trong
 `public/admin/config.yml`, và dòng `Sitemap:` trong `public/robots.txt` thành tên miền thật.
 
-### Biểu mẫu đăng ký hội viên
+### Đăng ký hội viên
 
-Đã chạy. Database D1 `clb-doanh-nhan` tạo ngày 09/09/2026 tại khu vực APAC, khai báo sẵn
-trong `wrangler.toml`, bảng theo `schema/dang-ky.sql`. Đã kiểm thử thật: gửi hồ sơ lưu được,
-thiếu trường thì báo lỗi, bot điền vào ô bẫy thì bị bỏ qua âm thầm.
+Từ 15/09/2026 câu lạc bộ nhận hồ sơ bằng phiếu Google Biểu mẫu của ban thư ký. Phiếu có mục
+tải ảnh chân dung, CCCD, giấy phép kinh doanh nên Google bắt người điền đăng nhập, và phiếu loại
+này không nhúng vào trang được. Trang `/dang-ky` giới thiệu điều kiện, những gì cần chuẩn bị rồi
+dẫn sang phiếu.
 
-#### Email báo hồ sơ mới
+Link phiếu nằm ở `phieuDangKy` trong `src/data/site.json`; ban thư ký tự đổi ở mục "Thông tin
+chung của CLB" trong `/cap-nhat` (máy chủ chỉ nhận link bắt đầu bằng `https://`).
 
-Mỗi khi có hồ sơ, hệ thống gửi một email tóm tắt cho ban thư ký, có nút Trả lời trỏ thẳng
-tới email người đăng ký. Cần 2 biến môi trường:
-
-```bash
-npx wrangler pages secret put RESEND_API_KEY --project-name clb-doanh-nhan-khanh-hoa
-npx wrangler pages secret put EMAIL_THU_KY --project-name clb-doanh-nhan-khanh-hoa
-```
-
-API key lấy ở [resend.com](https://resend.com) (miễn phí 3.000 email/tháng, 100 email/ngày).
-Đặt xong phải deploy lại thì mới có hiệu lực.
-
-**Lưu ý quan trọng về giới hạn của Resend khi chưa có tên miền riêng:** địa chỉ gửi đang dùng
-là `onboarding@resend.dev` — địa chỉ dùng thử của Resend, chỉ gửi được **tới đúng email đã
-dùng để đăng ký tài khoản Resend**. Nghĩa là phải đăng ký Resend bằng chính hòm thư mà ban thư
-ký muốn nhận thông báo. Khi CLB có tên miền riêng, xác minh tên miền đó trên Resend rồi sửa
-dòng `from:` trong `functions/api/dang-ky.ts` thành `no-reply@<tên-miền-clb>` là gửi được tới
-bất kỳ địa chỉ nào.
-
-Không đặt 2 biến này thì hồ sơ vẫn lưu bình thường, chỉ là không ai được báo.
-
-Xem hồ sơ đã nhận:
-
-```bash
-npx wrangler d1 execute clb-doanh-nhan --remote -y --command "SELECT id, tao_luc, ho_ten, dien_thoai, doanh_nghiep, trang_thai FROM dang_ky_hoi_vien ORDER BY id DESC LIMIT 20"
-```
-
-Đánh dấu hồ sơ đã xử lý (`moi` → `dang-xet` → `da-ket-nap` hoặc `tu-choi`):
-
-```bash
-npx wrangler d1 execute clb-doanh-nhan --remote -y --command "UPDATE dang_ky_hoi_vien SET trang_thai='da-ket-nap' WHERE id=1"
-```
+Biểu mẫu tự làm trước đây (`functions/api/dang-ky.ts`, lưu vào bảng D1 `dang_ky_hoi_vien`) đã
+gỡ vì không ai xem được hồ sơ gửi về. Lúc gỡ bảng có 0 hồ sơ; bảng vẫn còn trong D1, lệnh tạo ở
+`schema/dang-ky.sql`, cần thì lấy lại mã cũ trong lịch sử Git.
 
 ### Bật trang quản trị `/admin`
 

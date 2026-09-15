@@ -19,7 +19,14 @@ const menu = [
     ],
   },
   { ten: 'Cơ cấu tổ chức', href: '/co-cau-to-chuc' },
-  { ten: 'Hội viên', href: '/hoi-vien' },
+  {
+    ten: 'Hội viên',
+    href: '/hoi-vien',
+    con: [
+      { ten: 'Hội viên CLB', href: '/hoi-vien' },
+      { ten: 'Đăng ký hội viên', href: '/dang-ky' },
+    ],
+  },
   {
     ten: 'Hoạt động',
     href: '/hoat-dong',
@@ -40,6 +47,9 @@ const dangO = (href: string) => {
   const goc = href.split('#')[0];
   return path === goc || path.startsWith(goc + '/');
 };
+/** Mục cha sáng lên khi đang ở trang của nó hoặc của một mục con (ví dụ /dang-ky thuộc Hội viên). */
+const dangOMuc = (m: { href: string; con?: { href: string }[] }) =>
+  dangO(m.href) || (m.con ?? []).some((c) => dangO(c.href));
 
 const lopLink =
   'group/nav relative rounded-lg px-3 py-2 text-[0.88rem] font-semibold text-white/85 transition-colors hover:text-white aria-[current=page]:text-white group-data-dinh/hdr:text-slate-600 group-data-dinh/hdr:hover:text-brand-700 group-data-dinh/hdr:aria-[current=page]:text-brand-700 xl:px-3.5 xl:text-[0.92rem]';
@@ -57,7 +67,7 @@ const lopLink =
         menu.map((m) =>
           m.con ? (
             <div class="group/xo relative">
-              <a href={m.href} aria-current={dangO(m.href) ? 'page' : undefined} class={`${lopLink} inline-flex items-center gap-1`}>
+              <a href={m.href} aria-current={dangOMuc(m) ? 'page' : undefined} class={`${lopLink} inline-flex items-center gap-1`}>
                 {m.ten}
                 <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 opacity-60 transition-transform duration-300 group-hover/xo:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M6 9l6 6 6-6" />
@@ -84,7 +94,7 @@ const lopLink =
               </div>
             </div>
           ) : (
-            <a href={m.href} aria-current={dangO(m.href) ? 'page' : undefined} class={lopLink}>
+            <a href={m.href} aria-current={dangOMuc(m) ? 'page' : undefined} class={lopLink}>
               {m.ten}
               <span
                 aria-hidden="true"
@@ -128,7 +138,7 @@ const lopLink =
             <li>
               <a
                 href={m.href}
-                aria-current={dangO(m.href) ? 'page' : undefined}
+                aria-current={dangOMuc(m) ? 'page' : undefined}
                 class="block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 transition hover:bg-brand-50 hover:text-brand-700 aria-[current=page]:bg-brand-50 aria-[current=page]:text-brand-700"
               >
                 {m.ten}

@@ -2,6 +2,10 @@
 /**
  * Khung chung cho các trang nội dung do ban thư ký tự sửa
  * (Công tác xã hội, Phát triển thành viên, Văn hoá – Thể thao, Sự kiện CLB).
+ *
+ * Bấm vào một mục là thấy ngay các bài của mục đó, như trang chuyên mục của
+ * một trang tin; phần giới thiệu và album ảnh nằm bên dưới. Mục chưa có bài
+ * nào thì phần giới thiệu lên thẳng dưới đầu trang.
  */
 import HeroTrang from './HeroTrang.astro';
 import { render, getCollection, type CollectionEntry } from 'astro:content';
@@ -33,21 +37,11 @@ const ngayVn = (x: Date) =>
 
 <HeroTrang nhan={d.nhan} tieuDe={d.tieuDe} moTa={d.moTa} duongDan={duongDan} />
 
-<section class="py-12 lg:py-16">
-  <div class="container-page">
-    <div
-      class="mx-auto max-w-3xl space-y-5 text-(length:--text-lead) leading-relaxed text-slate-600 [&_a]:font-semibold [&_a]:text-brand-600 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-11 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-brand-900 [&_h3]:mt-9 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-brand-900 [&_li]:ml-5 [&_li]:list-disc [&_strong]:font-bold [&_strong]:text-brand-800"
-    >
-      <Content />
-    </div>
-  </div>
-</section>
-
 {
   baiViet.length > 0 && (
-    <section class="border-t border-slate-200 py-14 lg:py-20">
+    <section class="py-14 lg:py-20">
       <div class="container-page">
-        <h2 class="rule-accent text-(length:--text-h2)">Bài viết</h2>
+        <h2 class="rule-accent text-(length:--text-h2)">Hoạt động gần đây</h2>
         <div class="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
           {baiViet.map((b, i) => (
             <a
@@ -92,6 +86,21 @@ const ngayVn = (x: Date) =>
     </section>
   )
 }
+
+<section class:list={['py-12 lg:py-16', baiViet.length > 0 && 'border-t border-slate-200']}>
+  <div class="container-page">
+    {
+      baiViet.length > 0 && (
+        <h2 class="rule-accent mx-auto mb-8 max-w-3xl text-(length:--text-h2)">Giới thiệu</h2>
+      )
+    }
+    <div
+      class="mx-auto max-w-3xl space-y-5 text-(length:--text-lead) leading-relaxed text-slate-600 [&_a]:font-semibold [&_a]:text-brand-600 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-11 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-brand-900 [&_h3]:mt-9 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-brand-900 [&_li]:ml-5 [&_li]:list-disc [&_strong]:font-bold [&_strong]:text-brand-800"
+    >
+      <Content />
+    </div>
+  </div>
+</section>
 
 {
   album.length > 0 && (

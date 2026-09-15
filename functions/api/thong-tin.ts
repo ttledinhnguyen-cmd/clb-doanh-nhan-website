@@ -31,6 +31,7 @@ const TRUONG = {
   'lienHe.facebook': 300,
   'lienHe.youtube': 300,
   'lienHe.zalo': 300,
+  phieuDangKy: 300,
 } as const;
 
 type Site = Record<string, any>;
@@ -82,6 +83,9 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
     if (!(duong in (body.duLieu ?? {}))) continue;
     const gt = String(body.duLieu![duong] ?? '').trim().slice(0, max);
     if (duong === 'khauHieu' && !gt) continue; // khẩu hiệu không được để trống
+    // Link phiếu đăng ký phải là đường dẫn https đầy đủ; để trống hay gõ sai thì
+    // nút "Điền phiếu đăng ký" hỏng, nên bỏ qua giá trị không hợp lệ.
+    if (duong === 'phieuDangKy' && !/^https:\/\/\S+$/.test(gt)) continue;
     if (String(lay(kq.site, duong) ?? '') !== gt) {
       dat(kq.site, duong, gt);
       daDoi.push(duong);

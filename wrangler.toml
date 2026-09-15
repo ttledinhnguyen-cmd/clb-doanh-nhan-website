@@ -4,10 +4,11 @@ name = "clb-doanh-nhan-khanh-hoa"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-09-01"
 
-# Cơ sở dữ liệu lưu hồ sơ đăng ký hội viên (trang /dang-ky).
-# Tạo ngày 09/09/2026, đặt tại khu vực APAC.
-# Bảng khai trong schema/dang-ky.sql. Tên binding phải giữ đúng là "DB" vì
-# functions/api/dang-ky.ts gọi env.DB.
+# Cơ sở dữ liệu D1, tạo ngày 09/09/2026, đặt tại khu vực APAC.
+# Giữ mã đường dẫn riêng của trang /cap-nhat và nhật ký sửa (schema/ma-cap-nhat.sql).
+# Bảng dang_ky_hoi_vien (schema/dang-ky.sql) thôi dùng từ 15/09/2026: CLB nhận hồ
+# sơ đăng ký bằng phiếu Google Biểu mẫu. Tên binding phải giữ đúng là "DB" vì
+# functions/api/*.ts gọi env.DB.
 [[d1_databases]]
 binding = "DB"
 database_name = "clb-doanh-nhan"

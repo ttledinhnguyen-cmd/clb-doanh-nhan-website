@@ -530,6 +530,17 @@ const nutThemAnh =
               </label>
             </div>
           </fieldset>
+
+          <fieldset class={the}>
+            <legend class={legend}>Đăng ký hội viên</legend>
+            <label class="mt-5 block">
+              <span class={nhan}>Link phiếu đăng ký</span>
+              <input name="ttPhieuDangKy" type="url" inputmode="url" placeholder="https://forms.gle/…" class:list={['mt-2', o]} />
+              <span class="mt-1.5 block text-xs text-slate-500">
+                Nút "Điền phiếu đăng ký" trên trang Đăng ký hội viên mở link này. Phải bắt đầu bằng https://
+              </span>
+            </label>
+          </fieldset>
         </div>
 
         <div id="thong-bao" hidden role="status" class="rounded-xl px-5 py-4 text-[0.95rem] font-semibold"></div>
@@ -1220,6 +1231,7 @@ const nutThemAnh =
     oNhap('ttFacebook').value = t['lienHe.facebook'] ?? '';
     oNhap('ttYoutube').value = t['lienHe.youtube'] ?? '';
     oNhap('ttZalo').value = t['lienHe.zalo'] ?? '';
+    oNhap('ttPhieuDangKy').value = t.phieuDangKy ?? '';
     $('than-thong-tin').hidden = false;
     thanhLuu.hidden = false;
   }
@@ -1292,6 +1304,7 @@ const nutThemAnh =
         'lienHe.facebook': oNhap('ttFacebook').value,
         'lienHe.youtube': oNhap('ttYoutube').value,
         'lienHe.zalo': oNhap('ttZalo').value,
+        phieuDangKy: oNhap('ttPhieuDangKy').value,
       },
     });
   };

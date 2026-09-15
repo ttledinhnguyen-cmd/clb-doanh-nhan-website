@@ -158,6 +158,7 @@ collections:
           - { name: moTa, label: Mô tả ngắn, widget: text }
           - { name: ngayThanhLap, label: Ngày thành lập, widget: string }
           - { name: baoTro, label: Đơn vị bảo trợ, widget: string }
+          - { name: phieuDangKy, label: Link phiếu đăng ký hội viên, widget: string, hint: 'Đường dẫn Google Biểu mẫu, bắt đầu bằng https://' }
           - name: lienHe
             label: Thông tin liên hệ
             widget: object
