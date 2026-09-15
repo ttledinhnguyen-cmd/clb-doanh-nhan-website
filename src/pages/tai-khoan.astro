@@ -1,0 +1,474 @@
+---
+import Base from '../layouts/Base.astro';
+
+/**
+ * Tài khoản: ai cũng đổi được mật khẩu của mình; tài khoản quản trị có thêm phần
+ * quản lý tài khoản (tạo, khoá, xoá, đổi vai trò, cấp link đặt mật khẩu) và xem
+ * lượt đăng nhập, nhật ký thao tác gần đây.
+ *
+ * Tạo tài khoản mới thì quản trị viên nhận một link dùng một lần để gửi riêng cho
+ * người dùng tự đặt mật khẩu, nên quản trị viên không đặt và không biết mật khẩu
+ * của người khác. Máy chủ kiểm lại mọi quyền (functions/api/tai-khoan.ts); ẩn
+ * hiện trên giao diện chỉ để gọn mắt. Chữ lấy từ cơ sở dữ liệu đều gán bằng
+ * textContent, không ghép vào HTML.
+ */
+const o =
+  'w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]';
+const nhan = 'block text-sm font-semibold text-brand-900';
+const the = 'rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5 sm:p-7';
+const nutChinh =
+  'mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-brand-600 px-6 font-bold text-white transition hover:bg-brand-700 disabled:cursor-wait disabled:opacity-70 sm:w-auto';
+---
+
+<Base tieuDe="Tài khoản" khongLapChiMuc anTroLy>
+  <section class="surface-deep relative isolate overflow-hidden">
+    <div class="container-page relative pb-10 pt-32 sm:pt-36 lg:pb-14 lg:pt-40">
+      <p class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-accent-400">Tài khoản</p>
+      <h1 class="mt-3 text-(length:--text-h1) font-extrabold leading-tight text-white">Tài khoản của tôi</h1>
+      <p id="chao" class="mt-4 text-(length:--text-lead) text-brand-100"></p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a
+          href="/cap-nhat"
+          class="inline-flex min-h-11 items-center rounded-full bg-white/10 px-5 text-sm font-semibold text-white ring-1 ring-inset ring-white/20 transition hover:bg-white/20"
+          >Về trang cập nhật</a
+        >
+        <button
+          type="button"
+          id="nut-dang-xuat"
+          class="inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-brand-100 ring-1 ring-inset ring-white/20 transition hover:bg-white/10 hover:text-white"
+        >
+          Đăng xuất
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-10 lg:py-16">
+    <div class="container-page max-w-3xl space-y-7">
+      <div id="dang-tai" class="py-16 text-center">
+        <div class="mx-auto h-9 w-9 animate-spin rounded-full border-3 border-brand-200 border-t-brand-600"></div>
+        <p class="mt-5 text-slate-500">Đang mở…</p>
+      </div>
+
+      {/* ── Đổi mật khẩu ─────────────────────────────────────────────── */}
+      <form id="form-doi" hidden method="post" novalidate class={the}>
+        <h2 class="text-lg font-bold">Đổi mật khẩu</h2>
+        <input id="o-ten" type="text" autocomplete="username" readonly hidden />
+        <label for="mk-cu" class:list={[nhan, 'mt-5']}>Mật khẩu hiện tại</label>
+        <input id="mk-cu" type="password" autocomplete="current-password" maxlength="128" class:list={['mt-2', o]} />
+        <label for="mk-moi" class:list={[nhan, 'mt-5']}>Mật khẩu mới</label>
+        <input id="mk-moi" type="password" autocomplete="new-password" maxlength="128" class:list={['mt-2', o]} />
+        <label for="mk-lai" class:list={[nhan, 'mt-5']}>Nhập lại mật khẩu mới</label>
+        <input id="mk-lai" type="password" autocomplete="new-password" maxlength="128" class:list={['mt-2', o]} />
+        <p class="mt-3 text-[0.85rem] leading-relaxed text-slate-500">
+          Ít nhất 10 ký tự. Đổi xong, các thiết bị khác đang đăng nhập tài khoản này sẽ bị đăng xuất.
+        </p>
+        <p id="bao-doi" role="status" hidden></p>
+        <button id="nut-doi" type="submit" class={nutChinh}>Đổi mật khẩu</button>
+      </form>
+
+      {/* ── Quản trị ─────────────────────────────────────────────────── */}
+      <div id="khoi-quan-tri" hidden class="space-y-7">
+        <form id="form-tao" method="post" novalidate class={the}>
+          <h2 class="text-lg font-bold">Tạo tài khoản</h2>
+          <p class="mt-2 text-[0.9rem] leading-relaxed text-slate-600">
+            Tạo xong, hệ thống đưa ra một link dùng một lần. Gửi riêng link đó cho người dùng qua Zalo để họ tự đặt
+            mật khẩu.
+          </p>
+          <label for="tao-vai-tro" class:list={[nhan, 'mt-5']}>Vai trò</label>
+          <select id="tao-vai-tro" class:list={['mt-2', o]}>
+            <option value="hoi-vien">Hội viên — chỉ sửa hồ sơ của mình</option>
+            <option value="thu-ky">Ban thư ký — sửa toàn bộ nội dung</option>
+            <option value="admin">Quản trị — toàn quyền, kể cả quản lý tài khoản</option>
+          </select>
+          <div id="khoi-tao-ho-so">
+            <label for="tao-ho-so" class:list={[nhan, 'mt-5']}>Hồ sơ hội viên</label>
+            <select id="tao-ho-so" class:list={['mt-2', o]}></select>
+          </div>
+          <label for="tao-ten-hien-thi" class:list={[nhan, 'mt-5']}>Tên hiển thị</label>
+          <input id="tao-ten-hien-thi" type="text" maxlength="80" placeholder="Ví dụ: Chị Lan (ban thư ký)" class:list={['mt-2', o]} />
+          <label for="tao-ten-dang-nhap" class:list={[nhan, 'mt-5']}>Tên đăng nhập</label>
+          <input
+            id="tao-ten-dang-nhap"
+            type="text"
+            maxlength="40"
+            autocomplete="off"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+            placeholder="ví dụ: nguyen-hai-nam"
+            class:list={['mt-2', o]}
+          />
+          <p class="mt-2 text-[0.82rem] leading-relaxed text-slate-500">
+            Chữ thường không dấu, số, dấu chấm, gạch ngang. Không đổi được sau khi tạo.
+          </p>
+          <p id="bao-tao" role="status" hidden></p>
+          <button id="nut-tao" type="submit" class={nutChinh}>Tạo tài khoản</button>
+        </form>
+
+        <div id="khoi-link" hidden class="rounded-2xl border-2 border-accent-300 bg-accent-50 p-5 sm:p-7">
+          <h2 id="tieu-de-link" class="text-lg font-bold text-accent-700"></h2>
+          <p id="mo-ta-link" class="mt-2 text-[0.9rem] leading-relaxed text-slate-700"></p>
+          <div class="mt-4 flex flex-col gap-2.5 sm:flex-row">
+            <input id="o-link" type="text" readonly aria-label="Link đặt mật khẩu" class:list={[o, 'font-mono sm:text-[0.8rem]']} />
+            <button
+              type="button"
+              id="nut-chep"
+              class="inline-flex min-h-12 shrink-0 items-center justify-center rounded-xl bg-accent-500 px-5 font-bold text-white transition hover:bg-accent-600"
+            >
+              Sao chép
+            </button>
+          </div>
+          <p class="mt-3 text-[0.82rem] leading-relaxed text-slate-600">
+            Link chỉ hiện một lần và chỉ dùng được một lần. Lỡ mất thì bấm "Tạo link đặt mật khẩu" ở tài khoản đó để
+            lấy link mới.
+          </p>
+        </div>
+
+        <div class={the}>
+          <h2 class="text-lg font-bold">Danh sách tài khoản</h2>
+          <ul id="ds-tai-khoan" class="mt-4 space-y-3"></ul>
+        </div>
+
+        <div class={the}>
+          <h2 class="text-lg font-bold">Lượt đăng nhập gần đây</h2>
+          <ul id="ds-dang-nhap" class="mt-3 divide-y divide-slate-100 text-[0.88rem]"></ul>
+        </div>
+
+        <div class={the}>
+          <h2 class="text-lg font-bold">Nhật ký thao tác</h2>
+          <ul id="ds-nhat-ky" class="mt-3 divide-y divide-slate-100 text-[0.88rem]"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { MAU_TEN_DANG_NHAP, chuanHoaTen, loiMatKhauMoi, taoKhoa } from '../lib/mat-khau';
+
+  const O =
+    'w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]';
+  const TEN_VAI_TRO: Record<string, string> = { admin: 'Quản trị', 'thu-ky': 'Ban thư ký', 'hoi-vien': 'Hội viên' };
+  const VAI_TRO_CHON: [string, string][] = [
+    ['hoi-vien', 'Hội viên — chỉ sửa hồ sơ của mình'],
+    ['thu-ky', 'Ban thư ký — sửa toàn bộ nội dung'],
+    ['admin', 'Quản trị — toàn quyền, kể cả quản lý tài khoản'],
+  ];
+
+  type TaiKhoan = {
+    id: number;
+    ten_dang_nhap: string;
+    ten_hien_thi: string;
+    vai_tro: string;
+    slug_hoi_vien: string;
+    hoat_dong: number;
+    dang_nhap_lan_cuoi: string;
+    da_dat_mat_khau: number;
+    link_het_han: string | null;
+  };
+
+  const $ = (id: string) => document.getElementById(id)!;
+  const oNhap = (id: string) => $(id) as HTMLInputElement;
+  let toi = { tenDangNhap: '', tenHienThi: '', vaiTro: '' };
+  let idCuaToi = 0;
+  let danhBa: { slug: string; ten: string }[] = [];
+
+  const goi = async (url: string, method = 'GET', body?: object) => {
+    const res = await fetch(url, {
+      method,
+      headers: body ? { 'content-type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (res.status === 401) location.replace('/dang-nhap?tiep=/tai-khoan');
+    return { ok: res.ok, ...(await res.json().catch(() => ({}))) } as any;
+  };
+
+  /** Tạo phần tử; chữ luôn gán bằng textContent. */
+  function el<K extends keyof HTMLElementTagNameMap>(the: K, lop = '', chu = '') {
+    const e = document.createElement(the);
+    if (lop) e.className = lop;
+    if (chu) e.textContent = chu;
+    return e;
+  }
+
+  const bao = (id: string, msg: string, ok: boolean) => {
+    const p = $(id);
+    p.className =
+      'mt-5 rounded-xl px-4 py-3 text-[0.9rem] font-semibold leading-relaxed ring-1 ring-inset ' +
+      (ok ? 'bg-emerald-50 text-emerald-800 ring-emerald-200' : 'bg-red-50 text-red-800 ring-red-200');
+    p.textContent = msg;
+    p.hidden = false;
+  };
+
+  const ngayGio = (s: string | null) =>
+    s ? new Date(s).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' }) : '';
+
+  function chonHoSo(sel: HTMLSelectElement, giaTri = '') {
+    sel.replaceChildren(new Option('— Chọn hội viên —', ''));
+    for (const m of danhBa) sel.add(new Option(m.ten, m.slug));
+    sel.value = giaTri;
+  }
+
+  // ── Link đặt mật khẩu vừa tạo ────────────────────────────────────────────
+  function hienLink(tieuDe: string, ten: string, link: string, hetHan: string) {
+    $('tieu-de-link').textContent = tieuDe;
+    $('mo-ta-link').textContent =
+      `Gửi riêng link này cho người dùng (tên đăng nhập: ${ten}). Link hết hạn lúc ${ngayGio(hetHan)}. ` +
+      'Người nhận mở link, tự đặt mật khẩu rồi được đăng nhập luôn.';
+    oNhap('o-link').value = link;
+    $('khoi-link').hidden = false;
+    $('khoi-link').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  $('nut-chep').addEventListener('click', async () => {
+    const o = oNhap('o-link');
+    try {
+      await navigator.clipboard.writeText(o.value);
+    } catch {
+      o.select();
+      document.execCommand('copy');
+    }
+    $('nut-chep').textContent = 'Đã chép';
+    setTimeout(() => ($('nut-chep').textContent = 'Sao chép'), 2000);
+  });
+
+  // ── Danh sách tài khoản ──────────────────────────────────────────────────
+  const HOI: Record<string, (t: TaiKhoan) => string> = {
+    'dat-lai': (t) =>
+      `Tạo link đặt mật khẩu mới cho ${t.ten_hien_thi}? Mật khẩu hiện tại của tài khoản này mất tác dụng ngay, mọi thiết bị đang đăng nhập bị đăng xuất.`,
+    khoa: (t) => `Khoá tài khoản ${t.ten_hien_thi}? Người này bị đăng xuất và không đăng nhập được cho tới khi mở khoá.`,
+    'mo-khoa': (t) => `Mở khoá tài khoản ${t.ten_hien_thi}?`,
+    xoa: (t) => `Xoá hẳn tài khoản ${t.ten_hien_thi} (${t.ten_dang_nhap})? Việc này không hoàn tác được.`,
+  };
+
+  async function thaoTac(t: TaiKhoan, hanhDong: string) {
+    if (!confirm(HOI[hanhDong](t))) return;
+    const kq = await goi('/api/tai-khoan', 'PUT', { id: t.id, hanhDong });
+    if (!kq.ok) return alert(kq.loi ?? 'Chưa làm được. Anh/chị thử lại.');
+    if (kq.link) hienLink(`Link đặt mật khẩu mới cho ${t.ten_hien_thi}`, kq.tenDangNhap, kq.link, kq.hetHan);
+    await napQuanTri();
+  }
+
+  function moSua(li: HTMLElement, t: TaiKhoan) {
+    const dangMo = li.querySelector('form');
+    if (dangMo) return dangMo.remove();
+
+    const f = el('form', 'mt-4 grid gap-4 rounded-xl bg-slate-50 p-4');
+    const boc = (chu: string, o: HTMLElement) => {
+      const l = el('label', 'block text-sm font-semibold text-brand-900', chu);
+      o.classList.add('mt-1.5');
+      l.append(o);
+      return l;
+    };
+    const tenHienThi = el('input', O);
+    tenHienThi.value = t.ten_hien_thi;
+    tenHienThi.maxLength = 80;
+    const vaiTro = el('select', O);
+    for (const [gt, chu] of VAI_TRO_CHON) vaiTro.add(new Option(chu, gt));
+    vaiTro.value = t.vai_tro;
+    const hoSo = el('select', O);
+    chonHoSo(hoSo, t.slug_hoi_vien);
+    const nhanHoSo = boc('Hồ sơ hội viên', hoSo);
+    const anHoSo = () => (nhanHoSo.hidden = vaiTro.value !== 'hoi-vien');
+    vaiTro.addEventListener('change', anHoSo);
+    anHoSo();
+
+    const luu = el('button', 'inline-flex min-h-11 items-center rounded-full bg-brand-600 px-5 text-sm font-bold text-white transition hover:bg-brand-700', 'Lưu');
+    luu.type = 'submit';
+    const huy = el('button', 'inline-flex min-h-11 items-center rounded-full px-5 text-sm font-semibold text-slate-600 ring-1 ring-inset ring-slate-200 transition hover:bg-white', 'Huỷ');
+    huy.type = 'button';
+    huy.addEventListener('click', () => f.remove());
+    const hang = el('div', 'flex flex-wrap gap-2');
+    hang.append(luu, huy);
+
+    f.append(boc('Tên hiển thị', tenHienThi), boc('Vai trò', vaiTro), nhanHoSo, hang);
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      luu.disabled = true;
+      const kq = await goi('/api/tai-khoan', 'PUT', {
+        id: t.id,
+        hanhDong: 'sua',
+        tenHienThi: tenHienThi.value,
+        vaiTro: vaiTro.value,
+        slugHoiVien: vaiTro.value === 'hoi-vien' ? hoSo.value : '',
+      });
+      luu.disabled = false;
+      if (!kq.ok) return alert(kq.loi ?? 'Chưa lưu được. Anh/chị thử lại.');
+      await napQuanTri();
+    });
+    li.append(f);
+  }
+
+  function veTaiKhoan(ds: TaiKhoan[]) {
+    const ul = $('ds-tai-khoan');
+    ul.replaceChildren();
+    for (const t of ds) {
+      const li = el('li', 'rounded-xl p-4 ring-1 ring-inset ring-slate-200 sm:p-5');
+      const dau = el('div', 'flex flex-wrap items-center gap-x-2.5 gap-y-1.5');
+      const [trangThai, lopTrangThai] = !t.hoat_dong
+        ? ['Đã khoá', 'bg-red-50 text-red-700']
+        : !t.da_dat_mat_khau
+          ? [t.link_het_han ? 'Chờ đặt mật khẩu' : 'Link đã hết hạn', 'bg-amber-50 text-amber-800']
+          : ['Đang dùng', 'bg-emerald-50 text-emerald-700'];
+      dau.append(
+        el('p', 'font-bold text-brand-900', t.ten_hien_thi),
+        el('span', 'rounded-md bg-brand-50 px-2 py-0.5 text-[0.75rem] font-semibold text-brand-700', TEN_VAI_TRO[t.vai_tro] ?? t.vai_tro),
+        el('span', `rounded-md px-2 py-0.5 text-[0.75rem] font-semibold ${lopTrangThai}`, trangThai),
+      );
+      li.append(dau);
+
+      const phu = [`Tên đăng nhập: ${t.ten_dang_nhap}`];
+      if (t.slug_hoi_vien) phu.push(`Hồ sơ: ${danhBa.find((m) => m.slug === t.slug_hoi_vien)?.ten ?? t.slug_hoi_vien}`);
+      phu.push(t.dang_nhap_lan_cuoi ? `Đăng nhập gần nhất: ${ngayGio(t.dang_nhap_lan_cuoi)}` : 'Chưa đăng nhập lần nào');
+      if (!t.da_dat_mat_khau && t.link_het_han) phu.push(`Link hết hạn: ${ngayGio(t.link_het_han)}`);
+      li.append(el('p', 'mt-1.5 text-[0.85rem] leading-relaxed text-slate-500', phu.join(' · ')));
+
+      if (t.id === idCuaToi) {
+        li.append(el('p', 'mt-2 text-[0.82rem] font-semibold text-brand-600', 'Tài khoản anh/chị đang dùng'));
+      } else {
+        const hang = el('div', 'mt-3 flex flex-wrap gap-2');
+        const nut = (chu: string, lop: string, lam: () => void) => {
+          const b = el('button', `inline-flex min-h-10 items-center rounded-full px-4 text-[0.85rem] font-semibold ring-1 ring-inset transition ${lop}`, chu);
+          b.type = 'button';
+          b.addEventListener('click', lam);
+          hang.append(b);
+        };
+        nut('Tạo link đặt mật khẩu', 'text-brand-700 ring-brand-200 hover:bg-brand-50', () => thaoTac(t, 'dat-lai'));
+        nut(t.hoat_dong ? 'Khoá' : 'Mở khoá', 'text-slate-700 ring-slate-200 hover:bg-slate-50', () =>
+          thaoTac(t, t.hoat_dong ? 'khoa' : 'mo-khoa'),
+        );
+        nut('Sửa', 'text-slate-700 ring-slate-200 hover:bg-slate-50', () => moSua(li, t));
+        nut('Xoá', 'text-red-700 ring-red-200 hover:bg-red-50', () => thaoTac(t, 'xoa'));
+        li.append(hang);
+      }
+      ul.append(li);
+    }
+  }
+
+  function veDong(ulId: string, ds: { chinh: string; phu: string; loi?: boolean }[]) {
+    const ul = $(ulId);
+    ul.replaceChildren();
+    if (!ds.length) ul.append(el('li', 'py-2 text-slate-500', 'Chưa có gì.'));
+    for (const d of ds) {
+      const li = el('li', 'flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 py-2.5');
+      li.append(el('span', `font-semibold ${d.loi ? 'text-red-700' : 'text-slate-700'}`, d.chinh), el('span', 'text-slate-500', d.phu));
+      ul.append(li);
+    }
+  }
+
+  async function napQuanTri() {
+    const kq = await goi('/api/tai-khoan');
+    if (!kq.ok) return;
+    idCuaToi = kq.idCuaToi;
+    veTaiKhoan(kq.taiKhoan);
+    veDong(
+      'ds-dang-nhap',
+      (kq.lanDangNhap as any[]).map((l) => ({
+        chinh: `${l.thanh_cong ? 'Thành công' : 'Sai'} · ${String(l.ten_dang_nhap).startsWith('#') ? 'link đặt mật khẩu' : l.ten_dang_nhap || '(bỏ trống)'}`,
+        phu: `${ngayGio(l.luc)} · ${l.ip || 'không rõ IP'}`,
+        loi: !l.thanh_cong,
+      })),
+    );
+    veDong(
+      'ds-nhat-ky',
+      (kq.nhatKy as any[]).map((n) => ({ chinh: `${n.tai_khoan} · ${n.doi_tuong}`, phu: `${n.noi_dung} · ${ngayGio(n.luc)}` })),
+    );
+  }
+
+  // ── Tạo tài khoản ────────────────────────────────────────────────────────
+  const selVaiTro = $('tao-vai-tro') as HTMLSelectElement;
+  const selHoSo = $('tao-ho-so') as HTMLSelectElement;
+  const anHoSoTao = () => ($('khoi-tao-ho-so').hidden = selVaiTro.value !== 'hoi-vien');
+  selVaiTro.addEventListener('change', anHoSoTao);
+  anHoSoTao();
+
+  // Chọn hồ sơ thì gợi ý luôn tên hiển thị và tên đăng nhập nếu còn trống.
+  selHoSo.addEventListener('change', () => {
+    const m = danhBa.find((x) => x.slug === selHoSo.value);
+    if (!m) return;
+    if (!oNhap('tao-ten-hien-thi').value.trim()) oNhap('tao-ten-hien-thi').value = m.ten;
+    if (!oNhap('tao-ten-dang-nhap').value.trim()) oNhap('tao-ten-dang-nhap').value = m.slug.slice(0, 40).replace(/-+$/, '');
+  });
+
+  $('form-tao').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $('bao-tao').hidden = true;
+    const ten = chuanHoaTen(oNhap('tao-ten-dang-nhap').value);
+    if (!MAU_TEN_DANG_NHAP.test(ten)) {
+      return bao('bao-tao', 'Tên đăng nhập dài 3–40 ký tự, chỉ gồm chữ thường không dấu, số, dấu chấm, gạch ngang hoặc gạch dưới.', false);
+    }
+    const nut = $('nut-tao') as HTMLButtonElement;
+    nut.disabled = true;
+    const kq = await goi('/api/tai-khoan', 'POST', {
+      tenDangNhap: ten,
+      tenHienThi: oNhap('tao-ten-hien-thi').value,
+      vaiTro: selVaiTro.value,
+      slugHoiVien: selVaiTro.value === 'hoi-vien' ? selHoSo.value : '',
+    });
+    nut.disabled = false;
+    if (!kq.ok) return bao('bao-tao', kq.loi ?? 'Chưa tạo được tài khoản. Anh/chị thử lại.', false);
+    ($('form-tao') as HTMLFormElement).reset();
+    anHoSoTao();
+    hienLink(`Đã tạo tài khoản ${kq.tenDangNhap}`, kq.tenDangNhap, kq.link, kq.hetHan);
+    await napQuanTri();
+  });
+
+  // ── Đổi mật khẩu ─────────────────────────────────────────────────────────
+  $('form-doi').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $('bao-doi').hidden = true;
+    const cu = oNhap('mk-cu').value;
+    const moi = oNhap('mk-moi').value;
+    if (!cu) return bao('bao-doi', 'Anh/chị nhập mật khẩu hiện tại.', false);
+    const loiMatKhau = loiMatKhauMoi(moi, toi.tenDangNhap);
+    if (loiMatKhau) return bao('bao-doi', loiMatKhau, false);
+    if (moi !== oNhap('mk-lai').value) return bao('bao-doi', 'Hai lần nhập mật khẩu mới chưa giống nhau.', false);
+
+    const nut = $('nut-doi') as HTMLButtonElement;
+    nut.disabled = true;
+    nut.textContent = 'Đang đổi…';
+    try {
+      const khoaCu = await taoKhoa(toi.tenDangNhap, cu);
+      const khoaMoi = await taoKhoa(toi.tenDangNhap, moi);
+      const kq = await goi('/api/doi-mat-khau', 'POST', { khoaCu, khoaMoi });
+      if (!kq.ok) return bao('bao-doi', kq.loi ?? 'Chưa đổi được mật khẩu. Anh/chị thử lại.', false);
+      for (const id of ['mk-cu', 'mk-moi', 'mk-lai']) oNhap(id).value = '';
+      bao('bao-doi', 'Đã đổi mật khẩu. Các thiết bị khác đang đăng nhập tài khoản này đã bị đăng xuất.', true);
+    } catch {
+      bao('bao-doi', 'Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi thử lại.', false);
+    } finally {
+      nut.disabled = false;
+      nut.textContent = 'Đổi mật khẩu';
+    }
+  });
+
+  $('nut-dang-xuat').addEventListener('click', async () => {
+    await fetch('/api/dang-xuat', { method: 'POST' }).catch(() => {});
+    location.replace('/dang-nhap');
+  });
+
+  // ── Mở trang ─────────────────────────────────────────────────────────────
+  (async () => {
+    const p = await goi('/api/phien').catch(() => null);
+    if (!p?.ok) {
+      // Chưa đăng nhập thì goi() đã chuyển sang trang đăng nhập; lỗi khác báo ngay chỗ đang tải.
+      $('dang-tai').textContent = p?.loi ?? 'Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi tải lại trang.';
+      return;
+    }
+    toi = p.taiKhoan;
+    $('chao').textContent = `${toi.tenHienThi} · ${TEN_VAI_TRO[toi.vaiTro] ?? toi.vaiTro} · tên đăng nhập ${toi.tenDangNhap}`;
+    oNhap('o-ten').value = toi.tenDangNhap;
+    $('dang-tai').hidden = true;
+    $('form-doi').hidden = false;
+
+    if (toi.vaiTro === 'admin') {
+      danhBa = await fetch('/danh-ba.json')
+        .then((r) => (r.ok ? r.json() : []))
+        .catch(() => []);
+      chonHoSo(selHoSo);
+      $('khoi-quan-tri').hidden = false;
+      await napQuanTri();
+    }
+  })();
+</script>

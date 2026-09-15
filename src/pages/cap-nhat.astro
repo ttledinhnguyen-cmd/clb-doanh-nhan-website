@@ -2,15 +2,16 @@
 import Base from '../layouts/Base.astro';
 
 /**
- * Trang tự cập nhật nội dung, vào bằng đường dẫn riêng: /cap-nhat?ma=xxxxx
+ * Trang tự cập nhật nội dung, phải đăng nhập tài khoản (/dang-nhap). Đường dẫn
+ * riêng kiểu cũ /cap-nhat?ma=… thôi dùng từ 15/09/2026.
  *
- * Hội viên thường chỉ sửa hồ sơ của mình (kể cả ảnh sản phẩm, dịch vụ). Mã ban
- * thư ký mở thêm: thêm, sửa, xoá hồ sơ mọi hội viên (kể cả chức vụ); đăng bài
- * cho từng mục hoạt động; sửa phần giới thiệu các trang hoạt động và thông tin
- * chung của câu lạc bộ.
+ * Tài khoản hội viên chỉ sửa hồ sơ của mình (kể cả ảnh sản phẩm, dịch vụ). Tài
+ * khoản ban thư ký và quản trị mở thêm: thêm, sửa, xoá hồ sơ mọi hội viên (kể
+ * cả chức vụ); đăng bài cho từng mục hoạt động; sửa phần giới thiệu các trang
+ * hoạt động và thông tin chung của câu lạc bộ.
  *
  * Không ai cần tài khoản GitHub — máy chủ ghi hộ bằng khoá bot.
- * Thiết kế ưu tiên điện thoại vì phần lớn người dùng mở link từ Zalo.
+ * Thiết kế ưu tiên điện thoại vì phần lớn người dùng mở web từ Zalo.
  */
 
 const o =
@@ -34,6 +35,23 @@ const nutThemAnh =
         Cập nhật thông tin
       </h1>
       <p id="loi-chao" class="mt-4 text-(length:--text-lead) text-brand-100"></p>
+      <div id="thanh-tai-khoan" hidden class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2.5">
+        <p class="w-full text-sm text-brand-200 sm:w-auto">
+          Đang đăng nhập: <strong id="ten-tai-khoan" class="font-semibold text-white"></strong>
+        </p>
+        <a
+          href="/tai-khoan"
+          class="inline-flex min-h-10 items-center rounded-full bg-white/10 px-4 text-sm font-semibold text-white ring-1 ring-inset ring-white/20 transition hover:bg-white/20"
+          >Tài khoản</a
+        >
+        <button
+          type="button"
+          id="nut-dang-xuat"
+          class="inline-flex min-h-10 items-center rounded-full px-4 text-sm font-semibold text-brand-100 ring-1 ring-inset ring-white/20 transition hover:bg-white/10 hover:text-white"
+        >
+          Đăng xuất
+        </button>
+      </div>
     </div>
   </section>
 
@@ -48,13 +66,20 @@ const nutThemAnh =
         <h2 class="text-xl font-bold text-red-800">Không mở được</h2>
         <p id="ly-do" class="mt-3 text-[0.95rem] leading-relaxed text-red-700"></p>
         <p class="mt-5 text-[0.95rem] leading-relaxed text-slate-600">
-          Anh/chị vui lòng kiểm tra lại đường dẫn đã nhận, hoặc liên hệ ban thư ký câu lạc bộ.
+          Anh/chị đăng nhập lại, hoặc liên hệ ban thư ký câu lạc bộ để được cấp tài khoản.
         </p>
-        <a
-          href="/lien-he"
-          class="mt-6 inline-flex min-h-11 items-center rounded-full bg-brand-600 px-6 text-sm font-bold text-white transition hover:bg-brand-700"
-          >Liên hệ ban thư ký</a
-        >
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            href="/dang-nhap?tiep=/cap-nhat"
+            class="inline-flex min-h-11 items-center rounded-full bg-brand-600 px-6 text-sm font-bold text-white transition hover:bg-brand-700"
+            >Đăng nhập</a
+          >
+          <a
+            href="/lien-he"
+            class="inline-flex min-h-11 items-center rounded-full px-6 text-sm font-bold text-brand-700 ring-1 ring-inset ring-brand-200 transition hover:bg-brand-50"
+            >Liên hệ ban thư ký</a
+          >
+        </div>
       </div>
 
       <form id="bieu-mau" hidden class="space-y-7">
@@ -559,8 +584,6 @@ const nutThemAnh =
 </Base>
 
 <script>
-  const ma = new URLSearchParams(location.search).get('ma') ?? '';
-
   const $ = (id: string) => document.getElementById(id)!;
   const bieuMau = $('bieu-mau') as HTMLFormElement;
   const oNhap = (ten: string) => bieuMau.elements.namedItem(ten) as HTMLInputElement;
@@ -573,7 +596,8 @@ const nutThemAnh =
 
   type CheDo = 'hoi-vien' | 'tin-tuc' | 'trang' | 'thong-tin';
   let cheDo: CheDo = 'hoi-vien';
-  let vaiTro = 'hoi-vien';
+  /** Tài khoản quản trị hoặc ban thư ký: sửa được toàn bộ nội dung. */
+  let bienTap = false;
   let slugHienTai = '';
   let baiMoi = false;
   let hoiVienMoi = false;
@@ -630,9 +654,15 @@ const nutThemAnh =
     const res = await fetch(url, {
       method,
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ma, ...body }),
+      body: JSON.stringify(body),
     });
-    return { ok: res.ok, ...(await res.json().catch(() => ({}))) } as any;
+    const kq = { ok: res.ok, ...(await res.json().catch(() => ({}))) } as any;
+    // Phiên hết hạn giữa chừng thì không tự chuyển trang, kẻo mất phần đang sửa.
+    if (res.status === 401) {
+      kq.loi =
+        'Phiên đăng nhập đã hết hạn. Anh/chị mở trang Đăng nhập ở một tab mới, đăng nhập xong quay lại đây bấm Lưu (phần đang sửa vẫn còn nguyên).';
+    }
+    return kq;
   };
 
   const docDataUrl = (blob: Blob) =>
@@ -982,10 +1012,10 @@ const nutThemAnh =
     } else chuaCoAnh();
 
     $('ghi-chu-hoi-vien-moi').hidden = !hoiVienMoi;
-    $('khoi-xoa-hoi-vien').hidden = vaiTro !== 'thu-ky' || hoiVienMoi;
+    $('khoi-xoa-hoi-vien').hidden = !bienTap || hoiVienMoi;
 
     // Hội viên thường chỉ được xem chức vụ; thư ký mới sửa được.
-    if (vaiTro === 'thu-ky') {
+    if (bienTap) {
       $('khoi-chuc-vu').hidden = false;
       $('chuc-vu-xem').hidden = true;
     } else {
@@ -1239,7 +1269,7 @@ const nutThemAnh =
         if (el) duLieu[t] = el.value;
       }
       if (hoiVienMoi && !String(duLieu.hoTen ?? '').trim()) throw new Error('Hội viên mới phải có họ và tên.');
-      if (vaiTro === 'thu-ky') {
+      if (bienTap) {
         for (const t of ['chucVuClb', 'capBac', 'thuTu']) duLieu[t] = oNhap(t).value;
       }
       duLieu.sanPham = docDanhSach('ds-san-pham');
@@ -1371,15 +1401,27 @@ const nutThemAnh =
 
   // ── Mở phiên ─────────────────────────────────────────────────────────────
   async function moPhien() {
-    if (!ma) return dungLoi('Đường dẫn thiếu mã truy cập.');
-
-    danhBa = await fetch('/danh-ba.json').then((r) => (r.ok ? r.json() : [])).catch(() => []);
+    // Đường dẫn riêng kiểu cũ (?ma=…) thôi dùng từ 15/09/2026: xoá mã khỏi thanh
+    // địa chỉ rồi mời đăng nhập bằng tài khoản.
+    if (new URLSearchParams(location.search).has('ma')) {
+      history.replaceState(null, '', location.pathname);
+      return dungLoi('Đường dẫn riêng đã ngừng sử dụng. Trang cập nhật giờ đăng nhập bằng tài khoản do ban thư ký cấp.');
+    }
 
     try {
+      const phien = await fetch('/api/phien');
+      if (phien.status === 401) return location.replace('/dang-nhap?tiep=/cap-nhat');
+      const tk = await phien.json().catch(() => ({}));
+      if (!phien.ok) return dungLoi(tk.loi ?? 'Không mở được trang cập nhật.');
+      $('ten-tai-khoan').textContent = `${tk.taiKhoan.tenHienThi} (${tk.taiKhoan.tenDangNhap})`;
+      $('thanh-tai-khoan').hidden = false;
+
+      danhBa = await fetch('/danh-ba.json').then((r) => (r.ok ? r.json() : [])).catch(() => []);
+
       const kq = await goi('/api/ho-so', 'POST', {});
       if (!kq.ok) return dungLoi(kq.loi ?? 'Không mở được hồ sơ.');
 
-      vaiTro = kq.vaiTro;
+      bienTap = Boolean(kq.bienTap);
       $('dang-tai').hidden = true;
       bieuMau.hidden = false;
 
@@ -1392,7 +1434,7 @@ const nutThemAnh =
         dl.appendChild(opt);
       }
 
-      if (vaiTro === 'thu-ky') {
+      if (bienTap) {
         $('loi-chao').textContent =
           'Chế độ ban thư ký — thêm, sửa, xoá hội viên; đăng bài cho từng mục hoạt động; sửa phần giới thiệu các trang và thông tin chung của câu lạc bộ.';
         $('khoi-che-do').hidden = false;
@@ -1427,6 +1469,11 @@ const nutThemAnh =
       dungLoi('Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi thử lại.');
     }
   }
+
+  $('nut-dang-xuat').addEventListener('click', async () => {
+    await fetch('/api/dang-xuat', { method: 'POST' }).catch(() => {});
+    location.replace('/dang-nhap');
+  });
 
   moPhien();
 </script>

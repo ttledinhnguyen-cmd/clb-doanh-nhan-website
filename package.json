@@ -10,7 +10,8 @@
     "check": "astro check",
     "anh": "node scripts/build-assets.mjs",
     "kiem-tra": "node scripts/kiem-tra-link.mjs",
-    "ma": "node scripts/tao-ma-cap-nhat.mjs",
+    "tai-khoan": "node scripts/tao-tai-khoan.mjs",
+    "thu-functions": "npx wrangler pages dev dist --port 8788",
     "kiem-tra-fm": "node scripts/kiem-tra-frontmatter.mjs"
   },
   "dependencies": {

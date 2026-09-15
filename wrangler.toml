@@ -5,7 +5,8 @@ pages_build_output_dir = "dist"
 compatibility_date = "2026-09-01"
 
 # Cơ sở dữ liệu D1, tạo ngày 09/09/2026, đặt tại khu vực APAC.
-# Giữ mã đường dẫn riêng của trang /cap-nhat và nhật ký sửa (schema/ma-cap-nhat.sql).
+# Giữ tài khoản đăng nhập, phiên, lượt đăng nhập và nhật ký thao tác (schema/tai-khoan.sql).
+# Bảng ma_cap_nhat (đường dẫn riêng kiểu cũ) đổi tên thành ma_cap_nhat_cu từ 15/09/2026.
 # Bảng dang_ky_hoi_vien (schema/dang-ky.sql) thôi dùng từ 15/09/2026: CLB nhận hồ
 # sơ đăng ký bằng phiếu Google Biểu mẫu. Tên binding phải giữ đúng là "DB" vì
 # functions/api/*.ts gọi env.DB.

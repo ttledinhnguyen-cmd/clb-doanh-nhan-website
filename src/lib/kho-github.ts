@@ -1,9 +1,9 @@
 /**
  * Phần dùng chung cho các Cloudflare Function ghi nội dung vào kho GitHub.
  *
- * Người dùng cuối (hội viên, ban thư ký) không có tài khoản GitHub. Họ mở đường
- * dẫn riêng có mã bí mật; máy chủ kiểm tra mã rồi thay mặt họ commit bằng một
- * khoá bot mà chỉ máy chủ giữ.
+ * Người dùng cuối (hội viên, ban thư ký) không có tài khoản GitHub. Họ đăng nhập
+ * bằng tài khoản của website (src/lib/tai-khoan.ts); máy chủ kiểm tra phiên rồi
+ * thay mặt họ commit bằng một khoá bot mà chỉ máy chủ giữ.
  */
 
 export interface EnvKho {
@@ -13,28 +13,13 @@ export interface EnvKho {
   GITHUB_BRANCH?: string;
 }
 
-export const json = (data: unknown, status = 200) =>
+export const json = (data: unknown, status = 200, themHeader: Record<string, string> = {}) =>
   new Response(JSON.stringify(data), {
     status,
-    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...themHeader },
   });
 
-export const bam = async (s: string) => {
-  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
-};
-
 export const thieuCauHinh = (env: EnvKho) => !env.DB || !env.GITHUB_TOKEN || !env.GITHUB_REPO;
-
-/** Đổi mã bí mật lấy phiên làm việc. Trả null nếu mã sai. */
-export async function kiemTraMa(env: EnvKho, ma: unknown) {
-  if (typeof ma !== 'string' || ma.length < 20 || ma.length > 100) return null;
-  const hang = await env
-    .DB!.prepare('SELECT slug, vai_tro FROM ma_cap_nhat WHERE ma_bam = ?')
-    .bind(await bam(ma))
-    .first<{ slug: string; vai_tro: string }>();
-  return hang ?? null;
-}
 
 const ghHeaders = (env: EnvKho) => ({
   authorization: `Bearer ${env.GITHUB_TOKEN}`,
@@ -97,30 +82,6 @@ export const sangBase64 = (s: string) => {
   return btoa(nhiPhan);
 };
 
-/** Ghi nhật ký để ban thư ký biết ai sửa gì. Lỗi ở đây không làm hỏng việc đã lưu. */
-export async function ghiNhatKy(
-  env: EnvKho,
-  slugPhien: string,
-  slugDoiTuong: string,
-  truong: string,
-  coAnh: boolean,
-  ip: string,
-) {
-  try {
-    const luc = new Date().toISOString();
-    await env.DB!.batch([
-      env.DB!.prepare(
-        'INSERT INTO nhat_ky_sua_ho_so (slug, truong, co_anh, ip, luc) VALUES (?, ?, ?, ?, ?)',
-      ).bind(slugDoiTuong, truong, coAnh ? 1 : 0, ip, luc),
-      env.DB!.prepare(
-        'UPDATE ma_cap_nhat SET dung_lan_cuoi = ?, so_lan_dung = so_lan_dung + 1 WHERE slug = ?',
-      ).bind(luc, slugPhien),
-    ]);
-  } catch (e) {
-    console.error('Ghi nhật ký thất bại:', e);
-  }
-}
-
 export async function xoaFile(env: EnvKho, duongDan: string, sha: string, loiNhan: string) {
   const res = await fetch(
     `https://api.github.com/repos/${env.GITHUB_REPO}/contents/${encodeURI(duongDan)}`,
@@ -143,16 +104,6 @@ export function lamSlug(s: string) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 60);
-}
-
-/** Chỉ cho mã có vai trò ban thư ký đi tiếp. */
-export async function chiThuKy(env: EnvKho, ma: unknown) {
-  const phien = await kiemTraMa(env, ma);
-  if (!phien) return { loi: json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401) };
-  if (phien.vai_tro !== 'thu-ky') {
-    return { loi: json({ loi: 'Đường dẫn này không có quyền thực hiện thao tác đó.' }, 403) };
-  }
-  return { phien };
 }
 
 // ─── Ghi nhiều file trong một commit ────────────────────────────────────────

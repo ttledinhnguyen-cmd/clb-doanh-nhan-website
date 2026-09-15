@@ -44,10 +44,10 @@ website/
 │  ├─ logo-full.svg      Logo gốc chuyển từ file .ai, nguồn của mọi bản logo
 │  └─ logo-goc.svg, favicon.*, icon-*.png…  Sinh từ logo gốc bằng scripts/tao-logo.mjs
 ├─ functions/            Cloudflare Pages Functions
-│  ├─ api/              Ghi nội dung từ trang /cap-nhat (hồ sơ, bài viết, ảnh…)
+│  ├─ api/              Đăng nhập, tài khoản; ghi nội dung từ trang /cap-nhat (hồ sơ, bài viết, ảnh…)
 │  ├─ oauth/index.ts     Đăng nhập GitHub cho /admin (bước 1)
 │  └─ callback/index.ts  Đăng nhập GitHub cho /admin (bước 2)
-├─ schema/              Lệnh tạo bảng D1 (mã đường dẫn riêng, nhật ký sửa)
+├─ schema/              Lệnh tạo bảng D1 (tài khoản, phiên đăng nhập, nhật ký thao tác)
 └─ scripts/              Script xử lý ảnh & kiểm tra
 ```
 
@@ -78,17 +78,41 @@ Thang màu đầy đủ khai báo trong `src/styles/global.css` (`--color-brand-
 
 Có ba đường, dành cho ba nhóm người khác nhau.
 
-### Cách 1 — `/cap-nhat` (hội viên và ban thư ký, không cần tài khoản)
+### Cách 1 — `/cap-nhat` (hội viên và ban thư ký, đăng nhập bằng tài khoản của website)
 
-Mỗi người nhận một đường dẫn bí mật riêng gửi qua Zalo. Mở link là sửa được hồ sơ,
-không cần tài khoản hay mật khẩu. Hội viên chỉ sửa được hồ sơ của mình; mã của ban thư ký
-sửa được hồ sơ mọi người.
+Mỗi người có một tài khoản do quản trị viên tạo ở `/tai-khoan`. Tạo xong, quản trị viên gửi
+riêng cho người đó một link dùng một lần (`/kich-hoat#…`) để họ tự đặt mật khẩu, rồi đăng
+nhập ở `/dang-nhap`. Không có chỗ tự đăng ký.
 
-Máy chủ kiểm tra mã rồi thay mặt họ commit vào kho GitHub bằng một khoá bot, nên người dùng
-không cần biết GitHub là gì. Chức vụ trong CLB, cấp bậc và thứ tự hiển thị nằm ngoài danh
-sách trường cho sửa, hội viên không tự đổi được dù có chỉnh gói dữ liệu gửi lên.
+| Vai trò | Được làm |
+| --- | --- |
+| `hoi-vien` | Sửa hồ sơ gắn với tài khoản (kể cả ảnh sản phẩm) |
+| `thu-ky` | Sửa toàn bộ nội dung: hồ sơ mọi hội viên, bài viết, trang hoạt động, thông tin chung |
+| `admin` | Như ban thư ký, thêm quản lý tài khoản, xem lượt đăng nhập và nhật ký thao tác |
 
-Cách phát và thu hồi đường dẫn: `docs/buoc-cuoi-bat-tinh-nang-cap-nhat.txt`.
+Máy chủ kiểm tra phiên đăng nhập rồi thay mặt họ commit vào kho GitHub bằng một khoá bot, nên
+người dùng không cần biết GitHub là gì. Chức vụ trong CLB, cấp bậc và thứ tự hiển thị nằm ngoài
+danh sách trường hội viên được sửa, không tự đổi được dù có chỉnh gói dữ liệu gửi lên.
+
+Bảo mật (chi tiết trong `src/lib/mat-khau.ts`, `src/lib/tai-khoan.ts`):
+
+- Trình duyệt kéo giãn mật khẩu bằng PBKDF2-SHA256 600.000 vòng rồi mới gửi; máy chủ chỉ lưu
+  HMAC-SHA256 của khoá đó với muối ngẫu nhiên, không bao giờ nhận mật khẩu gốc. Làm phần nặng ở
+  trình duyệt vì gói miễn phí chỉ cho mỗi lượt gọi hàm 10ms xử lý.
+- Phiên đăng nhập: cookie `__Host-phien` HttpOnly, Secure, SameSite=Lax; CSDL chỉ lưu SHA-256
+  của mã. Hết hạn sau 7 ngày không dùng, tối đa 30 ngày.
+- Mọi yêu cầu ghi phải có `Origin` trùng website. Sai quá 10 lần trong 15 phút (theo IP hoặc
+  theo tên đăng nhập) thì tạm chặn.
+- Link đặt mật khẩu dùng một lần, hết hạn sau 3 ngày; mã nằm sau dấu `#` nên không bị gửi lên
+  máy chủ khi mở trang.
+- Đổi mật khẩu, đặt lại mật khẩu, khoá hay xoá tài khoản đều đăng xuất các phiên liên quan.
+
+Tạo tài khoản quản trị đầu tiên, khôi phục khi quản trị viên quên mật khẩu:
+`docs/buoc-cuoi-bat-tinh-nang-cap-nhat.txt` (lệnh `npm run tai-khoan`). Đường dẫn riêng kiểu cũ
+`/cap-nhat?ma=…` thôi dùng từ 15/09/2026.
+
+Chạy thử các API trên máy: `npm run build` rồi `npm run thu-functions` (wrangler pages dev, D1
+cục bộ; tạo bảng cục bộ bằng `npx wrangler d1 execute clb-doanh-nhan --local -y --file schema/tai-khoan.sql`).
 
 ### Cách 2 — `/admin` (Decap CMS, cần tài khoản GitHub)
 
@@ -210,7 +234,7 @@ và khoảng 1 phút sau là web cập nhật.
 | Biểu mẫu đăng ký + D1 | ✅ đang chạy |
 | Email báo hồ sơ mới | ⏸ tạm gác, chờ CLB có email chính thức |
 | Kho GitHub | `ttledinhnguyen-cmd/clb-doanh-nhan-website` |
-| Hội viên tự cập nhật `/cap-nhat` | ✅ đang chạy — hội viên sửa hồ sơ, thư ký sửa thêm nội dung 4 trang hoạt động |
+| Trang cập nhật `/cap-nhat` | ✅ đang chạy — đăng nhập bằng tài khoản (từ 15/09/2026), quản lý tài khoản ở `/tai-khoan` |
 | Trang quản trị `/admin` (Decap) | ✅ chạy — chỉ dùng khi cần, vì cần tài khoản GitHub |
 | Chatbot | ⏸ chưa chốt công nghệ |
 | Chặn Google lập chỉ mục | 🔒 **đang bật** — nhớ tắt khi ra mắt chính thức |

@@ -1,15 +1,18 @@
 /**
  * Cloudflare Pages Function — hồ sơ hội viên.
  *
- * Người dùng KHÔNG cần tài khoản GitHub. Họ mở đường dẫn riêng có mã bí mật,
- * sửa thông tin, bấm lưu; hàm này kiểm tra mã rồi thay mặt họ ghi vào kho
+ * Người dùng KHÔNG cần tài khoản GitHub. Họ đăng nhập tài khoản của website,
+ * sửa thông tin, bấm lưu; hàm này kiểm tra phiên rồi thay mặt họ ghi vào kho
  * GitHub bằng khoá bot. Cloudflare thấy commit mới thì tự dựng lại website.
  *
- *   POST  { ma }                                    → mở phiên, lấy hồ sơ
- *   PUT   { ma, slug, layHoSo }                     → thư ký xem hồ sơ người khác
- *   PUT   { ma, slug, duLieu, anh?, anhMoi? }       → lưu thay đổi
- *   PUT   { ma, moi: true, duLieu, anh?, anhMoi? }  → thư ký thêm hội viên mới
- *   PUT   { ma, slug, xoa: true }                   → thư ký xoá hội viên
+ * Tài khoản quản trị và ban thư ký sửa được mọi hồ sơ; tài khoản hội viên chỉ
+ * sửa được hồ sơ gắn với tài khoản đó.
+ *
+ *   POST  {}                                    → mở phiên, lấy hồ sơ
+ *   PUT   { slug, layHoSo }                     → thư ký xem hồ sơ người khác
+ *   PUT   { slug, duLieu, anh?, anhMoi? }       → lưu thay đổi
+ *   PUT   { moi: true, duLieu, anh?, anhMoi? }  → thư ký thêm hội viên mới
+ *   PUT   { slug, xoa: true }                   → thư ký xoá hội viên
  *
  * Ảnh sản phẩm được tải lên trước qua /api/anh, mỗi ảnh một lượt; `anhMoi` chỉ
  * mang mã blob. Mọi thứ của một lần bấm Lưu vào đúng một commit.
@@ -18,11 +21,9 @@ import {
   type EnvKho,
   type ThayDoiFile,
   json,
-  kiemTraMa,
   thieuCauHinh,
   docFile,
   lietKeThuMuc,
-  ghiNhatKy,
   ghiMotCommit,
   LoiXungDot,
   lamSlug,
@@ -30,6 +31,7 @@ import {
   tachAnh,
   chotBoAnh,
 } from '../../src/lib/kho-github';
+import { boi, coQuyenBienTap, ghiNhatKy, ipCua, yeuCauDangNhap } from '../../src/lib/tai-khoan';
 import { type BanGhi, docFrontmatter, vietFrontmatter } from '../../src/lib/frontmatter';
 
 const THU_MUC = 'src/content/hoi-vien';
@@ -58,7 +60,7 @@ const TRUONG_CHO_SUA = {
 /**
  * Chức vụ trong CLB, cấp bậc và thứ tự hiển thị là việc của câu lạc bộ, chỉ ban
  * thư ký đổi được. Hội viên thường không đổi được dù có sửa gói dữ liệu gửi lên,
- * vì các trường này chỉ được gộp vào khi phiên có vai trò "thu-ky".
+ * vì các trường này chỉ được gộp vào khi tài khoản là quản trị hoặc ban thư ký.
  */
 const TRUONG_THU_KY = {
   chucVuClb: 'chuoi',
@@ -107,7 +109,6 @@ const hoSoTrong = (): BanGhi => ({
 });
 
 type YeuCau = {
-  ma?: string;
   slug?: string;
   duLieu?: Record<string, unknown>;
   anh?: string;
@@ -224,42 +225,44 @@ async function xuLyAnh(
   return null;
 }
 
+const khongGanHoSo = () =>
+  json({ loi: 'Tài khoản này chưa được gắn với hồ sơ hội viên nào. Anh/chị liên hệ ban thư ký.' }, 403);
+
 // ─── POST: mở phiên, lấy hồ sơ ──────────────────────────────────────────────
 
 export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => {
+  const phien = await yeuCauDangNhap(request, env);
+  if (phien instanceof Response) return phien;
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống cập nhật hồ sơ chưa được kích hoạt.' }, 503);
 
-  const body = (await request.json().catch(() => ({}))) as { ma?: string };
-  const phien = await kiemTraMa(env, body.ma);
-  if (!phien) return json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401);
-
-  if (phien.vai_tro === 'thu-ky') {
+  if (coQuyenBienTap(phien.vaiTro)) {
     // Thư ký chọn được bất kỳ hội viên nào nên cần danh sách để hiển thị.
     const ds = await lietKeThuMuc(env, THU_MUC);
     const slugs = ds
       .filter((x) => x.name.endsWith('.md') && !x.name.startsWith('_'))
       .map((x) => x.name.replace(/\.md$/, ''))
       .sort();
-    return json({ vaiTro: 'thu-ky', danhSach: slugs, hoSo: null });
+    return json({ bienTap: true, danhSach: slugs, hoSo: null });
   }
 
-  const kq = await docHoSo(env, phien.slug);
+  if (!phien.slugHoiVien) return khongGanHoSo();
+  const kq = await docHoSo(env, phien.slugHoiVien);
   if (!kq) return json({ loi: 'Không tìm thấy hồ sơ.' }, 404);
-  return json({ vaiTro: 'hoi-vien', danhSach: [phien.slug], hoSo: kq.hoSo });
+  return json({ bienTap: false, danhSach: [phien.slugHoiVien], hoSo: kq.hoSo });
 };
 
 // ─── PUT: xem, lưu, thêm, xoá ───────────────────────────────────────────────
 
 export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
+  const phien = await yeuCauDangNhap(request, env);
+  if (phien instanceof Response) return phien;
+  const laThuKy = coQuyenBienTap(phien.vaiTro);
+  if (!laThuKy && !phien.slugHoiVien) return khongGanHoSo();
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống cập nhật hồ sơ chưa được kích hoạt.' }, 503);
 
   const body = (await request.json().catch(() => ({}))) as YeuCau;
-
-  const phien = await kiemTraMa(env, body.ma);
-  if (!phien) return json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401);
-  const laThuKy = phien.vai_tro === 'thu-ky';
-  const ip = request.headers.get('cf-connecting-ip') ?? '';
-  const khongCoQuyen = () => json({ loi: 'Đường dẫn này không có quyền thực hiện thao tác đó.' }, 403);
+  const ip = ipCua(request);
+  const khongCoQuyen = () => json({ loi: 'Tài khoản này không có quyền thực hiện thao tác đó.' }, 403);
 
   try {
     // ── Thêm hội viên mới ─────────────────────────────────────────────────
@@ -290,12 +293,12 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
 
       // shaCu = null: chắc chắn file chưa tồn tại lúc ghi.
       thayDoi.push({ duongDan: `${THU_MUC}/${slug}.md`, noiDung: vietFrontmatter(fm, thanMoi), shaCu: null });
-      await ghiMotCommit(env, thayDoi, `Thêm hội viên ${hoTen}`);
-      await ghiNhatKy(env, phien.slug, slug, 'tao-moi', Boolean(fm.anh), ip);
+      await ghiMotCommit(env, thayDoi, `Thêm hội viên ${hoTen}${boi(phien)}`);
+      await ghiNhatKy(env, phien.tenDangNhap, slug, 'tao-moi', Boolean(fm.anh), ip);
       return json({ ok: true, slug });
     }
 
-    const slug = laThuKy ? String(body.slug ?? '') : phien.slug;
+    const slug = laThuKy ? String(body.slug ?? '') : phien.slugHoiVien;
     if (!/^[a-z0-9-]{2,80}$/.test(slug)) return json({ loi: 'Mã hội viên không hợp lệ.' }, 400);
 
     const kq = await docHoSo(env, slug);
@@ -309,18 +312,22 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
       await ghiMotCommit(
         env,
         [{ duongDan: `${THU_MUC}/${slug}.md`, xoa: true }],
-        `Xoá hội viên ${String((kq.hoSo as Record<string, unknown>).hoTen ?? '') || slug}`,
+        `Xoá hội viên ${String((kq.hoSo as Record<string, unknown>).hoTen ?? '') || slug}${boi(phien)}`,
       );
-      // Link riêng của người đã xoá cũng thôi dùng được. Không đụng tới mã ban thư ký.
+      // Tài khoản hội viên gắn với hồ sơ vừa xoá bị khoá luôn. Không đụng tới tài khoản quản trị, ban thư ký.
       try {
-        await env
-          .DB!.prepare("DELETE FROM ma_cap_nhat WHERE slug = ? AND vai_tro != 'thu-ky'")
-          .bind(slug)
-          .run();
+        await env.DB!.batch([
+          env
+            .DB!.prepare(
+              "DELETE FROM phien_dang_nhap WHERE tai_khoan_id IN (SELECT id FROM tai_khoan WHERE slug_hoi_vien = ? AND vai_tro = 'hoi-vien')",
+            )
+            .bind(slug),
+          env.DB!.prepare("UPDATE tai_khoan SET hoat_dong = 0 WHERE slug_hoi_vien = ? AND vai_tro = 'hoi-vien'").bind(slug),
+        ]);
       } catch (e) {
-        console.error('Thu hồi link của hội viên đã xoá thất bại:', e);
+        console.error('Khoá tài khoản của hội viên đã xoá thất bại:', e);
       }
-      await ghiNhatKy(env, phien.slug, slug, 'xoa', false, ip);
+      await ghiNhatKy(env, phien.tenDangNhap, slug, 'xoa', false, ip);
       return json({ ok: true, daXoa: true });
     }
 
@@ -335,10 +342,10 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
     if (daDoi.length === 0) return json({ ok: true, khongDoi: true });
 
     thayDoi.push({ duongDan: `${THU_MUC}/${slug}.md`, noiDung: vietFrontmatter(fm, thanMoi), shaCu: kq.sha });
-    await ghiMotCommit(env, thayDoi, `Cập nhật hồ sơ ${fm.hoTen || slug} (${daDoi.join(', ')})`);
+    await ghiMotCommit(env, thayDoi, `Cập nhật hồ sơ ${fm.hoTen || slug} (${daDoi.join(', ')})${boi(phien)}`);
     await ghiNhatKy(
       env,
-      phien.slug,
+      phien.tenDangNhap,
       slug,
       daDoi.join(','),
       daDoi.includes('anh') || daDoi.includes('anhDoanhNghiep'),

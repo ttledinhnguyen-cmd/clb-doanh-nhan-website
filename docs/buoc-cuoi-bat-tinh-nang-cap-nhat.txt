@@ -1,9 +1,10 @@
 BẬT TÍNH NĂNG HỘI VIÊN TỰ CẬP NHẬT HỒ SƠ
 
-Cập nhật: 10/09/2026
+Cập nhật: 15/09/2026 (chuyển từ đường dẫn riêng sang tài khoản đăng nhập)
 
-Phần lập trình đã xong và đã đưa lên web. Còn 4 bước phải làm bằng tay vì liên
-quan tới tài khoản và khoá bí mật. Làm một lần duy nhất, khoảng 15 phút.
+Phần lập trình đã xong và đã đưa lên web. Những bước dưới đây làm bằng tay vì
+liên quan tới tài khoản và khoá bí mật. Bước 1-3 đã làm ngày 10/09/2026, chỉ
+phải làm lại khi dựng web ở chỗ mới.
 
 
 LƯU Ý TRƯỚC KHI BẮT ĐẦU
@@ -50,8 +51,8 @@ Mở terminal tại thư mục website, chạy lần lượt:
 
 BƯỚC 3 — NỐI CLOUDFLARE VỚI KHO GITHUB
 
-Việc này để mỗi khi hội viên bấm Lưu, Cloudflare tự dựng lại website.
-Không làm bước này thì hồ sơ vẫn được lưu nhưng website sẽ không đổi.
+Việc này để mỗi khi có người bấm Lưu, Cloudflare tự dựng lại website.
+Không làm bước này thì nội dung vẫn được lưu nhưng website sẽ không đổi.
 
 1. Vào https://dash.cloudflare.com
 2. Workers & Pages -> chọn dự án clb-doanh-nhan-khanh-hoa
@@ -68,65 +69,76 @@ Không làm bước này thì hồ sơ vẫn được lưu nhưng website sẽ k
 
 5. Bấm Connect
 
-Cloudflare sẽ tự chạy một lần dựng đầu tiên, mất khoảng 2-3 phút. Xem tiến độ
-ở tab Deployments. Lần dựng này phải thành công thì mới sang bước 4.
-
 Từ lúc này trở đi không cần chạy lệnh deploy bằng tay nữa. Cứ có thay đổi
 trong kho là Cloudflare tự dựng lại.
 
-BƯỚC 4 — PHÁT ĐƯỜNG DẪN CHO HỘI VIÊN
+
+BƯỚC 4 — TẠO BẢNG TÀI KHOẢN VÀ TÀI KHOẢN QUẢN TRỊ ĐẦU TIÊN
 
     cd "D:\Hosting\Hao's Projects\CLB Doanh Nhan\website"
-    npm run ma
+    npx wrangler d1 execute clb-doanh-nhan --remote -y --file schema/tai-khoan.sql
+    npm run tai-khoan -- admin "Quản trị viên" --vai-tro admin --nap
 
-Lệnh này tạo 2 file trong thư mục rieng-tu:
+Lệnh thứ ba KHÔNG in mật khẩu hay link ra màn hình. Nó ghi link đặt mật khẩu
+vào file:
 
-  ma-cap-nhat.sql          → nạp vào cơ sở dữ liệu
-  duong-dan-hoi-vien.txt   → danh sách đường dẫn để gửi cho từng người
+    rieng-tu\link-dat-mat-khau-admin.txt
 
-Nạp vào cơ sở dữ liệu:
+Mở file, bấm link, tự chọn mật khẩu (ít nhất 10 ký tự) là xong. Link dùng
+được một lần, hết hạn sau 7 ngày. Thư mục rieng-tu đã được loại khỏi Git.
 
-    npx wrangler d1 execute clb-doanh-nhan --remote -y --file rieng-tu/ma-cap-nhat.sql
+Từ đó trở đi, tài khoản cho ban thư ký và hội viên tạo ngay trên web:
 
-Rồi mở file duong-dan-hoi-vien.txt. Trong đó có 21 dòng: 1 dòng cho ban thư ký
-và 20 dòng cho từng thành viên Ban điều hành. Gửi riêng từng đường dẫn cho đúng
-người qua Zalo.
-
-QUAN TRỌNG: mỗi đường dẫn là chìa khoá riêng của một người. Ai cầm link đều sửa
-được hồ sơ đó. Gửi riêng, đừng đăng vào nhóm chung.
-
-Thư mục rieng-tu đã được loại khỏi Git nên không bị đẩy lên kho.
+  1. Đăng nhập tài khoản quản trị ở https://kh-sg.com/dang-nhap
+  2. Vào https://kh-sg.com/tai-khoan, mục "Tạo tài khoản"
+  3. Chọn vai trò:
+       Hội viên      chỉ sửa hồ sơ của mình (phải chọn đúng hồ sơ)
+       Ban thư ký    sửa toàn bộ nội dung website
+       Quản trị      như ban thư ký, thêm quyền quản lý tài khoản
+  4. Bấm Tạo tài khoản, gửi riêng link đặt mật khẩu hiện ra cho người đó
+     qua Zalo. Người nhận tự đặt mật khẩu; quản trị viên không biết mật khẩu
+     của ai.
 
 
 SAU KHI XONG
 
-Thử trước một link của chính mình xem có mở được không. Sửa một chữ, bấm Lưu,
-chờ khoảng 1-2 phút rồi xem trang hội viên đó trên web đã đổi chưa.
-
-Chạy được rồi thì báo tôi, tôi sẽ kiểm tra lại toàn bộ luồng trên bản chạy thật.
+Đăng nhập thử bằng tài khoản quản trị, vào trang cập nhật sửa một chữ, bấm
+Lưu, chờ khoảng 1-2 phút rồi xem trên web đã đổi chưa.
 
 
 NHỮNG TÌNH HUỐNG HAY GẶP
 
-Lộ link của ai đó:
-    npm run ma nguyen-hai-nam
-    npx wrangler d1 execute clb-doanh-nhan --remote -y --file rieng-tu/ma-cap-nhat.sql
-  Link cũ mất tác dụng ngay, gửi link mới cho người đó.
+Ai đó quên mật khẩu, hoặc nghi lộ mật khẩu:
+  Vào /tai-khoan, bấm "Tạo link đặt mật khẩu" ở tài khoản đó rồi gửi link
+  mới. Mật khẩu cũ mất tác dụng ngay, mọi thiết bị đang đăng nhập bị đăng xuất.
 
-Muốn cấp thêm một người có quyền như thư ký (sửa được hồ sơ mọi hội viên):
-    npm run ma -- --thu-ky "Tên người đó"
-  Lệnh này chỉ tạo thêm một mã mới, không đụng tới mã của ai. Kết quả ghi ra
-  file riêng có gắn ngày giờ, file link cũ vẫn nguyên.
-  Nên cấp mỗi người một mã riêng thay vì dùng chung, để nhật ký biết ai sửa gì.
+Link đặt mật khẩu hết hạn (3 ngày với link tạo trên web):
+  Bấm lại "Tạo link đặt mật khẩu" để lấy link mới.
 
-Có hội viên mới cần cấp link:
-    npm run ma
-  rồi nạp SQL như trên. Lệnh này phát lại mã cho tất cả mọi người, nên phải gửi
-  lại link mới cho toàn bộ hội viên. Muốn chỉ cấp cho một người thì thêm mã hội
-  viên vào cuối lệnh như ví dụ trên.
+Quản trị viên quên mật khẩu mà không còn quản trị viên nào khác:
+    npm run tai-khoan -- admin --dat-lai --nap
+  rồi mở file rieng-tu\link-dat-mat-khau-admin.txt.
+
+Có người thôi tham gia:
+  Vào /tai-khoan, bấm Khoá (giữ lại tài khoản) hoặc Xoá. Xoá hội viên ở trang
+  cập nhật thì tài khoản hội viên gắn với hồ sơ đó cũng tự bị khoá.
+
+Đăng nhập sai nhiều lần:
+  Sai quá 10 lần trong 15 phút thì bị chặn 15 phút, tính theo tên đăng nhập
+  và theo mạng đang dùng. Chờ hết 15 phút là đăng nhập lại được.
 
 Xem ai đã sửa gì:
-    npx wrangler d1 execute clb-doanh-nhan --remote -y --command "SELECT luc, slug, truong FROM nhat_ky_sua_ho_so ORDER BY id DESC LIMIT 30"
+  Vào /tai-khoan, mục "Nhật ký thao tác" và "Lượt đăng nhập gần đây".
+  Lịch sử kho GitHub cũng ghi "— bởi <tên đăng nhập>" cuối mỗi lần lưu.
+  Xem nhiều hơn:
+    npx wrangler d1 execute clb-doanh-nhan --remote --command "SELECT luc, tai_khoan, doi_tuong, noi_dung FROM nhat_ky_thao_tac ORDER BY id DESC LIMIT 100"
 
 Ai đó sửa hỏng hồ sơ:
   Mọi thay đổi đều lưu lịch sử trong kho GitHub, khôi phục được. Báo tôi.
+
+
+VỀ ĐƯỜNG DẪN RIÊNG KIỂU CŨ (/cap-nhat?ma=...)
+
+Thôi dùng từ 15/09/2026. Mở link cũ sẽ thấy lời mời đăng nhập bằng tài khoản.
+Bảng mã cũ trong cơ sở dữ liệu đã đổi tên thành ma_cap_nhat_cu nên link cũ
+không còn tác dụng ở bất kỳ bản web nào.

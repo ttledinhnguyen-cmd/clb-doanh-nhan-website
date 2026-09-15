@@ -1,3 +1,6 @@
+-- THÔI DÙNG TỪ 15/09/2026: trang /cap-nhat đăng nhập bằng tài khoản (schema/tai-khoan.sql).
+-- Bảng ma_cap_nhat đã đổi tên thành ma_cap_nhat_cu; giữ file này để biết cấu trúc cũ.
+--
 -- Mã cập nhật hồ sơ dành cho hội viên (trang /cap-nhat).
 -- Tạo bằng:  npx wrangler d1 execute clb-doanh-nhan --remote -y --file schema/ma-cap-nhat.sql
 

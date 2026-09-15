@@ -1,0 +1,151 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+
+/**
+ * Đăng nhập bằng tài khoản do quản trị viên cấp. Không có chỗ tự đăng ký.
+ *
+ * Mật khẩu được kéo giãn ngay trên máy (src/lib/mat-khau.ts) rồi mới gửi đi.
+ * Các ô nhập cố ý không có thuộc tính name: lỡ JavaScript không chạy mà trình
+ * duyệt gửi biểu mẫu kiểu cũ, mật khẩu cũng không bị gắn lên thanh địa chỉ.
+ *
+ * `?tiep=` là trang quay về sau khi đăng nhập, chỉ nhận /cap-nhat và /tai-khoan.
+ */
+const o =
+  'w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]';
+const nhan = 'block text-sm font-semibold text-brand-900';
+const { dienThoai } = site.lienHe;
+---
+
+<Base tieuDe="Đăng nhập" khongLapChiMuc anTroLy>
+  <section class="surface-deep relative isolate overflow-hidden">
+    <div class="container-page relative pb-10 pt-32 sm:pt-36 lg:pb-14 lg:pt-40">
+      <p class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-accent-400">Dành cho hội viên và ban thư ký</p>
+      <h1 class="mt-3 text-(length:--text-h1) font-extrabold leading-tight text-white">Đăng nhập</h1>
+      <p class="mt-4 max-w-xl text-(length:--text-lead) text-brand-100">
+        Đăng nhập để cập nhật hồ sơ hội viên và nội dung website câu lạc bộ.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 lg:py-16">
+    <div class="container-page max-w-md">
+      <form id="form-dang-nhap" method="post" novalidate class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 sm:p-8">
+        <label for="ten-dang-nhap" class={nhan}>Tên đăng nhập</label>
+        <input
+          id="ten-dang-nhap"
+          type="text"
+          autocomplete="username"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
+          maxlength="40"
+          required
+          class:list={['mt-2', o]}
+        />
+
+        <label for="mat-khau" class:list={[nhan, 'mt-5']}>Mật khẩu</label>
+        <div class="relative mt-2">
+          <input id="mat-khau" type="password" autocomplete="current-password" maxlength="128" required class:list={[o, 'pr-20']} />
+          <button
+            type="button"
+            id="hien-mat-khau"
+            aria-pressed="false"
+            aria-controls="mat-khau"
+            class="absolute inset-y-0 right-0 flex min-w-16 items-center justify-center rounded-r-xl px-4 text-sm font-semibold text-brand-700"
+          >
+            Hiện
+          </button>
+        </div>
+
+        <p
+          id="loi"
+          role="alert"
+          hidden
+          class="mt-5 rounded-xl bg-red-50 px-4 py-3 text-[0.9rem] font-semibold leading-relaxed text-red-800 ring-1 ring-inset ring-red-200"
+        >
+        </p>
+
+        <button
+          id="nut-dang-nhap"
+          type="submit"
+          class="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-brand-600 px-6 font-bold text-white transition hover:bg-brand-700 disabled:cursor-wait disabled:opacity-70"
+        >
+          Đăng nhập
+        </button>
+      </form>
+
+      {/* Câu liên hệ viết liền một dòng: xuống dòng giữa các thẻ sinh ra dấu cách thừa trước dấu chấm. */}
+      <p class="mt-6 text-center text-[0.9rem] leading-relaxed text-slate-600">
+        Tài khoản do ban thư ký cấp. Chưa có tài khoản hoặc quên mật khẩu, anh/chị liên hệ ban thư ký{dienThoai && <> qua số <a href={`tel:${dienThoai.replace(/[^\d+]/g, '')}`} class="font-semibold text-brand-700 underline underline-offset-4">{dienThoai}</a></>}.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { chuanHoaTen, taoKhoa } from '../lib/mat-khau';
+
+  const $ = (id: string) => document.getElementById(id)!;
+  const form = $('form-dang-nhap') as HTMLFormElement;
+  const oTen = $('ten-dang-nhap') as HTMLInputElement;
+  const oMatKhau = $('mat-khau') as HTMLInputElement;
+  const nut = $('nut-dang-nhap') as HTMLButtonElement;
+  const loi = $('loi');
+
+  // Chỉ quay về trang trong website, không để ?tiep= dẫn sang trang lạ.
+  const tiep = (() => {
+    const t = new URLSearchParams(location.search).get('tiep') ?? '';
+    return /^\/(cap-nhat|tai-khoan)\/?$/.test(t) ? t : '/cap-nhat';
+  })();
+
+  const baoLoi = (msg: string) => {
+    loi.textContent = msg;
+    loi.hidden = false;
+  };
+
+  // Đã đăng nhập sẵn thì đi thẳng.
+  fetch('/api/phien')
+    .then((r) => {
+      if (r.ok) location.replace(tiep);
+    })
+    .catch(() => {});
+
+  $('hien-mat-khau').addEventListener('click', (e) => {
+    const nutHien = e.currentTarget as HTMLButtonElement;
+    const hien = oMatKhau.type === 'password';
+    oMatKhau.type = hien ? 'text' : 'password';
+    nutHien.textContent = hien ? 'Ẩn' : 'Hiện';
+    nutHien.setAttribute('aria-pressed', String(hien));
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loi.hidden = true;
+    const ten = chuanHoaTen(oTen.value);
+    if (!ten || !oMatKhau.value) return baoLoi('Anh/chị nhập đủ tên đăng nhập và mật khẩu.');
+
+    nut.disabled = true;
+    nut.textContent = 'Đang kiểm tra…';
+    try {
+      const khoa = await taoKhoa(ten, oMatKhau.value);
+      const res = await fetch('/api/dang-nhap', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ tenDangNhap: ten, khoa }),
+      });
+      const kq = await res.json().catch(() => ({}));
+      if (res.ok) {
+        location.replace(tiep);
+        return;
+      }
+      baoLoi(kq.loi ?? 'Đăng nhập chưa được. Anh/chị thử lại.');
+      if (res.status === 401) oMatKhau.select();
+    } catch {
+      baoLoi('Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi thử lại.');
+    } finally {
+      nut.disabled = false;
+      nut.textContent = 'Đăng nhập';
+    }
+  });
+</script>

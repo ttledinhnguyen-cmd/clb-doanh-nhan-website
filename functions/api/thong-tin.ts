@@ -5,19 +5,20 @@
  * không làm vỡ trang: các mục cấu trúc như tiêu chí hoạt động, số liệu trang
  * chủ vẫn để nguyên vì chúng ràng buộc với bố cục.
  *
- *   POST { ma }           → lấy thông tin hiện tại
- *   PUT  { ma, duLieu }   → lưu
+ *   POST {}           → lấy thông tin hiện tại
+ *   PUT  { duLieu }   → lưu
+ *
+ * Chỉ tài khoản quản trị và ban thư ký dùng được.
  */
 import {
   type EnvKho,
   json,
-  chiThuKy,
   thieuCauHinh,
   docFile,
   ghiFile,
   sangBase64,
-  ghiNhatKy,
 } from '../../src/lib/kho-github';
+import { boi, ghiNhatKy, ipCua, yeuCauDangNhap } from '../../src/lib/tai-khoan';
 
 const DUONG_DAN = 'src/data/site.json';
 
@@ -53,9 +54,9 @@ async function docSite(env: EnvKho) {
 }
 
 export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => {
+  const phien = await yeuCauDangNhap(request, env, 'bien-tap');
+  if (phien instanceof Response) return phien;
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống chưa được kích hoạt.' }, 503);
-  const { loi } = await chiThuKy(env, ((await request.json().catch(() => ({}))) as { ma?: string }).ma);
-  if (loi) return loi;
 
   const kq = await docSite(env);
   if (!kq) return json({ loi: 'Không đọc được thông tin câu lạc bộ.' }, 404);
@@ -66,14 +67,13 @@ export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => 
 };
 
 export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
+  const phien = await yeuCauDangNhap(request, env, 'bien-tap');
+  if (phien instanceof Response) return phien;
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống chưa được kích hoạt.' }, 503);
 
   const body = (await request.json().catch(() => ({}))) as {
-    ma?: string;
     duLieu?: Record<string, unknown>;
   };
-  const { phien, loi } = await chiThuKy(env, body.ma);
-  if (loi) return loi;
 
   const kq = await docSite(env);
   if (!kq) return json({ loi: 'Không đọc được thông tin câu lạc bộ.' }, 404);
@@ -99,16 +99,9 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
     DUONG_DAN,
     sangBase64(JSON.stringify(kq.site, null, 2) + '\n'),
     kq.sha,
-    `Cập nhật thông tin câu lạc bộ (${daDoi.join(', ')})`,
+    `Cập nhật thông tin câu lạc bộ (${daDoi.join(', ')})${boi(phien)}`,
   );
-  await ghiNhatKy(
-    env,
-    phien!.slug,
-    'thong-tin-clb',
-    daDoi.join(','),
-    false,
-    request.headers.get('cf-connecting-ip') ?? '',
-  );
+  await ghiNhatKy(env, phien.tenDangNhap, 'thong-tin-clb', daDoi.join(','), false, ipCua(request));
 
   return json({ ok: true, daDoi });
 };

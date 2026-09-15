@@ -2,23 +2,22 @@
  * Cloudflare Pages Function — ban thư ký sửa nội dung các trang hoạt động.
  *
  * Áp dụng cho 4 trang: Công tác xã hội, Phát triển thành viên, Văn hoá – Thể
- * thao, Sự kiện câu lạc bộ. Chỉ mã có vai trò "thu-ky" mới dùng được.
+ * thao, Sự kiện câu lạc bộ. Chỉ tài khoản quản trị và ban thư ký dùng được.
  *
- *   POST { ma }                 → danh sách trang
- *   PUT  { ma, slug }           → lấy nội dung một trang
- *   PUT  { ma, slug, duLieu }   → lưu
+ *   POST {}                 → danh sách trang
+ *   PUT  { slug }           → lấy nội dung một trang
+ *   PUT  { slug, duLieu }   → lưu
  */
 import {
   type EnvKho,
   json,
-  kiemTraMa,
   thieuCauHinh,
   docFile,
   ghiFile,
   lietKeThuMuc,
   sangBase64,
-  ghiNhatKy,
 } from '../../src/lib/kho-github';
+import { boi, ghiNhatKy, ipCua, yeuCauDangNhap } from '../../src/lib/tai-khoan';
 import { docFrontmatter, vietFrontmatter } from '../../src/lib/frontmatter';
 
 const THU_MUC = 'src/content/trang';
@@ -33,21 +32,10 @@ const TRUONG_CHO_SUA = {
 
 const GIOI_HAN = { chuoi: 200, vanBan: 600, vanBanDai: 20000 };
 
-async function chiThuKy(env: EnvKho, ma: unknown) {
-  const phien = await kiemTraMa(env, ma);
-  if (!phien) return { loi: json({ loi: 'Đường dẫn không đúng hoặc đã hết hiệu lực.' }, 401) };
-  if (phien.vai_tro !== 'thu-ky') {
-    return { loi: json({ loi: 'Đường dẫn này không có quyền sửa nội dung trang.' }, 403) };
-  }
-  return { phien };
-}
-
 export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => {
+  const phien = await yeuCauDangNhap(request, env, 'bien-tap');
+  if (phien instanceof Response) return phien;
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống chưa được kích hoạt.' }, 503);
-
-  const body = (await request.json().catch(() => ({}))) as { ma?: string };
-  const { loi } = await chiThuKy(env, body.ma);
-  if (loi) return loi;
 
   const ds = await lietKeThuMuc(env, THU_MUC);
   const slugs = ds
@@ -59,16 +47,14 @@ export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => 
 };
 
 export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
+  const phien = await yeuCauDangNhap(request, env, 'bien-tap');
+  if (phien instanceof Response) return phien;
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống chưa được kích hoạt.' }, 503);
 
   const body = (await request.json().catch(() => ({}))) as {
-    ma?: string;
     slug?: string;
     duLieu?: Record<string, unknown>;
   };
-
-  const { phien, loi } = await chiThuKy(env, body.ma);
-  if (loi) return loi;
 
   const slug = String(body.slug ?? '');
   if (!/^[a-z0-9-]{2,80}$/.test(slug)) return json({ loi: 'Mã trang không hợp lệ.' }, 400);
@@ -111,17 +97,10 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
     duongDan,
     sangBase64(vietFrontmatter(fm, thanMoi)),
     file.sha,
-    `Cập nhật trang ${fm.tieuDe || slug} (${daDoi.join(', ')})`,
+    `Cập nhật trang ${fm.tieuDe || slug} (${daDoi.join(', ')})${boi(phien)}`,
   );
 
-  await ghiNhatKy(
-    env,
-    phien!.slug,
-    `trang/${slug}`,
-    daDoi.join(','),
-    false,
-    request.headers.get('cf-connecting-ip') ?? '',
-  );
+  await ghiNhatKy(env, phien.tenDangNhap, `trang/${slug}`, daDoi.join(','), false, ipCua(request));
 
   return json({ ok: true, daDoi });
 };

@@ -3,13 +3,13 @@
  *
  * Mỗi bài thuộc một mục: Công tác xã hội, Phát triển thành viên, Văn hoá – Thể
  * thao, Sự kiện CLB. Bài hiện ở trang của đúng mục đó và ở trang Tin tức.
- * Chỉ mã có vai trò "thu-ky" dùng được.
+ * Chỉ tài khoản quản trị và ban thư ký dùng được.
  *
- *   POST { ma }                                        → danh sách bài
- *   PUT  { ma, slug }                                  → lấy một bài
- *   PUT  { ma, moi: true, duLieu, anhBia?, anhMoi? }   → tạo bài mới
- *   PUT  { ma, slug, duLieu, anhBia?, anhMoi? }        → lưu
- *   PUT  { ma, slug, xoa: true }                       → xoá bài
+ *   POST {}                                        → danh sách bài
+ *   PUT  { slug }                                  → lấy một bài
+ *   PUT  { moi: true, duLieu, anhBia?, anhMoi? }   → tạo bài mới
+ *   PUT  { slug, duLieu, anhBia?, anhMoi? }        → lưu
+ *   PUT  { slug, xoa: true }                       → xoá bài
  *
  * Ảnh trong bài được tải lên trước qua /api/anh; mỗi lần bấm Lưu là một commit.
  */
@@ -17,12 +17,10 @@ import {
   type EnvKho,
   type ThayDoiFile,
   json,
-  chiThuKy,
   thieuCauHinh,
   docFile,
   lietKeThuMuc,
   docCaThuMuc,
-  ghiNhatKy,
   ghiMotCommit,
   LoiXungDot,
   lamSlug,
@@ -30,6 +28,7 @@ import {
   tachAnh,
   chotBoAnh,
 } from '../../src/lib/kho-github';
+import { boi, ghiNhatKy, ipCua, yeuCauDangNhap } from '../../src/lib/tai-khoan';
 import { type BanGhi, docFrontmatter, vietFrontmatter } from '../../src/lib/frontmatter';
 
 const THU_MUC = 'src/content/tin-tuc';
@@ -39,7 +38,6 @@ const DANH_MUC = ['cong-tac-xa-hoi', 'phat-trien-thanh-vien', 'van-hoa-the-thao'
 const GIOI_HAN = { tieuDe: 200, moTa: 500, noiDung: 30000, hinhAnh: 30 };
 
 type YeuCau = {
-  ma?: string;
   slug?: string;
   duLieu?: Record<string, unknown>;
   anhBia?: string;
@@ -102,9 +100,9 @@ const loiMayChu = (e: unknown) => {
 };
 
 export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => {
+  const phien = await yeuCauDangNhap(request, env, 'bien-tap');
+  if (phien instanceof Response) return phien;
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống chưa được kích hoạt.' }, 503);
-  const { loi } = await chiThuKy(env, ((await request.json().catch(() => ({}))) as { ma?: string }).ma);
-  if (loi) return loi;
 
   try {
     const bai = (await docCaThuMuc(env, THU_MUC)).map(({ ten, noiDung }) => {
@@ -126,12 +124,12 @@ export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => 
 };
 
 export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
+  const phien = await yeuCauDangNhap(request, env, 'bien-tap');
+  if (phien instanceof Response) return phien;
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống chưa được kích hoạt.' }, 503);
 
   const body = (await request.json().catch(() => ({}))) as YeuCau;
-  const { phien, loi } = await chiThuKy(env, body.ma);
-  if (loi) return loi;
-  const ip = request.headers.get('cf-connecting-ip') ?? '';
+  const ip = ipCua(request);
 
   try {
     // ── Tạo bài mới ───────────────────────────────────────────────────────
@@ -172,8 +170,8 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
         noiDung: vietFrontmatter(fm, than ? than + '\n' : ''),
         shaCu: null,
       });
-      await ghiMotCommit(env, thayDoi, `Thêm bài viết "${tieuDe}"`);
-      await ghiNhatKy(env, phien!.slug, `tin-tuc/${slug}`, 'tao-moi', Boolean(fm.anhBia), ip);
+      await ghiMotCommit(env, thayDoi, `Thêm bài viết "${tieuDe}"${boi(phien)}`);
+      await ghiNhatKy(env, phien.tenDangNhap, `tin-tuc/${slug}`, 'tao-moi', Boolean(fm.anhBia), ip);
       return json({ ok: true, slug });
     }
 
@@ -186,8 +184,8 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
 
     // ── Xoá bài ───────────────────────────────────────────────────────────
     if (body.xoa) {
-      await ghiMotCommit(env, [{ duongDan, xoa: true }], `Xoá bài viết "${slug}"`);
-      await ghiNhatKy(env, phien!.slug, `tin-tuc/${slug}`, 'xoa', false, ip);
+      await ghiMotCommit(env, [{ duongDan, xoa: true }], `Xoá bài viết "${slug}"${boi(phien)}`);
+      await ghiNhatKy(env, phien.tenDangNhap, `tin-tuc/${slug}`, 'xoa', false, ip);
       return json({ ok: true, daXoa: true });
     }
 
@@ -228,10 +226,10 @@ export const onRequestPut: PagesFunction<EnvKho> = async ({ request, env }) => {
     if (daDoi.length === 0) return json({ ok: true, khongDoi: true });
 
     thayDoi.push({ duongDan, noiDung: vietFrontmatter(fm, thanMoi), shaCu: file.sha });
-    await ghiMotCommit(env, thayDoi, `Cập nhật bài viết "${tieuDe}" (${daDoi.join(', ')})`);
+    await ghiMotCommit(env, thayDoi, `Cập nhật bài viết "${tieuDe}" (${daDoi.join(', ')})${boi(phien)}`);
     await ghiNhatKy(
       env,
-      phien!.slug,
+      phien.tenDangNhap,
       `tin-tuc/${slug}`,
       daDoi.join(','),
       daDoi.includes('anhBia') || daDoi.includes('hinhAnh'),

@@ -1,0 +1,187 @@
+---
+import Base from '../layouts/Base.astro';
+
+/**
+ * Đặt mật khẩu bằng link dùng một lần: /kich-hoat#<mã>.
+ *
+ * Mã nằm sau dấu # nên không bị gửi lên máy chủ khi mở trang, không lọt vào nhật
+ * ký truy cập hay tiêu đề Referer. Trang đọc mã, xoá ngay khỏi thanh địa chỉ,
+ * hỏi máy chủ link còn dùng được không rồi mới hiện ô đặt mật khẩu. Zalo có mở
+ * thử link để làm ảnh xem trước cũng không làm hỏng link: link chỉ bị dùng khi
+ * người nhận bấm nút Đặt mật khẩu.
+ */
+const o =
+  'w-full rounded-xl border-0 bg-white px-4 py-3 text-base text-slate-800 shadow-sm ring-1 ring-inset ring-slate-200 transition placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-500 sm:text-[0.95rem]';
+const nhan = 'block text-sm font-semibold text-brand-900';
+const nutChinh =
+  'mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-brand-600 px-6 font-bold text-white transition hover:bg-brand-700 disabled:cursor-wait disabled:opacity-70';
+---
+
+<Base tieuDe="Đặt mật khẩu" khongLapChiMuc anTroLy>
+  <section class="surface-deep relative isolate overflow-hidden">
+    <div class="container-page relative pb-10 pt-32 sm:pt-36 lg:pb-14 lg:pt-40">
+      <p class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-accent-400">Tài khoản</p>
+      <h1 class="mt-3 text-(length:--text-h1) font-extrabold leading-tight text-white">Đặt mật khẩu</h1>
+      <p class="mt-4 max-w-xl text-(length:--text-lead) text-brand-100">
+        Chọn mật khẩu cho tài khoản của anh/chị trên website câu lạc bộ.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-10 lg:py-16">
+    <div class="container-page max-w-md">
+      <div id="dang-kiem" class="py-12 text-center">
+        <div class="mx-auto h-9 w-9 animate-spin rounded-full border-3 border-brand-200 border-t-brand-600"></div>
+        <p class="mt-5 text-slate-500">Đang kiểm tra link…</p>
+      </div>
+
+      <div id="link-hong" hidden class="rounded-2xl border border-red-200 bg-red-50 p-7 sm:p-9">
+        <h2 class="text-xl font-bold text-red-800">Link không dùng được</h2>
+        <p id="ly-do" class="mt-3 text-[0.95rem] leading-relaxed text-red-700"></p>
+        <a
+          href="/dang-nhap"
+          class="mt-6 inline-flex min-h-11 items-center rounded-full bg-brand-600 px-6 text-sm font-bold text-white transition hover:bg-brand-700"
+          >Tới trang đăng nhập</a
+        >
+      </div>
+
+      <form id="form-dat" hidden method="post" novalidate class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5 sm:p-8">
+        <p class="text-[0.95rem] leading-relaxed text-slate-600">
+          Tài khoản: <strong id="ten-hien-thi" class="text-brand-900"></strong><br />
+          Tên đăng nhập: <strong id="ten-dang-nhap" class="text-brand-900"></strong>
+        </p>
+        {/* Ô ẩn cho trình quản lý mật khẩu biết mật khẩu mới thuộc tài khoản nào. */}
+        <input id="o-ten" type="text" autocomplete="username" readonly hidden />
+
+        <label for="mat-khau-moi" class:list={[nhan, 'mt-6']}>Mật khẩu mới</label>
+        <div class="relative mt-2">
+          <input id="mat-khau-moi" type="password" autocomplete="new-password" maxlength="128" class:list={[o, 'pr-20']} />
+          <button
+            type="button"
+            id="hien-mat-khau"
+            aria-pressed="false"
+            aria-controls="mat-khau-moi"
+            class="absolute inset-y-0 right-0 flex min-w-16 items-center justify-center rounded-r-xl px-4 text-sm font-semibold text-brand-700"
+          >
+            Hiện
+          </button>
+        </div>
+
+        <label for="nhap-lai" class:list={[nhan, 'mt-5']}>Nhập lại mật khẩu</label>
+        <input id="nhap-lai" type="password" autocomplete="new-password" maxlength="128" class:list={['mt-2', o]} />
+
+        <ul class="mt-4 space-y-1 text-[0.85rem] leading-relaxed text-slate-500">
+          <li>Ít nhất 10 ký tự. Một câu ngắn dễ nhớ là mật khẩu tốt.</li>
+          <li>Không chứa tên đăng nhập, không dùng dãy dễ đoán như 123456.</li>
+        </ul>
+
+        <p
+          id="loi"
+          role="alert"
+          hidden
+          class="mt-5 rounded-xl bg-red-50 px-4 py-3 text-[0.9rem] font-semibold leading-relaxed text-red-800 ring-1 ring-inset ring-red-200"
+        >
+        </p>
+
+        <button id="nut-dat" type="submit" class={nutChinh}>Đặt mật khẩu</button>
+      </form>
+
+      <div id="xong" hidden class="rounded-2xl border border-emerald-200 bg-emerald-50 p-7 sm:p-9">
+        <h2 class="text-xl font-bold text-emerald-800">Đã đặt mật khẩu</h2>
+        <p class="mt-3 text-[0.95rem] leading-relaxed text-emerald-900">
+          Anh/chị đã được đăng nhập. Lần sau vào trang <strong>Đăng nhập</strong> ở cuối website, dùng tên đăng
+          nhập và mật khẩu vừa đặt.
+        </p>
+        <a
+          href="/cap-nhat"
+          class="mt-6 inline-flex min-h-11 items-center rounded-full bg-brand-600 px-6 text-sm font-bold text-white transition hover:bg-brand-700"
+          >Vào trang cập nhật</a
+        >
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { loiMatKhauMoi, taoKhoa } from '../lib/mat-khau';
+
+  const $ = (id: string) => document.getElementById(id)!;
+  const form = $('form-dat') as HTMLFormElement;
+  const oMoi = $('mat-khau-moi') as HTMLInputElement;
+  const oNhapLai = $('nhap-lai') as HTMLInputElement;
+  const nut = $('nut-dat') as HTMLButtonElement;
+  const loi = $('loi');
+
+  const ma = location.hash.slice(1);
+  // Xoá mã khỏi thanh địa chỉ ngay, tránh lộ khi chụp màn hình hay lưu vào lịch sử duyệt web.
+  if (location.hash) history.replaceState(null, '', location.pathname);
+  let tenDangNhap = '';
+
+  const hong = (msg: string) => {
+    $('dang-kiem').hidden = true;
+    $('link-hong').hidden = false;
+    $('ly-do').textContent = msg;
+  };
+  const baoLoi = (msg: string) => {
+    loi.textContent = msg;
+    loi.hidden = false;
+  };
+  const goi = async (body: object) => {
+    const res = await fetch('/api/kich-hoat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return { ok: res.ok, ...(await res.json().catch(() => ({}))) } as any;
+  };
+
+  (async () => {
+    if (!/^[A-Za-z0-9_-]{43}$/.test(ma)) {
+      return hong('Link thiếu mã hoặc bị cắt mất một đoạn. Anh/chị mở lại đúng link đã nhận, hoặc xin ban thư ký link mới.');
+    }
+    try {
+      const kq = await goi({ ma });
+      if (!kq.ok) return hong(kq.loi ?? 'Link không dùng được.');
+      tenDangNhap = kq.tenDangNhap;
+      $('ten-hien-thi').textContent = kq.tenHienThi;
+      $('ten-dang-nhap').textContent = kq.tenDangNhap;
+      ($('o-ten') as HTMLInputElement).value = kq.tenDangNhap;
+      $('dang-kiem').hidden = true;
+      form.hidden = false;
+      oMoi.focus();
+    } catch {
+      hong('Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi mở lại link.');
+    }
+  })();
+
+  $('hien-mat-khau').addEventListener('click', (e) => {
+    const nutHien = e.currentTarget as HTMLButtonElement;
+    const hien = oMoi.type === 'password';
+    oMoi.type = oNhapLai.type = hien ? 'text' : 'password';
+    nutHien.textContent = hien ? 'Ẩn' : 'Hiện';
+    nutHien.setAttribute('aria-pressed', String(hien));
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loi.hidden = true;
+    const loiMatKhau = loiMatKhauMoi(oMoi.value, tenDangNhap);
+    if (loiMatKhau) return baoLoi(loiMatKhau);
+    if (oMoi.value !== oNhapLai.value) return baoLoi('Hai lần nhập mật khẩu chưa giống nhau.');
+
+    nut.disabled = true;
+    nut.textContent = 'Đang lưu…';
+    try {
+      const kq = await goi({ ma, khoa: await taoKhoa(tenDangNhap, oMoi.value) });
+      if (!kq.ok) return baoLoi(kq.loi ?? 'Chưa đặt được mật khẩu. Anh/chị thử lại.');
+      oMoi.value = oNhapLai.value = '';
+      form.hidden = true;
+      $('xong').hidden = false;
+    } catch {
+      baoLoi('Không kết nối được tới máy chủ. Anh/chị kiểm tra mạng rồi thử lại.');
+    } finally {
+      nut.disabled = false;
+      nut.textContent = 'Đặt mật khẩu';
+    }
+  });
+</script>
