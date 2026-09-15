@@ -26,13 +26,7 @@ const nutThemAnh =
 
 <Base tieuDe="Cập nhật thông tin" khongLapChiMuc anTroLy>
   <section class="surface-deep relative isolate overflow-hidden">
-    <img
-      src="/logo-mark.svg"
-      alt=""
-      aria-hidden="true"
-      class="pointer-events-none absolute -right-16 top-8 w-[30rem] max-w-[75%] opacity-[0.07] brightness-0 invert"
-    />
-    <div class="container-page relative pb-10 pt-28 sm:pt-32 lg:pb-14 lg:pt-40">
+    <div class="container-page relative pb-10 pt-32 sm:pt-36 lg:pb-14 lg:pt-40">
       <p class="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-accent-400">
         Dành cho hội viên
       </p>
@@ -143,7 +137,7 @@ const nutThemAnh =
             <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-start">
               <div class="mx-auto w-40 shrink-0 sm:mx-0">
                 <div class="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5">
-                  <img id="xem-truoc" src="/logo-mark.svg" alt="" class="aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30" />
+                  <img id="xem-truoc" src="/anh-chua-co-anh.svg" alt="" class="aspect-3/4 w-full object-cover" />
                 </div>
                 <p class="mt-2 text-center text-xs text-slate-500">Khung hiển thị trên web</p>
               </div>
@@ -390,7 +384,7 @@ const nutThemAnh =
             <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-start">
               <div class="w-full shrink-0 sm:w-56">
                 <div class="overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5">
-                  <img id="xem-truoc-bia" src="/logo-mark.svg" alt="" class="aspect-4/3 w-full bg-slate-100 object-cover p-8 opacity-30" />
+                  <img id="xem-truoc-bia" src="/logo-goc.svg" alt="" class="aspect-4/3 w-full bg-slate-100 object-contain p-8 opacity-30" />
                 </div>
               </div>
               <div class="min-w-0 flex-1">
@@ -973,8 +967,8 @@ const nutThemAnh =
     const img = $('xem-truoc') as HTMLImageElement;
     const chuaCoAnh = () => {
       img.onerror = null;
-      img.src = '/logo-mark.svg';
-      img.className = 'aspect-3/4 w-full bg-slate-100 object-cover p-6 opacity-30';
+      img.src = '/anh-chua-co-anh.svg';
+      img.className = 'aspect-3/4 w-full object-cover';
     };
 
     // Ảnh do scripts/build-assets.mjs sinh ra mang mã băm nội dung trong tên
@@ -1079,8 +1073,8 @@ const nutThemAnh =
       anh.alt = '';
       anh.className = b.anhBia
         ? 'h-14 w-18 shrink-0 rounded-lg bg-brand-50 object-cover'
-        : 'h-14 w-18 shrink-0 rounded-lg bg-brand-50 object-contain p-3 opacity-40';
-      anh.src = b.anhBia || '/logo-mark.svg';
+        : 'h-14 w-18 shrink-0 rounded-lg bg-brand-50 object-contain p-2 opacity-40';
+      anh.src = b.anhBia || '/logo-goc.svg';
 
       const chu = document.createElement('span');
       chu.className = 'min-w-0 flex-1';
@@ -1144,8 +1138,8 @@ const nutThemAnh =
       img.src = String(b.anhBia);
       img.className = 'aspect-4/3 w-full object-cover';
     } else {
-      img.src = '/logo-mark.svg';
-      img.className = 'aspect-4/3 w-full bg-slate-100 object-cover p-8 opacity-30';
+      img.src = '/logo-goc.svg';
+      img.className = 'aspect-4/3 w-full bg-slate-100 object-contain p-8 opacity-30';
     }
     napBo('bai-viet', b.hinhAnh);
 

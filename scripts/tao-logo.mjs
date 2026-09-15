@@ -1,84 +1,121 @@
 /**
- * Dựng các bản logo dùng trên website từ logo gốc của câu lạc bộ.
+ * Dựng mọi file logo và biểu tượng của website từ logo gốc của câu lạc bộ.
  *
  * public/logo-full.svg được chuyển nguyên nét từ file "logo CLB KHANH HOA.ai":
- * biểu tượng ở trên, chữ "CLB / Doanh nhân / KHÁNH HÒA - SÀI GÒN" ở dưới.
- * Header cần bản nằm ngang, nên script này tách biểu tượng và khối chữ ra rồi
- * xếp cạnh nhau — giữ nguyên nét chữ và màu gốc của logo, không gõ lại bằng
- * font khác.
+ * cánh yến ở trên, chữ "CLB / Doanh nhân / KHÁNH HÒA - SÀI GÒN" ở dưới, chữ
+ * xanh và cam. Ngày 15/09/2026 câu lạc bộ yêu cầu mọi chỗ trên web đều hiện
+ * đúng logo này, nên script chỉ cắt lề thừa rồi đặt logo lên nền — không tách
+ * riêng cánh yến, không xếp lại bố cục, không đổi màu.
  *
  *   node scripts/tao-logo.mjs
  *
- * Sinh ra:
- *   public/logo-ngang.svg        bản ngang, màu gốc (header khi nền trắng)
- *   public/logo-ngang-trang.svg  bản ngang, phần xanh đổi sang trắng (nền tối)
- *   public/anh-chia-se.png       ảnh 1200x630 hiện khi chia sẻ link lên Zalo, Facebook
+ * Sinh ra trong public/:
+ *   logo-goc.svg          logo gốc, khung ôm sát nét vẽ (đầu trang, chân trang)
+ *   anh-chua-co-anh.svg   khung 3:4 có logo mờ, thay cho ảnh chân dung còn thiếu
+ *   favicon.svg, favicon.ico
+ *                         biểu tượng trên tab trình duyệt
+ *   apple-touch-icon.png, icon-192.png, icon-512.png
+ *                         biểu tượng khi thêm web ra màn hình điện thoại
+ *   anh-chia-se.png       ảnh 1200x630 hiện khi chia sẻ link lên Zalo, Facebook
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import sharp from 'sharp';
 
-const XANH = '#00558F';
 const goc = readFileSync('public/logo-full.svg', 'utf8');
 const [, rong, cao] = goc.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/).map(Number);
-const bienDoi = goc.match(/<g transform="([^"]+)">/)[1];
-const cacPath = [...goc.matchAll(/<path[^>]*\/>/g)].map((m) => m[0]);
+// Phần nét vẽ bên trong thẻ <svg>, dùng lại khi đặt logo vào khung khác.
+const net = goc.slice(goc.indexOf('>') + 1, goc.lastIndexOf('</svg>'));
 
-// Biểu tượng là 6 nét xanh nằm hẳn phía trên; mọi nét còn lại thuộc khối chữ.
-// Phân loại theo toạ độ chứ không theo thứ tự, lỡ file gốc xếp nét khác đi.
-const [tx, ty] = bienDoi.match(/translate\(([-\d.]+) ([-\d.]+)\)/).slice(1).map(Number);
-const dayCuaNet = (p) => {
-  const so = (p.match(/ d="([^"]+)"/)[1].match(/-?\d*\.?\d+/g) ?? []).map(Number);
-  let yMax = -Infinity;
-  for (let i = 1; i < so.length; i += 2) yMax = Math.max(yMax, ty - so[i]);
-  return yMax;
-};
-const netBieuTuong = cacPath.filter((p) => p.includes(XANH) && dayCuaNet(p) < cao * 0.7);
-const netChu = cacPath.filter((p) => !netBieuTuong.includes(p));
-if (netBieuTuong.length !== 6) throw new Error(`Tách biểu tượng ra ${netBieuTuong.length} nét, mong đợi 6.`);
-
-/** Đo khung bao thật của một nhóm nét bằng cách vẽ ra ảnh rồi cắt viền trống. */
+// File gốc chừa lề trên dày mà lề dưới gần như bằng 0, logo đặt vào khung sẽ
+// lệch. Đo khung bao thật bằng cách vẽ ra ảnh rồi cắt viền trống, chừa thêm
+// nửa đơn vị cho mép nét khử răng cưa.
 const TI_LE = 10;
-async function doKhung(net) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${rong} ${cao}" width="${rong * TI_LE}" height="${cao * TI_LE}"><g transform="${bienDoi}">${net.join('')}</g></svg>`;
-  const { info } = await sharp(Buffer.from(svg)).png().trim({ threshold: 1 }).toBuffer({ resolveWithObject: true });
-  return {
-    x: -info.trimOffsetLeft / TI_LE,
-    y: -info.trimOffsetTop / TI_LE,
-    w: info.width / TI_LE,
-    h: info.height / TI_LE,
-  };
+const LE = 0.5;
+const { info } = await sharp(Buffer.from(goc.replace('<svg ', `<svg width="${rong * TI_LE}" height="${cao * TI_LE}" `)))
+  .png()
+  .trim({ threshold: 1 })
+  .toBuffer({ resolveWithObject: true });
+const f = (n) => +n.toFixed(2);
+const k = {
+  x: f(-info.trimOffsetLeft / TI_LE - LE),
+  y: f(-info.trimOffsetTop / TI_LE - LE),
+  w: f(info.width / TI_LE + 2 * LE),
+  h: f(info.height / TI_LE + 2 * LE),
+};
+
+/** Nét logo co giãn cho rộng `r`, góc trên bên trái đặt tại (x, y). */
+const datLogo = (x, y, r) =>
+  `<g transform="translate(${f(x)} ${f(y)}) scale(${+(r / k.w).toFixed(5)}) translate(${-k.x} ${-k.y})">${net}</g>`;
+
+const logoGoc = goc.replace(/viewBox="[^"]+"/, `viewBox="${k.x} ${k.y} ${k.w} ${k.h}"`);
+writeFileSync('public/logo-goc.svg', logoGoc);
+
+// Hội viên chưa có ảnh chân dung: khung 3:4 nền xám nhạt, logo mờ ở giữa.
+const RONG_MO = 150;
+const caoMo = (RONG_MO * k.h) / k.w;
+writeFileSync(
+  'public/anh-chua-co-anh.svg',
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400"><rect width="300" height="400" fill="#F1F5F9"/>` +
+    `<g opacity="0.4">${datLogo((300 - RONG_MO) / 2, (400 - caoMo) / 2, RONG_MO)}</g></svg>`,
+);
+
+// Biểu tượng tab: nền trắng bo góc để tab trình duyệt nền tối vẫn thấy rõ logo.
+const O = 64;
+const rongIcon = Math.min(O - 6, ((O - 6) * k.w) / k.h);
+const caoIcon = (rongIcon * k.h) / k.w;
+const favicon =
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${O} ${O}"><rect width="${O}" height="${O}" rx="12" fill="#FFFFFF"/>` +
+  `${datLogo((O - rongIcon) / 2, (O - caoIcon) / 2, rongIcon)}</svg>`;
+writeFileSync('public/favicon.svg', favicon);
+
+/** Gói nhiều ảnh PNG vào một file .ico (định dạng ICO chứa được nguyên khối PNG). */
+function goiIco(cacAnh) {
+  const dau = Buffer.alloc(6 + 16 * cacAnh.length);
+  dau.writeUInt16LE(1, 2); // loại file: biểu tượng
+  dau.writeUInt16LE(cacAnh.length, 4);
+  let viTri = dau.length;
+  cacAnh.forEach(({ co, du }, i) => {
+    const o = 6 + 16 * i;
+    dau.writeUInt8(co, o);
+    dau.writeUInt8(co, o + 1);
+    dau.writeUInt16LE(1, o + 4); // số mặt phẳng màu
+    dau.writeUInt16LE(32, o + 6); // số bit mỗi điểm ảnh
+    dau.writeUInt32LE(du.length, o + 8);
+    dau.writeUInt32LE(viTri, o + 12);
+    viTri += du.length;
+  });
+  return Buffer.concat([dau, ...cacAnh.map((a) => a.du)]);
+}
+const cacCoIco = await Promise.all(
+  [16, 32, 48].map(async (co) => ({
+    co,
+    du: await sharp(Buffer.from(favicon), { density: 72 * 8 }).resize(co, co).png().toBuffer(),
+  })),
+);
+writeFileSync('public/favicon.ico', goiIco(cacCoIco));
+
+/** Vẽ logo gốc cao tối đa `cao` điểm ảnh (vẽ ở độ phân giải gấp đôi rồi thu nhỏ cho nét mịn). */
+const veLogo = (caoLogo) =>
+  sharp(Buffer.from(logoGoc), { density: 72 * Math.ceil((caoLogo * 2) / k.h) })
+    .resize(caoLogo, caoLogo, { fit: 'inside' })
+    .png()
+    .toBuffer();
+
+/** Ảnh nền trắng khổ `r` x `c`, logo cao `caoLogo` nằm chính giữa. */
+async function ghiAnhNenTrang(duongDan, r, c, caoLogo) {
+  await sharp({ create: { width: r, height: c, channels: 3, background: '#ffffff' } })
+    .composite([{ input: await veLogo(caoLogo), gravity: 'centre' }])
+    .png({ compressionLevel: 9 })
+    .toFile(duongDan);
 }
 
-const bt = await doKhung(netBieuTuong);
-const chu = await doKhung(netChu);
+// Biểu tượng màn hình chính: điện thoại tự bo góc hoặc cắt tròn, nên chừa lề 10%.
+await ghiAnhNenTrang('public/apple-touch-icon.png', 180, 180, 144);
+await ghiAnhNenTrang('public/icon-192.png', 192, 192, 154);
+await ghiAnhNenTrang('public/icon-512.png', 512, 512, 410);
+await ghiAnhNenTrang('public/anh-chia-se.png', 1200, 630, 440);
 
-// Biểu tượng cao bằng khối chữ; khoảng hở bằng 18% chiều cao.
-const s = chu.h / bt.h;
-const btRong = bt.w * s;
-const ho = chu.h * 0.18;
-const tongRong = btRong + ho + chu.w;
-const f = (n) => +n.toFixed(3);
-
-const dungSvg = (mauXanh) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f(tongRong)} ${f(chu.h)}" role="img" aria-label="CLB Doanh nhân Khánh Hòa - Sài Gòn">` +
-  `<g transform="translate(${f(-bt.x * s)} ${f(-bt.y * s)}) scale(${f(s)})"><g transform="${bienDoi}">${netBieuTuong.join('')}</g></g>` +
-  `<g transform="translate(${f(btRong + ho - chu.x)} ${f(-chu.y)})"><g transform="${bienDoi}">${netChu.join('')}</g></g>` +
-  `</svg>`.replaceAll(XANH, mauXanh);
-
-const mau = dungSvg(XANH);
-const trang = dungSvg(XANH).replaceAll(XANH, '#FFFFFF');
-writeFileSync('public/logo-ngang.svg', mau);
-writeFileSync('public/logo-ngang-trang.svg', trang);
-
-// Ảnh chia sẻ: nền trắng, logo gốc (bản đứng) ở giữa.
-const CAO_LOGO = 440;
-const logoDung = await sharp(Buffer.from(goc), { density: 600 }).resize({ height: CAO_LOGO }).png().toBuffer();
-const { width: rongLogo } = await sharp(logoDung).metadata();
-await sharp({ create: { width: 1200, height: 630, channels: 3, background: '#ffffff' } })
-  .composite([{ input: logoDung, left: Math.round((1200 - rongLogo) / 2), top: Math.round((630 - CAO_LOGO) / 2) }])
-  .png({ compressionLevel: 9 })
-  .toFile('public/anh-chia-se.png');
-
-console.log(`Biểu tượng ${f(bt.w)}x${f(bt.h)} | khối chữ ${f(chu.w)}x${f(chu.h)}`);
-console.log(`logo-ngang.svg: ${f(tongRong)}x${f(chu.h)} (tỉ lệ ${f(tongRong / chu.h)}:1), ${mau.length} byte`);
-console.log(`anh-chia-se.png: 1200x630, logo cao ${CAO_LOGO}px`);
+console.log(`Khung nét vẽ: ${k.x} ${k.y} ${k.w} ${k.h} (tỉ lệ ${f(k.w / k.h)}:1)`);
+console.log(
+  'Đã ghi: logo-goc.svg, anh-chua-co-anh.svg, favicon.svg, favicon.ico, apple-touch-icon.png, icon-192.png, icon-512.png, anh-chia-se.png',
+);

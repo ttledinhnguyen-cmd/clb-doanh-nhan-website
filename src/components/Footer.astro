@@ -34,17 +34,13 @@ const nam = new Date().getFullYear();
 ---
 
 <footer class="surface-deep relative mt-24 overflow-hidden text-brand-100">
-  <img
-    src="/logo-mark.svg"
-    alt=""
-    aria-hidden="true"
-    class="pointer-events-none absolute -right-16 -top-20 w-[28rem] max-w-[70%] opacity-[0.06] brightness-0 invert"
-  />
-
   <div class="container-page relative py-16 lg:py-20">
     <div class="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.1fr]">
       <div>
-        <img src="/logo-ngang-trang.svg" alt={site.ten} width="399" height="80" class="h-14 w-auto" />
+        {/* Logo gốc giữ nguyên màu, đặt trên nền trắng để nổi trên nền xanh đậm. */}
+        <div class="inline-block rounded-2xl bg-white p-3.5 shadow-lg shadow-brand-950/30">
+          <img src="/logo-goc.svg" alt={site.ten} width="261" height="258" class="h-28 w-auto" />
+        </div>
         <p class="mt-6 max-w-sm text-sm/relaxed text-brand-200">{site.moTa}</p>
         <p class="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-accent-400">
           {site.khauHieu}

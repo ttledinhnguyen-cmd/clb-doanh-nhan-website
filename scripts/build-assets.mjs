@@ -327,17 +327,12 @@ async function chayThuVien() {
 
 async function chayLogo() {
   const from = path.resolve(ROOT, 'src/assets/logo');
-  for (const f of ['logo-full.svg', 'logo-mark.svg']) {
+  for (const f of ['logo-full.svg']) {
     if (await exists(path.join(from, f))) await copyFile(path.join(from, f), path.join(ROOT, 'public', f));
   }
-  // Ảnh xem trước khi chia sẻ link lên Facebook/Zalo.
-  const markPath = path.join(ROOT, 'public/logo-mark.svg');
-  if (await exists(markPath)) {
-    await sharp(markPath, { density: 600 })
-      .resize(512, 512, { fit: 'contain', background: '#ffffff' })
-      .png()
-      .toFile(path.join(ROOT, 'public/apple-touch-icon.png'));
-  }
+  // Biểu tượng tab, màn hình chính và ảnh chia sẻ link đều dựng từ logo gốc
+  // bằng scripts/tao-logo.mjs. Không sinh ở đây nữa, kẻo ghi đè bằng bản chỉ có
+  // cánh yến.
 }
 
 console.log('› Logo');

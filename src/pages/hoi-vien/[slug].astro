@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { render } from 'astro:content';
-import { layHoiVien, tenDayDu, anhChanDung, coAnhNhieuCo } from '../../lib/hoi-vien';
+import { layHoiVien, tenDayDu, anhChanDung, coAnhNhieuCo, ANH_CHUA_CO } from '../../lib/hoi-vien';
 import { boAnh } from '../../lib/anh';
 import LuoiAnh from '../../components/LuoiAnh.astro';
 import type { GetStaticPaths } from 'astro';
@@ -41,23 +41,18 @@ const thongTinDn = [
 const chuaCoLienHe = lienHe.length === 0;
 const coGioiThieu = Boolean(m.body?.trim());
 const anhSanPham = boAnh(d.anhDoanhNghiep, d.chuThichAnh);
+// Zalo, Facebook không hiện ảnh SVG: hội viên chưa có ảnh thì dùng ảnh chia sẻ mặc định (logo gốc).
+const anhChiaSe = anhChanDung(m) === ANH_CHUA_CO ? undefined : anhChanDung(m);
 ---
 
 <Base
   tieuDe={ten}
   moTa={[d.chucVuClb, d.chucDanh, d.doanhNghiep].filter(Boolean).join(' · ') || d.hoTen}
-  anh={anhChanDung(m)}
+  anh={anhChiaSe}
 >
   <article>
     {/* Đầu trang */}
     <section class="surface-deep relative isolate overflow-hidden">
-      <img
-        src="/logo-mark.svg"
-        alt=""
-        aria-hidden="true"
-        class="pointer-events-none absolute -right-16 top-10 w-[34rem] max-w-[75%] opacity-[0.07] brightness-0 invert"
-      />
-
       <div class="container-page relative pb-16 pt-32 sm:pt-36 lg:pb-20 lg:pt-44">
         <nav aria-label="Đường dẫn" class="mb-8">
           <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-brand-200">

@@ -22,7 +22,7 @@ media_folder: public/images/tai-len
 public_folder: /images/tai-len
 
 site_url: https://kh-sg.com
-logo_url: /logo-mark.svg
+logo_url: /logo-goc.svg
 
 collections:
   - name: tin-tuc

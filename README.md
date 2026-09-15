@@ -41,8 +41,8 @@ website/
 ├─ public/
 │  ├─ admin/             Trang quản trị nội dung (Decap CMS)
 │  ├─ images/            Ảnh đã tối ưu (sinh tự động)
-│  ├─ logo-full.svg      Logo đầy đủ (biểu tượng + chữ)
-│  └─ logo-mark.svg      Chỉ biểu tượng cánh yến
+│  ├─ logo-full.svg      Logo gốc chuyển từ file .ai, nguồn của mọi bản logo
+│  └─ logo-goc.svg, favicon.*, icon-*.png…  Sinh từ logo gốc bằng scripts/tao-logo.mjs
 ├─ functions/            Cloudflare Pages Functions
 │  ├─ api/              Ghi nội dung từ trang /cap-nhat (hồ sơ, bài viết, ảnh…)
 │  ├─ oauth/index.ts     Đăng nhập GitHub cho /admin (bước 1)
@@ -63,6 +63,11 @@ Màu lấy trực tiếp từ file logo gốc `logo CLB KHANH HOA.ai`:
 | Cam nhấn | `#F37021` | 0 / 70 / 100 / 0 |
 
 Logo đã được chuyển từ `.ai` sang SVG vector (nét sắc ở mọi kích thước, nhẹ hơn ảnh).
+Mọi chỗ trên web đều dùng **nguyên logo gốc**: cánh yến ở trên, chữ ở dưới, giữ màu xanh và cam.
+Câu lạc bộ yêu cầu không dùng riêng cánh yến, không xếp lại thành bản ngang, không đổi màu; trên
+nền tối thì đặt logo lên nền trắng. Khi logo thay đổi, thay `public/logo-full.svg` (và bản trong
+`src/assets/logo/`) rồi chạy `node scripts/tao-logo.mjs` để sinh lại logo đầu trang, biểu tượng
+tab, biểu tượng màn hình chính và ảnh chia sẻ link.
 Phông chữ: **Be Vietnam Pro**, tự host trong site nên không phụ thuộc Google Fonts.
 
 Thang màu đầy đủ khai báo trong `src/styles/global.css` (`--color-brand-*`, `--color-accent-*`).

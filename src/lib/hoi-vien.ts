@@ -59,6 +59,9 @@ export function boDau(s: string) {
 export const tenDayDu = (m: HoiVien) =>
   [m.data.xungHo, m.data.hoTen].filter(Boolean).join(' ');
 
+/** Khung 3:4 có logo mờ, hiện thay cho ảnh chân dung của hội viên chưa có ảnh. */
+export const ANH_CHUA_CO = '/anh-chua-co-anh.svg';
+
 /**
  * Đường dẫn ảnh chân dung của một hội viên.
  *
@@ -71,7 +74,7 @@ export function anhChanDung(m: HoiVien, nho = false) {
   if (m.data.anh) return m.data.anh;
   const muc = bangAnh[m.id as keyof typeof bangAnh];
   if (muc) return nho ? muc.nho : muc.lon;
-  return '/logo-mark.svg'; // hội viên mới thêm mà chưa có ảnh
+  return ANH_CHUA_CO; // hội viên mới thêm mà chưa có ảnh
 }
 
 /** Có bản ảnh nhỏ riêng để dùng srcset hay không. */

@@ -1,52 +1,33 @@
 ---
 /**
- * Logo câu lạc bộ.
+ * Logo câu lạc bộ ở đầu trang.
  *
- * Dùng đúng logo gốc của CLB (chuyển nguyên nét từ file .ai), xếp thành bản
- * nằm ngang bằng scripts/tao-logo.mjs — không gõ lại tên CLB bằng font khác.
+ * Dùng nguyên logo gốc của CLB (chuyển nguyên nét từ file .ai, sinh bằng
+ * scripts/tao-logo.mjs): cánh yến ở trên, chữ ở dưới, giữ màu xanh và cam. Câu
+ * lạc bộ yêu cầu mọi chỗ trên web đều là logo này — không tách riêng cánh yến,
+ * không xếp lại thành bản ngang, không gõ lại tên bằng font khác.
  *
- * `variant="tuDong"` dùng trong header: header còn trong suốt trên nền xanh đậm
- * thì hiện bản trắng, header dính lên đầu trang (thẻ cha đặt `data-dinh` và
- * class "group/hdr") thì hiện bản màu gốc.
+ * Logo màu chìm mất trên nền xanh đậm của phần đầu trang, nên nằm trên một tấm
+ * nền trắng buông từ mép trên màn hình xuống, cao hơn thanh menu một chút cho
+ * logo đủ lớn. Khi header dính lên đầu trang (thẻ cha đặt `data-dinh` và class
+ * "group/hdr"), nền header đã trắng: tấm nền trong suốt đi và logo thu lại vừa
+ * chiều cao thanh menu.
+ *
+ * Tấm nền cao 94px trên điện thoại, 106px từ máy tính bảng, nên phần đầu mỗi
+ * trang phải chừa khoảng trống phía trên lớn hơn thế (pt-32, sm:pt-36).
  */
-interface Props {
-  variant?: 'mau' | 'trang' | 'tuDong';
-  class?: string;
-}
-const { variant = 'mau', class: className = '' } = Astro.props;
-
-// Tỉ lệ khung của logo-ngang.svg: 399.407 x 79.5.
-const RONG = 399;
-const CAO = 80;
-// Dưới 360px (máy 320px đời cũ) hạ một nấc để nút menu bên cạnh giữ đủ 44px.
-const lopCao = 'h-10 w-auto min-[360px]:h-11 sm:h-12';
 ---
 
 <a
   href="/"
-  class:list={['-my-1 flex shrink-0 items-center py-1', className]}
+  class="relative flex shrink-0 self-start rounded-b-2xl bg-white px-2.5 pb-3 pt-2.5 shadow-lg shadow-brand-950/30 transition-[padding,background-color,box-shadow] duration-300 group-data-dinh/hdr:bg-transparent group-data-dinh/hdr:py-2 group-data-dinh/hdr:shadow-none sm:px-3"
   aria-label="Trang chủ CLB Doanh nhân Khánh Hòa – Sài Gòn"
 >
-  {
-    variant !== 'mau' && (
-      <img
-        src="/logo-ngang-trang.svg"
-        alt=""
-        width={RONG}
-        height={CAO}
-        class:list={[lopCao, variant === 'tuDong' && 'group-data-dinh/hdr:hidden']}
-      />
-    )
-  }
-  {
-    variant !== 'trang' && (
-      <img
-        src="/logo-ngang.svg"
-        alt=""
-        width={RONG}
-        height={CAO}
-        class:list={[lopCao, variant === 'tuDong' && 'hidden group-data-dinh/hdr:block']}
-      />
-    )
-  }
+  <img
+    src="/logo-goc.svg"
+    alt=""
+    width="261"
+    height="258"
+    class="h-18 w-auto transition-[height] duration-300 group-data-dinh/hdr:h-12 sm:h-21 sm:group-data-dinh/hdr:h-16"
+  />
 </a>
