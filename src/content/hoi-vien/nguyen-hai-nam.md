@@ -16,12 +16,19 @@ diaChi: "522-524-526 Nguyễn Chí Thanh, Phường Diên Hồng, Thành phố H
 facebook: ""
 zalo: ""
 sanPham:
-  - "Phòng Khám"
+  - "Phòng Khám Đa Khoa"
 uuDaiHoiVien: ""
 noiBat: true
 namThanhLap: null
 quyMo: ""
 dienThoaiXacThuc: "0916968578"
+anhDoanhNghiep:
+  - "/images/tai-len/sp-1789657764505-2f44cc6b.webp"
+  - "/images/tai-len/sp-1789657766331-9e100196.webp"
+  - "/images/tai-len/sp-1789657767690-f0414144.webp"
+  - "/images/tai-len/sp-1789657770028-59291f12.webp"
+  - "/images/tai-len/sp-1789657772225-712795a4.webp"
+  - "/images/tai-len/sp-1789657773553-c8399ad2.webp"
 ---
 
 Trong vô số các cơ sở y tế lớn nhỏ trên địa bàn thành phố Hồ Chí Minh hiện nay thì phòng khám Đa Khoa Quốc Tế Nhân Hậu (Địa chỉ: 522-524-526 Nguyễn Chí Thanh, Phường Diên Hồng, Thành phố Hồ Chí Minh) được xem là địa chỉ uy tín nhận được nhiều sự tín nhiệm của đông đảo bệnh nhân mỗi khi có nhu cầu khám chữa bệnh bởi sự chất lượng từ dịch vụ khám và điều trị mà phòng khám mang lại. 
