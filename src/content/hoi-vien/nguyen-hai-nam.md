@@ -16,7 +16,7 @@ diaChi: "522-524-526 Nguyễn Chí Thanh, Phường Diên Hồng, Thành phố H
 facebook: ""
 zalo: ""
 sanPham:
-  - "Phòng Khám Đa Khoa"
+  - "Xét nghiệm, chuẩn đoán; Khám tổng quát; Khám tai - mũi - họng; Gói khám sức khoẻ định kỳ; Nội soi chuẩn đoán điều trị; Khám phụ khoa; Tiêm vừa vắc xin; Tế bào gốc,..."
 uuDaiHoiVien: ""
 noiBat: true
 namThanhLap: null
