@@ -40,15 +40,11 @@ Bảo dưỡng sửa chữa:
 Máy gầm: bảo dưỡng, tiểu tu, trung tu, đại tu theo đúng tiêu chuẩn của nhà sản xuất đối với từng hiệu xe.
 Điện, điện lạnh: sửa chữa hệ thống điện – điện tử động cơ, điện thân xe, vệ sinh – bảo dưỡng định kỳ hệ thống điều hòa.
 Đồng sơn: với hệ thống phòng sơn hấp và sơn nhanh, sơn chi tiết và sơn nguyên bộ phục vụ đối tượng xe cần làm mới, dặm vá….
-Cung cấp và lắp đặt phụ tùng OEM:
 
-Cung cấp phụ tùng OEM của hầu hết các dòng xe có mặt trên thị trường, từ các thị trường Châu Âu, Mỹ, Nhật.., Uy tín, chất lượng, giá cả hợp lý, thời gian nhanh chóng.
-Chăm sóc, làm đẹp xe:
+Cung cấp và lắp đặt phụ tùng OEM: Cung cấp phụ tùng OEM của hầu hết các dòng xe có mặt trên thị trường, từ các thị trường Châu Âu, Mỹ, Nhật.., Uy tín, chất lượng, giá cả hợp lý, thời gian nhanh chóng.
 
-Dọn nội thất, vệ sinh động cơ xe, gầm xe, rửa xe.
-Phủ nano
-Thực hiện bảo hiểm xe Ô tô
+Chăm sóc, làm đẹp xe: Dọn nội thất, vệ sinh động cơ xe, gầm xe, rửa xe. Phủ nano. 
 
-Chúng tôi liên kết với nhiều công ty bảo hiểm uy tín giúp Quý khách hàng thuận tiện và yên tâm hơn trong việc thực hiện bảo hiểm ô tô: thông báo tai nạn, giám định thiệt hại, báo giá sửa chữa, đền bù…..
+Thực hiện bảo hiểm xe Ô tô: Chúng tôi liên kết với nhiều công ty bảo hiểm uy tín giúp Quý khách hàng thuận tiện và yên tâm hơn trong việc thực hiện bảo hiểm ô tô: thông báo tai nạn, giám định thiệt hại, báo giá sửa chữa, đền bù…..
 
 Đặc biệt, chúng tôi có mức chiết khấu hấp dẫn khi Quý khách hàng mua mới và tái ký bảo hiểm tại Tiên Phong Auto.
