@@ -32,7 +32,8 @@ anhDoanhNghiep:
 ---
 
 Phân bón lá Sinh học của Công ty TNHH SXTM & DV Phát Việt là đơn vị chuyên cung cấp phân bón chất lượng cho nông dân, đáp ứng các tiêu chí:
-1. Phân sinh học Nhập khẩu 100% từ Mỹ và Đài Loan.
-2. Được phân phối bởi các Đại lý uy tín, đàng hoàng.
-3. Có cam kết chất lượng từ nhà sản xuất ở nước ngoài và cam kết từ Công ty Phát Việt.
-4. Phù hợp với các loại cây trồng, các giai đoạn sinh trưởng của từng loại cây.
+
+- Phân sinh học Nhập khẩu 100% từ Mỹ và Đài Loan.
+- Được phân phối bởi các Đại lý uy tín, đàng hoàng.
+- Có cam kết chất lượng từ nhà sản xuất ở nước ngoài và cam kết từ Công ty Phát Việt.
+- Phù hợp với các loại cây trồng, các giai đoạn sinh trưởng của từng loại cây
