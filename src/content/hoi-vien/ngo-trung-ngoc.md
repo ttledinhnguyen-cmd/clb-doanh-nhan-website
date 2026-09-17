@@ -7,7 +7,7 @@ capBac: "pho-chu-tich"
 thuTu: 305
 chucDanh: "Giám đốc"
 doanhNghiep: "Công ty Evergrow"
-nganhNghe: "Đang cập nhật"
+nganhNghe: "Cho thuê văn phòng"
 namGiaNhap: null
 dienThoai: ""
 email: ""
@@ -18,5 +18,6 @@ zalo: ""
 sanPham: []
 uuDaiHoiVien: ""
 noiBat: false
+namThanhLap: null
+quyMo: ""
 ---
-
