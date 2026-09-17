@@ -16,7 +16,7 @@ diaChi: "2A Phan Văn Trị, Phường Gò Vấp, Thành phố Hồ Chí Minh"
 facebook: ""
 zalo: ""
 sanPham:
-  - "Bảo dưỡng, sữa chữa xe ô tô"
+  - "Bảo dưỡng, sữa chữa xe ô tô -  Cung cấp và lắp phụ tùng OEM - Chăm sóc, làm đẹp xe - Bảo hiểm xe ô tô"
 uuDaiHoiVien: ""
 noiBat: false
 dienThoaiXacThuc: "0903753611"
@@ -33,12 +33,14 @@ anhDoanhNghiep:
 
 TIÊN PHONG AUTO - tọa lạc tại 2A Phan Văn Trị, P.10, Quận Gò Vấp, Tp. Hồ Chí Minh được trang bị đầy đủ hệ thống trang thiết bị hiện đại: hệ thống thử phanh, kiểm tra trượt ngang, hệ thống kiểm tra khí thải, đèn pha, phòng sơn hấp và sơn nhanh, hệ thống xả matit khô, hệ thống tài liệu kỹ thuật sửa chữa, tra cứu phụ tùng chính hãng, máy chẩn đoán chuyên dụng cho từng hiệu xe: Audi, Rolls Royce, BMW, Mercedes Benz, Lexus, Toyota, Honda, Kia, Chevrolet, Ford, Hyundai, Mazda, Mitsubishi, Nissan, Porsche, Renault, Subaru, Suzuki, Volkswagen, Acura…….
 
-Cùng đội ngũ kỹ thuật viên chất lượng, giàu kinh nghiệm, tập thể nhân viên tư vấn dịch vụ chuyên môn cao, nhiệt tình, năng động, công tâm. Chúng tôi luôn sẵn sàng và hân hạnh được phục vụ Quý khách với những dịch vụ:
+Cùng đội ngũ kỹ thuật viên chất lượng, giàu kinh nghiệm, tập thể nhân viên tư vấn dịch vụ chuyên môn cao, nhiệt tình, năng động, công tâm. Chúng tôi luôn sẵn sàng và hân hạnh được phục vụ Quý khách.
 
 Bảo dưỡng sửa chữa:
 
 Máy gầm: bảo dưỡng, tiểu tu, trung tu, đại tu theo đúng tiêu chuẩn của nhà sản xuất đối với từng hiệu xe.
+
 Điện, điện lạnh: sửa chữa hệ thống điện – điện tử động cơ, điện thân xe, vệ sinh – bảo dưỡng định kỳ hệ thống điều hòa.
+
 Đồng sơn: với hệ thống phòng sơn hấp và sơn nhanh, sơn chi tiết và sơn nguyên bộ phục vụ đối tượng xe cần làm mới, dặm vá….
 
 Cung cấp và lắp đặt phụ tùng OEM: Cung cấp phụ tùng OEM của hầu hết các dòng xe có mặt trên thị trường, từ các thị trường Châu Âu, Mỹ, Nhật.., Uy tín, chất lượng, giá cả hợp lý, thời gian nhanh chóng.
