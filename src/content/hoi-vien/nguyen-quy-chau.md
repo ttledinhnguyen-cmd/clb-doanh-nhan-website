@@ -37,11 +37,4 @@ Bằng đội ngũ nhân sự giàu chuyên môn, tinh thần trách nhiệm cao
 
 AVC SHIPPING cung cấp đa dạng các dịch vụ như:
 
-Vận chuyển hàng không quốc tế và hàng biển; 
-Hợp nhất hàng hóa, đóng ghép hàng lẻ hàng tuần; 
-Vận tải nội địa: đường bộ, đường sắt, đường sông; 
-Dịch vụ Door to Door; 
-Vận tải đa phương thức; 
-Dịch vụ kho bãi, kiểm đếm và phân phối; 
-Dự án giao hàng tận nơi và giải phóng mặt bằng; 
-Thủ tục và đại lý hải quan
+Vận chuyển hàng không quốc tế và hàng biển; Hợp nhất hàng hóa, đóng ghép hàng lẻ hàng tuần; Vận tải nội địa: đường bộ, đường sắt, đường sông; Dịch vụ Door to Door; Vận tải đa phương thức; Dịch vụ kho bãi, kiểm đếm và phân phối; Dự án giao hàng tận nơi và giải phóng mặt bằng; Thủ tục và đại lý hải quan
