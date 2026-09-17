@@ -7,7 +7,7 @@ capBac: "pho-chu-tich-thuong-truc"
 thuTu: 202
 chucDanh: "Giám đốc"
 doanhNghiep: "Công ty TNHH Sản xuất Thương mại Dịch vụ Phát Việt"
-nganhNghe: "Sản xuất & Thương mại"
+nganhNghe: "Phân bón"
 namGiaNhap: null
 dienThoai: ""
 email: ""
@@ -18,5 +18,6 @@ zalo: ""
 sanPham: []
 uuDaiHoiVien: ""
 noiBat: true
+namThanhLap: null
+quyMo: ""
 ---
-
