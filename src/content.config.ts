@@ -52,6 +52,11 @@ const hoiVien = defineCollection({
     facebook: z.string().default(''),
     zalo: z.string().default(''),
 
+    // Số điện thoại trong danh sách của ban thư ký, dùng để hội viên tự nhận
+    // mình khi đăng ký tài khoản. TUYỆT ĐỐI không hiển thị ra trang nào, không
+    // đưa vào danh-ba.json: ai muốn công khai số thì tự điền vào `dienThoai`.
+    dienThoaiXacThuc: z.string().default(''),
+
     namGiaNhap: z.number().nullable().default(null),
     sanPham: z.array(z.string()).default([]),
     khachHang: z.array(z.string()).default([]),

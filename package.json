@@ -12,7 +12,8 @@
     "kiem-tra": "node scripts/kiem-tra-link.mjs",
     "tai-khoan": "node scripts/tao-tai-khoan.mjs",
     "thu-functions": "npx wrangler pages dev dist --port 8788",
-    "kiem-tra-fm": "node scripts/kiem-tra-frontmatter.mjs"
+    "kiem-tra-fm": "node scripts/kiem-tra-frontmatter.mjs",
+    "nhap-danh-sach": "node scripts/nhap-danh-sach.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.4.1",

@@ -20,6 +20,7 @@ uuDaiHoiVien: ""
 noiBat: false
 namThanhLap: 2019
 quyMo: "20"
+dienThoaiXacThuc: "0919225599"
 ---
 
 Đàm phán với Hội sở Ngân hàng để cơ cấu nợ, miễn giảm lãi phạt, giải chấp tài sản. Đại diện pháp lý cho khách hàng tại các phiên làm việc, tòa án nếu cần.
