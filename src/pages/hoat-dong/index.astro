@@ -2,7 +2,10 @@
 import Base from '../../layouts/Base.astro';
 import HeroTrang from '../../components/HeroTrang.astro';
 import { getCollection } from 'astro:content';
-import thuVien from '../../data/thu-vien.json';
+import thuVienGoc from '../../data/thu-vien.json';
+import { locAlbum } from '../../lib/anh';
+
+const thuVien = locAlbum(thuVienGoc);
 
 const mang = (await getCollection('trang'))
   .filter((t) => t.id !== 'su-kien')

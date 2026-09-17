@@ -90,6 +90,7 @@ const nutThemAnh =
             <select id="chon-che-do" class:list={['mt-2.5', o]}>
               <option value="hoi-vien">Hồ sơ hội viên (thêm, sửa, xoá)</option>
               <option value="tin-tuc">Đăng bài cho các mục hoạt động</option>
+              <option value="album">Album ảnh trong thư viện</option>
               <option value="trang">Sửa phần giới thiệu đầu trang hoạt động</option>
               <option value="thong-tin">Thông tin chung của CLB</option>
             </select>
@@ -144,6 +145,20 @@ const nutThemAnh =
 
           <p class="mt-6 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Bài đã đăng trong mục</p>
           <ul id="ds-bai" class="mt-2.5 space-y-2"></ul>
+        </div>
+
+        <div id="khoi-chon-album" hidden class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-900/5 sm:p-6">
+          <button
+            type="button"
+            id="nut-album-moi"
+            class="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 text-center text-sm font-bold text-white transition hover:bg-brand-700"
+          >
+            <span class="text-lg leading-none">+</span>
+            <span>Tạo album mới</span>
+          </button>
+
+          <p class="mt-6 text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Album đã có</p>
+          <ul id="ds-album" class="mt-2.5 space-y-2"></ul>
         </div>
 
         <div id="khoi-chon-trang" hidden class="rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-900/5 sm:p-6">
@@ -465,6 +480,55 @@ const nutThemAnh =
           </div>
         </div>
 
+        {/* ── Biểu mẫu album ảnh ──────────────────────────────────────── */}
+        <div id="than-album" hidden class="space-y-7">
+          <fieldset class={the}>
+            <legend class={legend}>Album</legend>
+            <div class="mt-5 space-y-4">
+              <label class="block">
+                <span class={nhan}>Tên album</span>
+                <input name="albumTen" type="text" class:list={['mt-2', o]} />
+              </label>
+              <div>
+                <span class={nhan}>Thuộc mục hoạt động</span>
+                <div id="chon-muc-album" class="mt-2.5 grid grid-cols-2 gap-2.5" role="group" aria-label="Thuộc mục hoạt động">
+                  <button type="button" data-muc-album="cong-tac-xa-hoi" aria-pressed="true" class={nutMuc}>Công tác xã hội</button>
+                  <button type="button" data-muc-album="phat-trien-thanh-vien" aria-pressed="false" class={nutMuc}>Phát triển thành viên</button>
+                  <button type="button" data-muc-album="van-hoa-the-thao" aria-pressed="false" class={nutMuc}>Văn hoá – Thể thao</button>
+                  <button type="button" data-muc-album="su-kien" aria-pressed="false" class={nutMuc}>Sự kiện CLB</button>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class={the}>
+            <legend class={legend}>Hình ảnh</legend>
+            <p class="mt-4 text-[0.85rem] leading-relaxed text-slate-500">
+              Tối đa 60 ảnh, chọn được nhiều ảnh cùng lúc. Album phải có ít nhất một ảnh.
+            </p>
+            <div id="bo-anh-album" class="mt-5 grid grid-cols-3 gap-2.5 sm:grid-cols-4"></div>
+            <label class={nutThemAnh}>
+              <span class="text-lg leading-none">+</span> Thêm ảnh
+              <input id="chon-anh-album" type="file" accept="image/*" multiple class="sr-only" />
+            </label>
+            <p id="thong-tin-anh-album" class="mt-2 text-[0.85rem] font-semibold text-brand-700"></p>
+          </fieldset>
+
+          <div id="khoi-xoa-album" hidden class="rounded-2xl border border-red-200 bg-red-50 p-5 sm:p-6">
+            <p class="text-sm font-bold text-red-800">Xoá album này</p>
+            <p class="mt-2 text-[0.88rem] leading-relaxed text-red-700">
+              Album sẽ biến mất khỏi thư viện ảnh. Bài viết đang gắn album này sẽ tự bỏ gắn kèm.
+            </p>
+            <button
+              type="button"
+              id="nut-xoa-album"
+              class="mt-4 inline-flex min-h-11 items-center rounded-xl bg-red-600 px-5 text-sm font-bold text-white transition hover:bg-red-700"
+            >
+              Xoá album
+            </button>
+          </div>
+        </div>
+
         {/* ── Biểu mẫu nội dung trang ─────────────────────────────────── */}
         <div id="than-trang" hidden class="space-y-7">
           <fieldset class={the}>
@@ -594,7 +658,7 @@ const nutThemAnh =
   const nutLuu = $('nut-luu') as HTMLButtonElement;
   const trangThai = $('trang-thai');
 
-  type CheDo = 'hoi-vien' | 'tin-tuc' | 'trang' | 'thong-tin';
+  type CheDo = 'hoi-vien' | 'tin-tuc' | 'album' | 'trang' | 'thong-tin';
   let cheDo: CheDo = 'hoi-vien';
   /** Tài khoản quản trị hoặc ban thư ký: sửa được toàn bộ nội dung. */
   let bienTap = false;
@@ -750,17 +814,19 @@ const nutThemAnh =
     anh: string;
     xem: string;
     chuThich: string;
+    ngang?: boolean;
     lon?: string;
     nho?: string;
     blobLon?: string;
     blobNho?: string;
   };
-  type LoaiBo = 'san-pham' | 'bai-viet';
+  type LoaiBo = 'san-pham' | 'bai-viet' | 'album';
   const CAU_HINH_BO = {
-    'san-pham': { khung: 'bo-anh-san-pham', chon: 'chon-anh-san-pham', thongTin: 'thong-tin-anh-san-pham', toiDa: 12, coChuThich: true },
-    'bai-viet': { khung: 'bo-anh-bai-viet', chon: 'chon-anh-bai-viet', thongTin: 'thong-tin-anh-bai-viet', toiDa: 30, coChuThich: false },
+    'san-pham': { khung: 'bo-anh-san-pham', chon: 'chon-anh-san-pham', thongTin: 'thong-tin-anh-san-pham', toiDa: 12, coChuThich: true, kemNgang: false },
+    'bai-viet': { khung: 'bo-anh-bai-viet', chon: 'chon-anh-bai-viet', thongTin: 'thong-tin-anh-bai-viet', toiDa: 30, coChuThich: false, kemNgang: false },
+    album: { khung: 'bo-anh-album', chon: 'chon-anh-album', thongTin: 'thong-tin-anh-album', toiDa: 60, coChuThich: false, kemNgang: true },
   } as const;
-  const boAnh: Record<LoaiBo, AnhTrongBo[]> = { 'san-pham': [], 'bai-viet': [] };
+  const boAnh: Record<LoaiBo, AnhTrongBo[]> = { 'san-pham': [], 'bai-viet': [], album: [] };
 
   /** Ảnh đã lưu xem bằng bản nhỏ cho nhẹ; ảnh cũ không có bản nhỏ thì lấy ảnh lớn. */
   const banNho = (url: string) => url.replace(/\.(webp|jpg)$/, '-nho.$1');
@@ -820,10 +886,16 @@ const nutThemAnh =
     $(ch.thongTin).textContent = boAnh[loai].length ? `${boAnh[loai].length} / ${ch.toiDa} ảnh` : '';
   }
 
-  function napBo(loai: LoaiBo, ds: unknown, chuThich: unknown = []) {
+  function napBo(loai: LoaiBo, ds: unknown, chuThich: unknown = [], ngang: unknown = []) {
     const dsUrl = Array.isArray(ds) ? ds.map(String) : [];
     const dsChu = Array.isArray(chuThich) ? chuThich.map(String) : [];
-    boAnh[loai] = dsUrl.map((anh, i) => ({ anh, xem: banNho(anh), chuThich: dsChu[i] ?? '' }));
+    const dsNgang = Array.isArray(ngang) ? ngang : [];
+    boAnh[loai] = dsUrl.map((anh, i) => ({
+      anh,
+      xem: banNho(anh),
+      chuThich: dsChu[i] ?? '',
+      ngang: typeof dsNgang[i] === 'boolean' ? dsNgang[i] : undefined,
+    }));
     veBo(loai);
   }
 
@@ -848,7 +920,7 @@ const nutThemAnh =
           try {
             const lon = await veLai(bitmap, 1600, 0.82);
             const nho = await veLai(bitmap, 600, 0.76);
-            boAnh[loai].push({ anh: '', xem: nho, chuThich: '', lon, nho });
+            boAnh[loai].push({ anh: '', xem: nho, chuThich: '', lon, nho, ngang: bitmap.width >= bitmap.height });
           } finally {
             bitmap.close();
           }
@@ -883,8 +955,15 @@ const nutThemAnh =
       Object.assign(x, { anh: kq.anh, blobLon: kq.blobLon, blobNho: kq.blobNho, lon: undefined, nho: undefined });
     }
     trangThai.textContent = 'Đang lưu…';
+    const ch = CAU_HINH_BO[loai];
     return {
-      danhSach: ds.map((x) => (CAU_HINH_BO[loai].coChuThich ? { anh: x.anh, chuThich: x.chuThich } : x.anh)),
+      danhSach: ds.map((x) =>
+        ch.coChuThich
+          ? { anh: x.anh, chuThich: x.chuThich }
+          : ch.kemNgang
+            ? { anh: x.anh, ngang: x.ngang !== false }
+            : x.anh,
+      ),
       anhMoi: ds
         .filter((x) => x.blobLon)
         .map((x) => ({ anh: x.anh, blobLon: x.blobLon, blobNho: x.blobNho })),
@@ -943,6 +1022,7 @@ const nutThemAnh =
   const MOI_KHOI = [
     'khoi-chon-nguoi', 'than-hoi-vien',
     'khoi-chon-tin', 'than-tin-tuc',
+    'khoi-chon-album', 'than-album',
     'khoi-chon-trang', 'than-trang',
     'than-thong-tin',
   ];
@@ -953,7 +1033,7 @@ const nutThemAnh =
     thongBao.hidden = true;
   };
 
-  const daNap = { 'tin-tuc': false, trang: false };
+  const daNap = { 'tin-tuc': false, album: false, trang: false };
 
   $('chon-che-do').addEventListener('change', async (e) => {
     cheDo = (e.target as HTMLSelectElement).value as CheDo;
@@ -965,6 +1045,9 @@ const nutThemAnh =
     } else if (cheDo === 'tin-tuc') {
       $('khoi-chon-tin').hidden = false;
       if (!daNap['tin-tuc']) await napTinTuc();
+    } else if (cheDo === 'album') {
+      $('khoi-chon-album').hidden = false;
+      if (!daNap.album) await napAlbum();
     } else if (cheDo === 'trang') {
       $('khoi-chon-trang').hidden = false;
       if (!daNap.trang) await napTrang();
@@ -1207,6 +1290,145 @@ const nutThemAnh =
     bao('Đã xoá bài viết. Website sẽ cập nhật sau khoảng 1–2 phút.', true);
   });
 
+  // ── Chế độ: album ảnh ─────────────────────────────────────────────────────
+  type AlbumTomTat = { slug: string; ten: string; danhMuc: string; soAnh: number; tuWeb: boolean; bia: string };
+  let dsAlbum: AlbumTomTat[] = [];
+  let albumMoi = false;
+  let albumTuWeb = true;
+  let danhMucAlbumChon = 'cong-tac-xa-hoi';
+
+  function chonMucAlbumForm(muc: string) {
+    danhMucAlbumChon = muc;
+    for (const n of document.querySelectorAll<HTMLButtonElement>('#chon-muc-album [data-muc-album]')) {
+      n.setAttribute('aria-pressed', String(n.dataset.mucAlbum === muc));
+    }
+  }
+
+  for (const n of document.querySelectorAll<HTMLButtonElement>('#chon-muc-album [data-muc-album]')) {
+    n.addEventListener('click', () => chonMucAlbumForm(n.dataset.mucAlbum!));
+  }
+
+  function veDsAlbum() {
+    const ul = $('ds-album');
+    ul.innerHTML = '';
+    if (!dsAlbum.length) {
+      const li = document.createElement('li');
+      li.className = 'rounded-xl border border-dashed border-slate-300 bg-white px-4 py-5 text-center text-[0.9rem] text-slate-500';
+      li.textContent = daNap.album
+        ? 'Chưa có album nào. Bấm nút phía trên để tạo album đầu tiên.'
+        : 'Đang tải danh sách album…';
+      ul.appendChild(li);
+      return;
+    }
+    for (const a of dsAlbum) {
+      const li = document.createElement('li');
+      const nut = document.createElement('button');
+      nut.type = 'button';
+      nut.className =
+        'flex w-full items-center gap-3 rounded-xl bg-white p-2.5 text-left ring-1 ring-slate-900/5 transition hover:ring-brand-300 aria-[current=true]:ring-2 aria-[current=true]:ring-brand-500';
+      nut.setAttribute('aria-current', String(!albumMoi && a.slug === slugHienTai));
+
+      const anh = document.createElement('img');
+      anh.alt = '';
+      anh.className = a.bia
+        ? 'h-14 w-18 shrink-0 rounded-lg bg-brand-50 object-cover'
+        : 'h-14 w-18 shrink-0 rounded-lg bg-brand-50 object-contain p-2 opacity-40';
+      anh.src = a.bia || '/logo-goc.svg';
+
+      const chu = document.createElement('span');
+      chu.className = 'min-w-0 flex-1';
+      const td = document.createElement('span');
+      td.className = 'line-clamp-2 block text-[0.95rem] font-semibold leading-snug text-brand-900';
+      td.textContent = a.ten;
+      const phu = document.createElement('span');
+      phu.className = 'mt-1 block text-[0.8rem] text-slate-500';
+      phu.textContent = [TEN_MUC[a.danhMuc] ?? a.danhMuc, `${a.soAnh} ảnh`, a.tuWeb ? '' : 'do kỹ thuật tạo']
+        .filter(Boolean)
+        .join(' · ');
+      chu.append(td, phu);
+
+      nut.append(anh, chu);
+      nut.addEventListener('click', () => moAlbum(a.slug));
+      li.appendChild(nut);
+      ul.appendChild(li);
+    }
+  }
+
+  async function napAlbum() {
+    if (!daNap.album) veDsAlbum();
+    const kq = await goi('/api/album', 'POST', {});
+    if (!kq.ok) return bao(kq.loi ?? 'Không lấy được danh sách album.', false);
+    dsAlbum = kq.danhSach;
+    daNap.album = true;
+    veDsAlbum();
+  }
+
+  function donAlbum(a: Record<string, any>) {
+    slugHienTai = String(a.slug ?? '');
+    albumTuWeb = a.tuWeb !== false;
+    oNhap('albumTen').value = a.ten ?? '';
+    chonMucAlbumForm(a.danhMuc ?? danhMucAlbumChon);
+    napBo('album', a.anh ?? [], [], a.ngang ?? []);
+
+    $('khoi-xoa-album').hidden = albumMoi || !albumTuWeb;
+    $('than-album').hidden = false;
+    thanhLuu.hidden = false;
+    veDsAlbum();
+  }
+
+  async function moAlbum(slug: string) {
+    thongBao.hidden = true;
+    albumMoi = false;
+    const kq = await goi('/api/album', 'PUT', { slug });
+    if (!kq.ok) return bao(kq.loi ?? 'Không mở được album.', false);
+    donAlbum(kq.album);
+    $('than-album').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  $('nut-album-moi').addEventListener('click', () => {
+    albumMoi = true;
+    thongBao.hidden = true;
+    donAlbum({ danhMuc: danhMucAlbumChon });
+    oNhap('albumTen').focus();
+  });
+
+  $('nut-xoa-album').addEventListener('click', async () => {
+    if (!confirm('Xoá hẳn album này khỏi thư viện?')) return;
+    const kq = await goi('/api/album', 'PUT', { slug: slugHienTai, xoa: true });
+    if (!kq.ok) return bao(kq.loi ?? 'Xoá không thành công.', false);
+    $('than-album').hidden = true;
+    thanhLuu.hidden = true;
+    slugHienTai = '';
+    await napAlbum();
+    await napChonAlbum();
+    bao('Đã xoá album. Website sẽ cập nhật sau khoảng 1 phút.', true);
+  });
+
+  /** Nạp lại danh sách album cho ô chọn "Album ảnh gắn kèm" ở bài viết. */
+  async function napChonAlbum() {
+    const selAlbum = oChon('tinAlbum');
+    const dangChon = selAlbum.value;
+
+    let ds: { slug: string; ten: string }[];
+    if (bienTap) {
+      const kq = await goi('/api/album', 'POST', {});
+      ds = kq.ok ? kq.danhSach : [];
+    } else {
+      ds = await fetch('/thu-vien.json')
+        .then((r) => (r.ok ? r.json() : []))
+        .catch(() => []);
+    }
+
+    for (const opt of [...selAlbum.options].slice(1)) opt.remove();
+    for (const a of ds) {
+      const opt = document.createElement('option');
+      opt.value = a.slug;
+      opt.textContent = a.ten;
+      selAlbum.appendChild(opt);
+    }
+    selAlbum.value = dangChon;
+  }
+
   // ── Chế độ: nội dung trang ───────────────────────────────────────────────
   async function napTrang() {
     const kq = await goi('/api/trang', 'POST', {});
@@ -1307,6 +1529,22 @@ const nutThemAnh =
       });
     }
 
+    if (cheDo === 'album') {
+      const ten = oNhap('albumTen').value;
+      if (!ten.trim()) throw new Error('Album phải có tên.');
+      const bo = await chuanBiBo('album');
+      if (bo.danhSach.length === 0) {
+        throw new Error('Album phải có ít nhất một ảnh. Anh/chị bấm "Thêm ảnh" rồi lưu lại giúp em.');
+      }
+      const duLieu = { ten, danhMuc: danhMucAlbumChon };
+      return goi('/api/album', 'PUT', {
+        ...(albumMoi ? { moi: true } : { slug: slugHienTai }),
+        duLieu,
+        danhSach: bo.danhSach,
+        anhMoi: bo.anhMoi,
+      });
+    }
+
     if (cheDo === 'trang') {
       const duLieu = {
         tieuDe: oNhap('trangTieuDe').value,
@@ -1389,6 +1627,19 @@ const nutThemAnh =
           if (muc !== mucDangChon) chonMuc(muc);
           await napTinTuc();
         }
+
+        if (cheDo === 'album') {
+          chotBo('album');
+          if (albumMoi && kq.slug) {
+            albumMoi = false;
+            slugHienTai = kq.slug;
+            albumTuWeb = true;
+            $('khoi-xoa-album').hidden = false;
+          }
+          daNap.album = false;
+          await napAlbum();
+          await napChonAlbum();
+        }
       }
     } catch (e) {
       bao((e as Error).message, false);
@@ -1449,17 +1700,7 @@ const nutThemAnh =
           sel.appendChild(opt);
         }
 
-        // Danh sách album để gắn vào bài viết
-        const albums = await fetch('/thu-vien.json')
-          .then((r) => (r.ok ? r.json() : []))
-          .catch(() => []);
-        const selAlbum = oChon('tinAlbum');
-        for (const a of albums as any[]) {
-          const opt = document.createElement('option');
-          opt.value = a.slug;
-          opt.textContent = a.ten;
-          selAlbum.appendChild(opt);
-        }
+        await napChonAlbum();
       } else {
         donHoSo(kq.hoSo);
         const ten = [kq.hoSo.xungHo, kq.hoSo.hoTen].filter(Boolean).join(' ');

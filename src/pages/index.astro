@@ -3,8 +3,11 @@ import Base from '../layouts/Base.astro';
 import TieuDeMuc from '../components/TieuDeMuc.astro';
 import TheHoiVien from '../components/TheHoiVien.astro';
 import site from '../data/site.json';
-import thuVien from '../data/thu-vien.json';
+import thuVienGoc from '../data/thu-vien.json';
 import { layBanDieuHanh, anhChanDung, coAnhNhieuCo } from '../lib/hoi-vien';
+import { anhAlbumNho, locAlbum } from '../lib/anh';
+
+const thuVien = locAlbum(thuVienGoc);
 
 const banDieuHanh = await layBanDieuHanh();
 const noiBat = banDieuHanh.slice(0, 4);
@@ -212,7 +215,7 @@ const anhTapThe = `/images/hoat-dong/${ANH_TAP_THE.album}/${ANH_TAP_THE.anh}.web
               class="group reveal relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-brand-900/20"
             >
               <img
-                src={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}-thumb.webp`}
+                src={anhAlbumNho(a.slug, a.anh[0])}
                 alt={a.ten}
                 width="640"
                 height="480"

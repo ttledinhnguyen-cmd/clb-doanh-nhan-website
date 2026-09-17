@@ -1,22 +1,25 @@
 ---
 import Base from '../../layouts/Base.astro';
 import HeroTrang from '../../components/HeroTrang.astro';
-import thuVien from '../../data/thu-vien.json';
+import thuVienGoc from '../../data/thu-vien.json';
 import { DANH_MUC_TIN } from '../../content.config';
+import { anhAlbumLon, anhAlbumNho, locAlbum } from '../../lib/anh';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
-  thuVien.map((a) => ({ params: { album: a.slug }, props: { a } }));
+  locAlbum(thuVienGoc).map((a) => ({ params: { album: a.slug }, props: { a } }));
 
+const thuVien = locAlbum(thuVienGoc);
 const { a } = Astro.props;
 const tenDanhMuc = DANH_MUC_TIN[a.danhMuc as keyof typeof DANH_MUC_TIN];
 const khac = thuVien.filter((x) => x.slug !== a.slug).slice(0, 3);
+const duongDanLon = a.anh.map((x) => anhAlbumLon(a.slug, x));
 ---
 
 <Base
   tieuDe={a.ten}
   moTa={`${a.soAnh} hình ảnh chương trình ${a.ten} của CLB Doanh nhân Khánh Hòa – Sài Gòn.`}
-  anh={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}.webp`}
+  anh={duongDanLon[0]}
 >
   <HeroTrang
     nhan={tenDanhMuc}
@@ -38,7 +41,7 @@ const khac = thuVien.filter((x) => x.slug !== a.slug).slice(0, 3);
                 aria-label={`Xem ảnh ${i + 1} trên ${a.soAnh}`}
               >
                 <img
-                  src={`/images/hoat-dong/${a.slug}/${anh.ten}-thumb.webp`}
+                  src={anhAlbumNho(a.slug, anh)}
                   alt={`${a.ten} — ảnh ${i + 1}`}
                   width="640"
                   height="480"
@@ -66,7 +69,7 @@ const khac = thuVien.filter((x) => x.slug !== a.slug).slice(0, 3);
                 class="group relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-xl"
               >
                 <img
-                  src={`/images/hoat-dong/${x.slug}/${x.anh[0].ten}-thumb.webp`}
+                  src={anhAlbumNho(x.slug, x.anh[0])}
                   alt={x.ten}
                   width="640"
                   height="480"
@@ -165,10 +168,7 @@ const khac = thuVien.filter((x) => x.slug !== a.slug).slice(0, 3);
     </div>
   </dialog>
 
-  <script
-    is:inline
-    define:vars={{ slug: a.slug, ten: a.ten, danhSach: a.anh.map((x) => x.ten) }}
-  >
+  <script is:inline define:vars={{ ten: a.ten, dsAnh: duongDanLon }}>
     (() => {
       const khung = document.getElementById('khung-anh');
       const anhLon = document.getElementById('anh-lon');
@@ -176,10 +176,10 @@ const khac = thuVien.filter((x) => x.slug !== a.slug).slice(0, 3);
       let i = 0;
 
       const hien = (k) => {
-        i = (k + danhSach.length) % danhSach.length;
-        anhLon.src = `/images/hoat-dong/${slug}/${danhSach[i]}.webp`;
+        i = (k + dsAnh.length) % dsAnh.length;
+        anhLon.src = dsAnh[i];
         anhLon.alt = `${ten} — ảnh ${i + 1}`;
-        soAnh.textContent = `Ảnh ${i + 1} / ${danhSach.length}`;
+        soAnh.textContent = `Ảnh ${i + 1} / ${dsAnh.length}`;
       };
 
       document.getElementById('luoi-anh').addEventListener('click', (e) => {

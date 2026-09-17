@@ -319,10 +319,22 @@ async function chayThuVien() {
     console.log(`  ✓ ${album.slug.padEnd(38)} ${anh.length} ảnh`);
   }
 
-  await writeFile(
-    path.join(ROOT, 'src/data/thu-vien.json'),
-    JSON.stringify(manifest, null, 2) + '\n',
-  );
+  // Album ban thư ký tạo ở /cap-nhat không nằm trong hằng ALBUMS và cũng không
+  // có ảnh gốc trên máy này, nên nếu ghi đè thẳng manifest thì chạy lại script
+  // là xoá sạch công sức của thư ký. Giữ lại mọi mục tuWeb và mọi mục lạ.
+  const duongDanJson = path.join(ROOT, 'src/data/thu-vien.json');
+  const slugDaSinh = new Set(manifest.map((a) => a.slug));
+  let giuLai = [];
+  if (await exists(duongDanJson)) {
+    try {
+      const cu = JSON.parse(await readFile(duongDanJson, 'utf8'));
+      giuLai = cu.filter((a) => a.tuWeb === true || !slugDaSinh.has(a.slug));
+    } catch {
+      console.warn('  ! thu-vien.json cũ hỏng, bỏ qua phần giữ lại');
+    }
+  }
+  if (giuLai.length) console.log(`  ↳ giữ lại ${giuLai.length} album không do script sinh`);
+  await writeFile(duongDanJson, JSON.stringify([...manifest, ...giuLai], null, 2) + '\n');
 }
 
 async function chayLogo() {

@@ -9,7 +9,7 @@
  * Gửi từng ảnh thay vì gom cả chục ảnh vào một lượt, vì gói miễn phí của
  * Cloudflare chỉ cho mỗi lượt gọi hàm 10ms xử lý; một gói vài MB sẽ vượt.
  *
- *   POST { loai: 'san-pham' | 'bai-viet', lon, nho }
+ *   POST { loai: 'san-pham' | 'bai-viet' | 'album', lon, nho }
  *     → { anh: '/images/tai-len/….webp', blobLon, blobNho }
  */
 import { type EnvKho, json, thieuCauHinh, taoBlob, tachAnh } from '../../src/lib/kho-github';
@@ -25,12 +25,12 @@ export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => 
     nho?: string;
   };
 
-  if (body.loai !== 'san-pham' && body.loai !== 'bai-viet') {
+  if (body.loai !== 'san-pham' && body.loai !== 'bai-viet' && body.loai !== 'album') {
     return json({ loi: 'Loại ảnh không hợp lệ.' }, 400);
   }
-  // Hội viên tải được ảnh sản phẩm cho hồ sơ của mình; ảnh bài viết chỉ quản trị và ban thư ký.
+  // Hội viên tải được ảnh sản phẩm cho hồ sơ của mình; ảnh bài viết và ảnh album chỉ quản trị và ban thư ký.
   const bienTap = coQuyenBienTap(phien.vaiTro);
-  if ((body.loai === 'bai-viet' && !bienTap) || (!bienTap && !phien.slugHoiVien)) {
+  if ((body.loai !== 'san-pham' && !bienTap) || (!bienTap && !phien.slugHoiVien)) {
     return json({ loi: 'Tài khoản này không có quyền thực hiện thao tác đó.' }, 403);
   }
   if (thieuCauHinh(env)) return json({ loi: 'Hệ thống chưa được kích hoạt.' }, 503);
@@ -44,7 +44,8 @@ export const onRequestPost: PagesFunction<EnvKho> = async ({ request, env }) => 
 
   try {
     const ma = crypto.randomUUID().slice(0, 8);
-    const ten = `${body.loai === 'san-pham' ? 'sp' : 'bai'}-${Date.now()}-${ma}`;
+    const tienTo = body.loai === 'san-pham' ? 'sp' : body.loai === 'album' ? 'alb' : 'bai';
+    const ten = `${tienTo}-${Date.now()}-${ma}`;
     const [blobLon, blobNho] = await Promise.all([taoBlob(env, lon.b64), taoBlob(env, nho.b64)]);
     return json({ ok: true, anh: `/images/tai-len/${ten}.${lon.duoi}`, blobLon, blobNho });
   } catch (e) {

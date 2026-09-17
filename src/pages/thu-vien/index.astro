@@ -1,8 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import HeroTrang from '../../components/HeroTrang.astro';
-import thuVien from '../../data/thu-vien.json';
+import thuVienGoc from '../../data/thu-vien.json';
 import { DANH_MUC_TIN } from '../../content.config';
+import { anhAlbumNho, locAlbum } from '../../lib/anh';
+
+const thuVien = locAlbum(thuVienGoc);
 
 const tongAnh = thuVien.reduce((s, a) => s + a.soAnh, 0);
 
@@ -35,7 +38,7 @@ const nhom = Object.entries(DANH_MUC_TIN)
                 class="group reveal relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-brand-900/20"
               >
                 <img
-                  src={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}-thumb.webp`}
+                  src={anhAlbumNho(a.slug, a.anh[0])}
                   alt={a.ten}
                   width="640"
                   height="480"

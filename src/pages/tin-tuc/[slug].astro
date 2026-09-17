@@ -2,8 +2,10 @@
 import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
 import { DANH_MUC_TIN } from '../../content.config';
-import thuVien from '../../data/thu-vien.json';
-import { boAnh } from '../../lib/anh';
+import thuVienGoc from '../../data/thu-vien.json';
+import { boAnh, anhAlbumNho, locAlbum } from '../../lib/anh';
+
+const thuVien = locAlbum(thuVienGoc);
 import LuoiAnh from '../../components/LuoiAnh.astro';
 import type { GetStaticPaths } from 'astro';
 
@@ -104,7 +106,7 @@ const ngayVn = (x: Date) =>
             <div class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {album.anh.slice(0, 8).map((a) => (
                 <img
-                  src={`/images/hoat-dong/${album.slug}/${a.ten}-thumb.webp`}
+                  src={anhAlbumNho(album.slug, a)}
                   alt={album.ten}
                   width="640"
                   height="480"

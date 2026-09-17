@@ -278,8 +278,8 @@ export function tachAnh(
 
 // ─── Bộ ảnh (ảnh sản phẩm của hội viên, ảnh trong bài viết) ─────────────────
 
-/** Tên file do /api/anh đặt: sp-… cho ảnh sản phẩm, bai-… cho ảnh bài viết. */
-const MAU_ANH_TAI_LEN = /^\/images\/tai-len\/(sp|bai)-\d{13}-[0-9a-f]{8}\.(webp|jpg)$/;
+/** Tên file do /api/anh đặt: sp-… ảnh sản phẩm, bai-… ảnh bài viết, alb-… ảnh album. */
+const MAU_ANH_TAI_LEN = /^\/images\/tai-len\/(sp|bai|alb)-\d{13}-[0-9a-f]{8}\.(webp|jpg)$/;
 const MAU_SHA = /^[0-9a-f]{40,64}$/;
 
 /**

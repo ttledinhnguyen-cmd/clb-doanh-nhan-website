@@ -9,8 +9,10 @@
  */
 import HeroTrang from './HeroTrang.astro';
 import { render, getCollection, type CollectionEntry } from 'astro:content';
-import { anhNho } from '../lib/anh';
-import thuVien from '../data/thu-vien.json';
+import { anhNho, anhAlbumNho, locAlbum } from '../lib/anh';
+import thuVienGoc from '../data/thu-vien.json';
+
+const thuVien = locAlbum(thuVienGoc);
 
 interface Props {
   muc: CollectionEntry<'trang'>;
@@ -19,6 +21,10 @@ interface Props {
 const { muc, duongDan } = Astro.props;
 const d = muc.data;
 const { Content } = await render(muc);
+
+// Thân rỗng thì giấu hẳn khối giới thiệu, không để lại tiêu đề lơ lửng.
+// Ban thư ký xoá sạch ô nội dung ở /cap-nhat cũng rơi vào trường hợp này.
+const coNoiDung = Boolean(muc.body?.trim());
 
 const album = d.danhMucAlbum ? thuVien.filter((a) => a.danhMuc === d.danhMucAlbum) : [];
 const baiViet = d.danhMucTin
@@ -87,20 +93,24 @@ const ngayVn = (x: Date) =>
   )
 }
 
-<section class:list={['py-12 lg:py-16', baiViet.length > 0 && 'border-t border-slate-200']}>
-  <div class="container-page">
-    {
-      baiViet.length > 0 && (
-        <h2 class="rule-accent mx-auto mb-8 max-w-3xl text-(length:--text-h2)">Giới thiệu</h2>
-      )
-    }
-    <div
-      class="mx-auto max-w-3xl space-y-5 text-(length:--text-lead) leading-relaxed text-slate-600 [&_a]:font-semibold [&_a]:text-brand-600 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-11 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-brand-900 [&_h3]:mt-9 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-brand-900 [&_li]:ml-5 [&_li]:list-disc [&_strong]:font-bold [&_strong]:text-brand-800"
-    >
-      <Content />
-    </div>
-  </div>
-</section>
+{
+  coNoiDung && (
+    <section class:list={['py-12 lg:py-16', baiViet.length > 0 && 'border-t border-slate-200']}>
+      <div class="container-page">
+        {
+          baiViet.length > 0 && (
+            <h2 class="rule-accent mx-auto mb-8 max-w-3xl text-(length:--text-h2)">Giới thiệu</h2>
+          )
+        }
+        <div
+          class="mx-auto max-w-3xl space-y-5 text-(length:--text-lead) leading-relaxed text-slate-600 [&_a]:font-semibold [&_a]:text-brand-600 [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-11 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-brand-900 [&_h3]:mt-9 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-brand-900 [&_li]:ml-5 [&_li]:list-disc [&_strong]:font-bold [&_strong]:text-brand-800"
+        >
+          <Content />
+        </div>
+      </div>
+    </section>
+  )
+}
 
 {
   album.length > 0 && (
@@ -114,7 +124,7 @@ const ngayVn = (x: Date) =>
               class="group reveal relative overflow-hidden rounded-2xl shadow-sm ring-1 ring-slate-900/5 transition duration-500 hover:-translate-y-1.5 hover:shadow-xl"
             >
               <img
-                src={`/images/hoat-dong/${a.slug}/${a.anh[0].ten}-thumb.webp`}
+                src={anhAlbumNho(a.slug, a.anh[0])}
                 alt={a.ten}
                 width="640"
                 height="480"
@@ -138,7 +148,7 @@ const ngayVn = (x: Date) =>
 }
 
 {
-  album.length === 0 && baiViet.length === 0 && (
+  album.length === 0 && baiViet.length === 0 && !coNoiDung && (
     <section class="border-t border-slate-200 py-14">
       <div class="container-page">
         <div class="mx-auto max-w-2xl rounded-2xl border border-dashed border-brand-200 bg-brand-50/60 p-8 text-center sm:p-10">

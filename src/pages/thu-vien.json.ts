@@ -1,5 +1,8 @@
 import type { APIRoute } from 'astro';
-import thuVien from '../data/thu-vien.json';
+import thuVienGoc from '../data/thu-vien.json';
+import { locAlbum } from '../lib/anh';
+
+const thuVien = locAlbum(thuVienGoc);
 
 /** Danh sách album rút gọn, để trang /cap-nhat gắn album vào bài viết. */
 export const GET: APIRoute = async () =>

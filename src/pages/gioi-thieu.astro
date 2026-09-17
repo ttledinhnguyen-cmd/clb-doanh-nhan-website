@@ -3,8 +3,10 @@ import Base from '../layouts/Base.astro';
 import HeroTrang from '../components/HeroTrang.astro';
 import TieuDeMuc from '../components/TieuDeMuc.astro';
 import site from '../data/site.json';
-import thuVien from '../data/thu-vien.json';
+import thuVienGoc from '../data/thu-vien.json';
+import { anhAlbumLon, locAlbum } from '../lib/anh';
 
+const thuVien = locAlbum(thuVienGoc);
 const anhMinhHoa = thuVien.find((a) => a.slug === 'caravan-tro-ve-tuoi-tho-toi-lan-10') ?? thuVien[0];
 ---
 
@@ -48,7 +50,7 @@ const anhMinhHoa = thuVien.find((a) => a.slug === 'caravan-tro-ve-tuoi-tho-toi-l
 
       <div class="reveal lg:sticky lg:top-28">
         <img
-          src={`/images/hoat-dong/${anhMinhHoa.slug}/${anhMinhHoa.anh[0].ten}.webp`}
+          src={anhAlbumLon(anhMinhHoa.slug, anhMinhHoa.anh[0])}
           alt={anhMinhHoa.ten}
           width="1600"
           height="1067"
@@ -78,8 +80,7 @@ const anhMinhHoa = thuVien.find((a) => a.slug === 'caravan-tro-ve-tuoi-tho-toi-l
   <section id="tieu-chi" class="scroll-mt-28 bg-brand-50/60 py-20 lg:py-28">
     <div class="container-page">
       <TieuDeMuc
-        nhan="Tiêu chí hoạt động"
-        tieuDe="Ba trụ cột của câu lạc bộ"
+        tieuDe="Tiêu chí hoạt động của CLB"
         moTa="Ba tiêu chí này vừa là kim chỉ nam, vừa là lời cam kết của câu lạc bộ với hội viên và với quê hương."
         giua
       />
