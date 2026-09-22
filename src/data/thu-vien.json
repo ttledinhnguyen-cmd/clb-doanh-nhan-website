@@ -325,58 +325,203 @@
   },
   {
     "slug": "giai-pickleball-cup-tan-pham-nguyen",
-    "ten": "Giải Pickleball tranh Cúp Tân Phạm Nguyên",
+    "ten": "Giải Pickleball tranh Cúp \"Tân Phạm Nguyên\"",
     "danhMuc": "van-hoa-the-thao",
-    "soAnh": 12,
+    "soAnh": 32,
     "anh": [
       {
-        "ten": "001",
-        "ngang": true
+        "ten": "alb-1790079180749-f5c84174",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079180749-f5c84174.webp",
+        "nho": "/images/tai-len/alb-1790079180749-f5c84174-nho.webp"
       },
       {
-        "ten": "002",
-        "ngang": true
+        "ten": "alb-1790079182506-f01e7054",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079182506-f01e7054.webp",
+        "nho": "/images/tai-len/alb-1790079182506-f01e7054-nho.webp"
       },
       {
-        "ten": "003",
-        "ngang": true
+        "ten": "alb-1790079184504-d6036759",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079184504-d6036759.webp",
+        "nho": "/images/tai-len/alb-1790079184504-d6036759-nho.webp"
       },
       {
-        "ten": "004",
-        "ngang": true
+        "ten": "alb-1790079186610-0d9ee008",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079186610-0d9ee008.webp",
+        "nho": "/images/tai-len/alb-1790079186610-0d9ee008-nho.webp"
       },
       {
-        "ten": "005",
-        "ngang": true
+        "ten": "alb-1790079188679-f58f492b",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079188679-f58f492b.webp",
+        "nho": "/images/tai-len/alb-1790079188679-f58f492b-nho.webp"
       },
       {
-        "ten": "006",
-        "ngang": true
+        "ten": "alb-1790079190461-7fa56d69",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079190461-7fa56d69.webp",
+        "nho": "/images/tai-len/alb-1790079190461-7fa56d69-nho.webp"
       },
       {
-        "ten": "007",
-        "ngang": true
+        "ten": "alb-1790079192440-711ab77e",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079192440-711ab77e.webp",
+        "nho": "/images/tai-len/alb-1790079192440-711ab77e-nho.webp"
       },
       {
-        "ten": "008",
-        "ngang": true
+        "ten": "alb-1790079193803-a23b8b38",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079193803-a23b8b38.webp",
+        "nho": "/images/tai-len/alb-1790079193803-a23b8b38-nho.webp"
       },
       {
-        "ten": "009",
-        "ngang": true
+        "ten": "alb-1790079195893-5a6502e7",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079195893-5a6502e7.webp",
+        "nho": "/images/tai-len/alb-1790079195893-5a6502e7-nho.webp"
       },
       {
-        "ten": "010",
-        "ngang": true
+        "ten": "alb-1790079197895-5a2f9467",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079197895-5a2f9467.webp",
+        "nho": "/images/tai-len/alb-1790079197895-5a2f9467-nho.webp"
       },
       {
-        "ten": "011",
-        "ngang": true
+        "ten": "alb-1790079199171-11d23323",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079199171-11d23323.webp",
+        "nho": "/images/tai-len/alb-1790079199171-11d23323-nho.webp"
       },
       {
-        "ten": "012",
-        "ngang": true
+        "ten": "alb-1790079201029-e0cee94d",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079201029-e0cee94d.webp",
+        "nho": "/images/tai-len/alb-1790079201029-e0cee94d-nho.webp"
+      },
+      {
+        "ten": "alb-1790079202955-2993b24d",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079202955-2993b24d.webp",
+        "nho": "/images/tai-len/alb-1790079202955-2993b24d-nho.webp"
+      },
+      {
+        "ten": "alb-1790079204492-da9f510c",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079204492-da9f510c.webp",
+        "nho": "/images/tai-len/alb-1790079204492-da9f510c-nho.webp"
+      },
+      {
+        "ten": "alb-1790079205798-d03a8af4",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079205798-d03a8af4.webp",
+        "nho": "/images/tai-len/alb-1790079205798-d03a8af4-nho.webp"
+      },
+      {
+        "ten": "alb-1790079206903-42955f3e",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079206903-42955f3e.webp",
+        "nho": "/images/tai-len/alb-1790079206903-42955f3e-nho.webp"
+      },
+      {
+        "ten": "alb-1790079208137-70dae57d",
+        "ngang": false,
+        "lon": "/images/tai-len/alb-1790079208137-70dae57d.webp",
+        "nho": "/images/tai-len/alb-1790079208137-70dae57d-nho.webp"
+      },
+      {
+        "ten": "alb-1790079209734-b083ac3b",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079209734-b083ac3b.webp",
+        "nho": "/images/tai-len/alb-1790079209734-b083ac3b-nho.webp"
+      },
+      {
+        "ten": "alb-1790079211531-32211897",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079211531-32211897.webp",
+        "nho": "/images/tai-len/alb-1790079211531-32211897-nho.webp"
+      },
+      {
+        "ten": "alb-1790079212803-863460b1",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079212803-863460b1.webp",
+        "nho": "/images/tai-len/alb-1790079212803-863460b1-nho.webp"
+      },
+      {
+        "ten": "alb-1790079214606-3506d38c",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079214606-3506d38c.webp",
+        "nho": "/images/tai-len/alb-1790079214606-3506d38c-nho.webp"
+      },
+      {
+        "ten": "alb-1790079216248-c9f02a57",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079216248-c9f02a57.webp",
+        "nho": "/images/tai-len/alb-1790079216248-c9f02a57-nho.webp"
+      },
+      {
+        "ten": "alb-1790079218197-f7077557",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079218197-f7077557.webp",
+        "nho": "/images/tai-len/alb-1790079218197-f7077557-nho.webp"
+      },
+      {
+        "ten": "alb-1790079219962-493e35c3",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079219962-493e35c3.webp",
+        "nho": "/images/tai-len/alb-1790079219962-493e35c3-nho.webp"
+      },
+      {
+        "ten": "alb-1790079221721-67dca3ec",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079221721-67dca3ec.webp",
+        "nho": "/images/tai-len/alb-1790079221721-67dca3ec-nho.webp"
+      },
+      {
+        "ten": "alb-1790079223265-71eb9fd6",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079223265-71eb9fd6.webp",
+        "nho": "/images/tai-len/alb-1790079223265-71eb9fd6-nho.webp"
+      },
+      {
+        "ten": "alb-1790079225314-7a3be5a0",
+        "ngang": false,
+        "lon": "/images/tai-len/alb-1790079225314-7a3be5a0.webp",
+        "nho": "/images/tai-len/alb-1790079225314-7a3be5a0-nho.webp"
+      },
+      {
+        "ten": "alb-1790079226777-5c7efa29",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079226777-5c7efa29.webp",
+        "nho": "/images/tai-len/alb-1790079226777-5c7efa29-nho.webp"
+      },
+      {
+        "ten": "alb-1790079228400-73821cec",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079228400-73821cec.webp",
+        "nho": "/images/tai-len/alb-1790079228400-73821cec-nho.webp"
+      },
+      {
+        "ten": "alb-1790079229802-fe473dd6",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079229802-fe473dd6.webp",
+        "nho": "/images/tai-len/alb-1790079229802-fe473dd6-nho.webp"
+      },
+      {
+        "ten": "alb-1790079231678-648247a0",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079231678-648247a0.webp",
+        "nho": "/images/tai-len/alb-1790079231678-648247a0-nho.webp"
+      },
+      {
+        "ten": "alb-1790079233390-0c4bf36e",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790079233390-0c4bf36e.webp",
+        "nho": "/images/tai-len/alb-1790079233390-0c4bf36e-nho.webp"
       }
-    ]
+    ],
+    "tuWeb": false
   }
 ]
