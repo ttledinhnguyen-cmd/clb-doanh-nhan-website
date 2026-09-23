@@ -4,7 +4,7 @@ moTa: "Trong không khí ấm áp, thân tình và tràn đầy niềm vui của
 ngay: "2026-03-19"
 danhMuc: "su-kien"
 anhBia: "/images/tai-len/tin-tan-nien-hoi-ngo-khoi-dau-thinh-vuong-1790166323542.webp"
-album: ""
+album: "tan-nien-hoi-ngo-khoi-dau-thinh-vuong"
 hinhAnh: []
 noiBat: false
 ---
