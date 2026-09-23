@@ -1081,5 +1081,116 @@
       }
     ],
     "tuWeb": true
+  },
+  {
+    "slug": "tet-nghia-tinh-xuan-dong-day",
+    "ten": "TẾT NGHĨA TÌNH - XUÂN ĐONG ĐẦY",
+    "danhMuc": "cong-tac-xa-hoi",
+    "soAnh": 17,
+    "anh": [
+      {
+        "ten": "alb-1790167382442-d0120809",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167382442-d0120809.webp",
+        "nho": "/images/tai-len/alb-1790167382442-d0120809-nho.webp"
+      },
+      {
+        "ten": "alb-1790167384177-b9943447",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167384177-b9943447.webp",
+        "nho": "/images/tai-len/alb-1790167384177-b9943447-nho.webp"
+      },
+      {
+        "ten": "alb-1790167385551-33d1081b",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167385551-33d1081b.webp",
+        "nho": "/images/tai-len/alb-1790167385551-33d1081b-nho.webp"
+      },
+      {
+        "ten": "alb-1790167386710-1f5ee4c0",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167386710-1f5ee4c0.webp",
+        "nho": "/images/tai-len/alb-1790167386710-1f5ee4c0-nho.webp"
+      },
+      {
+        "ten": "alb-1790167387801-ccebed6a",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167387801-ccebed6a.webp",
+        "nho": "/images/tai-len/alb-1790167387801-ccebed6a-nho.webp"
+      },
+      {
+        "ten": "alb-1790167389091-51178d96",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167389091-51178d96.webp",
+        "nho": "/images/tai-len/alb-1790167389091-51178d96-nho.webp"
+      },
+      {
+        "ten": "alb-1790167390485-1c2fbecd",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167390485-1c2fbecd.webp",
+        "nho": "/images/tai-len/alb-1790167390485-1c2fbecd-nho.webp"
+      },
+      {
+        "ten": "alb-1790167391690-f2f22741",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167391690-f2f22741.webp",
+        "nho": "/images/tai-len/alb-1790167391690-f2f22741-nho.webp"
+      },
+      {
+        "ten": "alb-1790167393232-5dd15497",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167393232-5dd15497.webp",
+        "nho": "/images/tai-len/alb-1790167393232-5dd15497-nho.webp"
+      },
+      {
+        "ten": "alb-1790167394605-80e8947f",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167394605-80e8947f.webp",
+        "nho": "/images/tai-len/alb-1790167394605-80e8947f-nho.webp"
+      },
+      {
+        "ten": "alb-1790167395922-1bd5bb6f",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167395922-1bd5bb6f.webp",
+        "nho": "/images/tai-len/alb-1790167395922-1bd5bb6f-nho.webp"
+      },
+      {
+        "ten": "alb-1790167397635-5cad0d18",
+        "ngang": false,
+        "lon": "/images/tai-len/alb-1790167397635-5cad0d18.webp",
+        "nho": "/images/tai-len/alb-1790167397635-5cad0d18-nho.webp"
+      },
+      {
+        "ten": "alb-1790167398954-e6d728a3",
+        "ngang": false,
+        "lon": "/images/tai-len/alb-1790167398954-e6d728a3.webp",
+        "nho": "/images/tai-len/alb-1790167398954-e6d728a3-nho.webp"
+      },
+      {
+        "ten": "alb-1790167400336-7c4c14c3",
+        "ngang": false,
+        "lon": "/images/tai-len/alb-1790167400336-7c4c14c3.webp",
+        "nho": "/images/tai-len/alb-1790167400336-7c4c14c3-nho.webp"
+      },
+      {
+        "ten": "alb-1790167401980-d605ed90",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167401980-d605ed90.webp",
+        "nho": "/images/tai-len/alb-1790167401980-d605ed90-nho.webp"
+      },
+      {
+        "ten": "alb-1790167403392-32dce433",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167403392-32dce433.webp",
+        "nho": "/images/tai-len/alb-1790167403392-32dce433-nho.webp"
+      },
+      {
+        "ten": "alb-1790167404588-1552f018",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790167404588-1552f018.webp",
+        "nho": "/images/tai-len/alb-1790167404588-1552f018-nho.webp"
+      }
+    ],
+    "tuWeb": true
   }
 ]
