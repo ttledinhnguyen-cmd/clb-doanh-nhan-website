@@ -790,5 +790,38 @@
       }
     ],
     "tuWeb": true
+  },
+  {
+    "slug": "kham-benh-va-tang-qua-cho-500-tre-khuyet-tat-tre-em-co-hoan-",
+    "ten": "KHÁM BỆNH VÀ TẶNG QUÀ CHO 500 TRẺ KHUYẾT TẬT, TRẺ EM CÓ HOÀN CẢNH KHÓ KHĂN",
+    "danhMuc": "cong-tac-xa-hoi",
+    "soAnh": 4,
+    "anh": [
+      {
+        "ten": "alb-1790165989612-b7a80d2c",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165989612-b7a80d2c.webp",
+        "nho": "/images/tai-len/alb-1790165989612-b7a80d2c-nho.webp"
+      },
+      {
+        "ten": "alb-1790165991841-f86362f2",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165991841-f86362f2.webp",
+        "nho": "/images/tai-len/alb-1790165991841-f86362f2-nho.webp"
+      },
+      {
+        "ten": "alb-1790165993797-53dcbda6",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165993797-53dcbda6.webp",
+        "nho": "/images/tai-len/alb-1790165993797-53dcbda6-nho.webp"
+      },
+      {
+        "ten": "alb-1790165995212-087ede7b",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165995212-087ede7b.webp",
+        "nho": "/images/tai-len/alb-1790165995212-087ede7b-nho.webp"
+      }
+    ],
+    "tuWeb": true
   }
 ]
