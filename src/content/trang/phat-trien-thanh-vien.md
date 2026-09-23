@@ -1,5 +1,5 @@
 ---
-tieuDe: "Hoạt động phát triển thành viên"
+tieuDe: "HOẠT ĐỘNG PHÁT TRIỂN THÀNH VIÊN"
 nhan: "Hoạt động"
 moTa: "Những hoạt động giúp hội viên gặp gỡ, hiểu nhau và tìm được cơ hội hợp tác ngay trong câu lạc bộ."
 danhMucAlbum: ""
