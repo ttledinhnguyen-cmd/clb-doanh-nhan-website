@@ -25,6 +25,7 @@ noiBat: false
 “NGÀY HỘI ĐÓNG GÓI QUÀ THIỆN NGUYỆN” MỞ RA HÀNH TRÌNH YÊU THƯƠNG
 
 ☀️Có những ngày thật đặc biệt…
+
 ❤️Đó là ngày hàng chục con người cùng ngồi lại bên nhau, không phân biệt tuổi tác hay nghề nghiệp, cùng chung một mục tiêu: chuẩn bị những phần quà yêu thương gửi đến các em nhỏ.
 
 🍀Từ những chiếc bánh, hộp sữa, quyển tập, cây bút… tất cả đã được nâng niu, sắp xếp cẩn thận bằng sự tận tâm và tình yêu thương của từng người.
