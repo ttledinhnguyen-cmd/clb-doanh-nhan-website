@@ -22,16 +22,20 @@ hinhAnh:
 noiBat: false
 ---
 
-“NGÀY HỘI ĐÓNG GÓI QUÀ THIỆN NGUYỆN” MỞ RA HÀNH TRÌNH YÊU THƯƠNG
+“NGÀY HỘI ĐÓNG GÓI QUÀ THIỆN NGUYỆN” – MỞ RA HÀNH TRÌNH YÊU THƯƠNG
 
-☀️Có những ngày thật đặc biệt…
+Có những ngày thật đặc biệt – những ngày mà yêu thương được kết nối bằng những hành động giản dị nhưng đầy ý nghĩa.
 
-❤️Đó là ngày hàng chục con người cùng ngồi lại bên nhau, không phân biệt tuổi tác hay nghề nghiệp, cùng chung một mục tiêu: chuẩn bị những phần quà yêu thương gửi đến các em nhỏ.
+Trong không khí ấm áp và tràn đầy tinh thần sẻ chia, Ngày hội Đóng gói quà thiện nguyện đã trở thành nơi hàng chục thành viên, tình nguyện viên và những người đồng hành cùng ngồi lại bên nhau, không phân biệt tuổi tác, nghề nghiệp hay vị trí, cùng chung một mục tiêu: chuẩn bị những phần quà yêu thương gửi đến các em nhỏ có hoàn cảnh còn nhiều khó khăn.
 
-🍀Từ những chiếc bánh, hộp sữa, quyển tập, cây bút… tất cả đã được nâng niu, sắp xếp cẩn thận bằng sự tận tâm và tình yêu thương của từng người.
+Từ những chiếc bánh, hộp sữa, quyển tập, cây bút… từng món quà đều được mọi người cẩn thận lựa chọn, sắp xếp và đóng gói bằng tất cả sự tận tâm. Mỗi phần quà hoàn thiện là kết tinh của thời gian, công sức và tấm lòng của rất nhiều người.
 
-🌹Mỗi phần quà hoàn thiện không chỉ là một món quà vật chất, mà còn là lời động viên, là niềm hy vọng và là sự sẻ chia dành cho những hoàn cảnh còn nhiều khó khăn.
+Bởi phía sau mỗi món quà không chỉ là những giá trị vật chất, mà còn là một lời động viên, một sự sẻ chia và một niềm hy vọng được gửi đến các em nhỏ. Đó cũng chính là thông điệp mà hành trình thiện nguyện luôn hướng đến: trao đi yêu thương để cùng nhau tạo nên những điều tốt đẹp hơn.
 
-Xin chân thành cảm ơn Quý Nhà tài trợ, Quý mạnh thường quân, các Anh Chị TV CLB, TV Đoàn Caravan cùng tất cả những tấm lòng đã dành thời gian, công sức và tình cảm để tạo nên một Ngày Hội Đóng Gói Quà Thiện Nguyện đầy ý nghĩa.
+Ban Tổ chức xin trân trọng gửi lời cảm ơn đến Quý Nhà tài trợ, Quý Mạnh thường quân, các Anh Chị Thành viên CLB, Thành viên Đoàn Caravan cùng tất cả những tấm lòng đã dành thời gian, công sức và tình cảm để chung tay tạo nên một Ngày hội Đóng gói quà thiện nguyện đầy ý nghĩa.
 
-Hẹn gặp Quý Anh Chị trên hành trình Caravan “Trở về tuổi thơ tôi – Lần 10”, nơi chúng ta sẽ cùng nhau mang theo không chỉ những món quà, mà còn là yêu thương, trách nhiệm và niềm hy vọng đến với những vùng đất còn nhiều khó khăn.
+Mỗi bàn tay góp một phần công sức, mỗi tấm lòng góp một phần yêu thương. Và từ những món quà được chuẩn bị hôm nay, một hành trình mới lại bắt đầu.
+
+Hẹn gặp Quý Anh Chị trên hành trình Caravan “Trở về tuổi thơ tôi – Lần 10”, nơi chúng ta sẽ cùng nhau mang theo không chỉ những món quà, mà còn mang theo yêu thương, trách nhiệm và niềm hy vọng, trao gửi đến các em nhỏ và những vùng đất còn nhiều khó khăn.
+
+Cùng nhau trao gửi yêu thương – cùng nhau viết tiếp hành trình NHÂN ÁI.
