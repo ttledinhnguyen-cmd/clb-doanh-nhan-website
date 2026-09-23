@@ -616,5 +616,92 @@
       }
     ],
     "tuWeb": true
+  },
+  {
+    "slug": "le-cong-bo-chuong-trinh-caravan-tro-ve-tuoi-tho-toi-lan-10",
+    "ten": "LỄ CÔNG BỐ CHƯƠNG TRÌNH CARAVAN \"TRỞ VỀ TUỔI THƠ TÔI - LẦN 10\"",
+    "danhMuc": "su-kien",
+    "soAnh": 13,
+    "anh": [
+      {
+        "ten": "alb-1790165850556-c5dc12e8",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165850556-c5dc12e8.webp",
+        "nho": "/images/tai-len/alb-1790165850556-c5dc12e8-nho.webp"
+      },
+      {
+        "ten": "alb-1790165851537-6d879e31",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165851537-6d879e31.webp",
+        "nho": "/images/tai-len/alb-1790165851537-6d879e31-nho.webp"
+      },
+      {
+        "ten": "alb-1790165852620-a17346f6",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165852620-a17346f6.webp",
+        "nho": "/images/tai-len/alb-1790165852620-a17346f6-nho.webp"
+      },
+      {
+        "ten": "alb-1790165853819-b4423e52",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165853819-b4423e52.webp",
+        "nho": "/images/tai-len/alb-1790165853819-b4423e52-nho.webp"
+      },
+      {
+        "ten": "alb-1790165854749-215fcd87",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165854749-215fcd87.webp",
+        "nho": "/images/tai-len/alb-1790165854749-215fcd87-nho.webp"
+      },
+      {
+        "ten": "alb-1790165855725-29ab7b20",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165855725-29ab7b20.webp",
+        "nho": "/images/tai-len/alb-1790165855725-29ab7b20-nho.webp"
+      },
+      {
+        "ten": "alb-1790165856859-fdae3439",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165856859-fdae3439.webp",
+        "nho": "/images/tai-len/alb-1790165856859-fdae3439-nho.webp"
+      },
+      {
+        "ten": "alb-1790165857969-fe4efc82",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165857969-fe4efc82.webp",
+        "nho": "/images/tai-len/alb-1790165857969-fe4efc82-nho.webp"
+      },
+      {
+        "ten": "alb-1790165859024-a8962d82",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165859024-a8962d82.webp",
+        "nho": "/images/tai-len/alb-1790165859024-a8962d82-nho.webp"
+      },
+      {
+        "ten": "alb-1790165860294-fdbd4b72",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165860294-fdbd4b72.webp",
+        "nho": "/images/tai-len/alb-1790165860294-fdbd4b72-nho.webp"
+      },
+      {
+        "ten": "alb-1790165861431-972cc18c",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165861431-972cc18c.webp",
+        "nho": "/images/tai-len/alb-1790165861431-972cc18c-nho.webp"
+      },
+      {
+        "ten": "alb-1790165862487-b586b777",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165862487-b586b777.webp",
+        "nho": "/images/tai-len/alb-1790165862487-b586b777-nho.webp"
+      },
+      {
+        "ten": "alb-1790165863676-58981134",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790165863676-58981134.webp",
+        "nho": "/images/tai-len/alb-1790165863676-58981134-nho.webp"
+      }
+    ],
+    "tuWeb": true
   }
 ]
