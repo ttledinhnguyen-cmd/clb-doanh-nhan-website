@@ -31,7 +31,7 @@ anhDoanhNghiep:
   - "/images/tai-len/sp-1790338154504-c295f53e.webp"
 ---
 
-Công Ty TNHH In Promac thành lập từ năm 2015 cho đến nay là sự kết hợp của nhiều chuyên gia trong lĩnh vực in ấn, thiết kế, kỹ thuật số, bảo mật thông tin .v.v.. có nhiều năm kinh nghiệm. 
+Công Ty TNHH Kỹ Thuật In Promac thành lập từ năm 2015 cho đến nay là sự kết hợp của nhiều chuyên gia trong lĩnh vực in ấn, thiết kế, kỹ thuật số, bảo mật thông tin .v.v.. có nhiều năm kinh nghiệm. 
 
 Chúng tôi là đối tác của các nhà cung cấp máy in, máy dán nhãn, nguyên vật liệu có công nghệ tiên tiến nhất trên thị trường. Năng lực của chúng tôi là đã thực hiện được những đơn hàng lớn đối với những khách hàng danh tiếng trong nước.
 
