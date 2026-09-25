@@ -7,7 +7,7 @@ capBac: "pho-chu-tich-danh-du"
 thuTu: 408
 chucDanh: "Chủ tịch Hội đồng Thành viên"
 doanhNghiep: "Công ty TNHH Công nghệ Môi trường Tân Phạm Nguyên"
-nganhNghe: "Môi trường"
+nganhNghe: "Xử lý nước"
 namGiaNhap: null
 dienThoai: "(+84) 0909 219 201"
 email: ""
