@@ -39,5 +39,7 @@ Qua hơn hai thập kỷ hoạt động, Tân Phạm Nguyên không chỉ ghi d�
 Lĩnh vực hoạt động chính:
 
 Xử lý nước cấp các công trình y tế, dân dụng, công nghiệp.
+
 Xử lý nước thải y tế, dân dụng, công nghiệp.
+
 Cung cấp thiết bị, vật tư xử lý ngành nước y tế, dân dụng, công nghiệp.
