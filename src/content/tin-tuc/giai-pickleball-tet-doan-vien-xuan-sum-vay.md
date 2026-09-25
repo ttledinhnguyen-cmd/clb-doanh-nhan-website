@@ -3,7 +3,7 @@ tieuDe: "GIẢI PICKLEBALL \"TẾT ĐOÀN VIÊN - XUÂN SUM VẦY\""
 moTa: "Với chủ đề “Tết Đoàn Viên - Xuân Sum Vầy”, chào đón năm mới, Ban Văn Hoá - Thể Thao CLB tổ chức giải đấu Pickleball \"Tết đoàn viên - Xuân sum vầy\", giải đấu không chỉ mang đến những trận tranh tài hấp dẫn, mà còn tạo nên những khoảnh khắc đáng nhớ của tình bạn, sự đồng hành và tinh thần thể thao fair-play"
 ngay: "2026-01-31"
 danhMuc: "van-hoa-the-thao"
-anhBia: "/images/tai-len/tin-giai-pickleball-tet-doan-vien-xuan-sum-vay-1790339859343.webp"
+anhBia: "/images/tai-len/tin-giai-pickleball-tet-doan-vien-xuan-sum-vay-1790340261817.webp"
 album: "giai-pickleball-tet-doan-vien-xuan-sum-vay"
 hinhAnh: []
 noiBat: false
