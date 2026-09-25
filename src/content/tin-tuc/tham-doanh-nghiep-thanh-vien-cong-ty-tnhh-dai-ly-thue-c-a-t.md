@@ -1,7 +1,7 @@
 ---
 tieuDe: "THĂM DOANH NGHIỆP THÀNH VIÊN – CÔNG TY TNHH ĐẠI LÝ THUẾ C.A.T"
 moTa: "Nhằm tăng cường sự gắn kết giữa các doanh nghiệp hội viên, đồng thời tạo cơ hội để các thành viên có thêm những góc nhìn thực tế về hoạt động kinh doanh, CLB Doanh Nhân Khánh Hòa – Sài Gòn tổ chức chương trình thăm Doanh nghiệp Thành viên – Công ty TNHH Đại lý Thuế C.A.T - Ms. Nguyễn Thị Thanh Hương"
-ngay: "2025-03-05"
+ngay: "2026-03-05"
 danhMuc: "phat-trien-thanh-vien"
 anhBia: "/images/tai-len/tin-tham-doanh-nghiep-thanh-vien-cong-ty-tnhh-dai-ly-thue-c-a-t-1790167084703.webp"
 album: ""
