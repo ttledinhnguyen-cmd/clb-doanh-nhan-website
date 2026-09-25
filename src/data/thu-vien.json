@@ -1326,7 +1326,7 @@
     "slug": "year-end-party-tet-doan-vien-xuan-sum-vay",
     "ten": "YEAR END PARTY \"TẾT ĐOÀN VIÊN - XUÂN SUM VẦY\"",
     "danhMuc": "su-kien",
-    "soAnh": 19,
+    "soAnh": 20,
     "anh": [
       {
         "ten": "alb-1790340047449-203e22ec",
@@ -1441,6 +1441,12 @@
         "ngang": true,
         "lon": "/images/tai-len/alb-1790340080784-5011140b.webp",
         "nho": "/images/tai-len/alb-1790340080784-5011140b-nho.webp"
+      },
+      {
+        "ten": "alb-1790340110652-e1536d4d",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790340110652-e1536d4d.webp",
+        "nho": "/images/tai-len/alb-1790340110652-e1536d4d-nho.webp"
       }
     ],
     "tuWeb": true
