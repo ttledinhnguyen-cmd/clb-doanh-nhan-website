@@ -1,23 +1,14 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import bangAnh from '../data/anh-hoi-vien.json';
+import { NHOM_BAN_DIEU_HANH, soSanhHoiVien } from './thu-tu';
+
+export { NHOM_BAN_DIEU_HANH };
 
 export type HoiVien = CollectionEntry<'hoiVien'>;
 
-export const NHOM_BAN_DIEU_HANH = [
-  { ma: 'chu-tich', ten: 'Chủ tịch' },
-  { ma: 'pho-chu-tich-thuong-truc', ten: 'Phó Chủ tịch Thường trực' },
-  { ma: 'pho-chu-tich', ten: 'Phó Chủ tịch' },
-  { ma: 'pho-chu-tich-danh-du', ten: 'Phó Chủ tịch Danh dự' },
-  { ma: 'uy-vien', ten: 'Uỷ viên Ban Chấp hành' },
-  { ma: 'uy-vien-du-khuyet', ten: 'Uỷ viên dự khuyết Ban Chấp hành' },
-] as const;
-
-const theoThuTu = (a: HoiVien, b: HoiVien) =>
-  a.data.thuTu - b.data.thuTu || a.data.hoTen.localeCompare(b.data.hoTen, 'vi');
-
-/** Toàn bộ hội viên, đã sắp xếp. */
+/** Toàn bộ hội viên, đã sắp xếp theo chức vụ. */
 export async function layHoiVien(): Promise<HoiVien[]> {
-  return (await getCollection('hoiVien')).sort(theoThuTu);
+  return (await getCollection('hoiVien')).sort(soSanhHoiVien);
 }
 
 /** Chỉ những người giữ chức vụ trong Ban điều hành. */

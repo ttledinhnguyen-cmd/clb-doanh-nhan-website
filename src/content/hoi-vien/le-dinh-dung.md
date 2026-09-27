@@ -4,7 +4,7 @@ xungHo: "Ông"
 anhGoc: "LÊ ĐÌNH DŨNG.png"
 chucVuClb: "Uỷ viên Ban Chấp hành"
 capBac: "uy-vien"
-thuTu: 12
+thuTu: 512
 chucDanh: "Chủ tịch"
 doanhNghiep: "CLB DN Tư vấn Nợ Ngân hàng BDC"
 nganhNghe: "Tài chính & Ngân hàng"
