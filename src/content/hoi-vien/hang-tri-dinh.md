@@ -2,7 +2,7 @@
 hoTen: "Hàng Trí Định"
 xungHo: "Ông"
 anh: "/images/tai-len/hang-tri-dinh-1789652687724.webp"
-chucVuClb: ""
+chucVuClb: "Thành viên CLB"
 capBac: ""
 thuTu: 9999
 chucDanh: "Giám Đốc"
