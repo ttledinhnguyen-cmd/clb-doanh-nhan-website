@@ -1549,5 +1549,50 @@
       }
     ],
     "tuWeb": true
+  },
+  {
+    "slug": "trao-qua-tang-cho-nguoi-dan-bi-anh-huong-lu-lut-tai-tay-khan",
+    "ten": "TRAO QUÀ TẶNG CHO NGƯỜI DÂN BỊ ẢNH HƯỞNG LŨ LỤT TẠI TÂY KHÁNH SƠN",
+    "danhMuc": "cong-tac-xa-hoi",
+    "soAnh": 6,
+    "anh": [
+      {
+        "ten": "alb-1790607034759-faf8ef6b",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607034759-faf8ef6b.webp",
+        "nho": "/images/tai-len/alb-1790607034759-faf8ef6b-nho.webp"
+      },
+      {
+        "ten": "alb-1790607037258-c2dc6c8e",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607037258-c2dc6c8e.webp",
+        "nho": "/images/tai-len/alb-1790607037258-c2dc6c8e-nho.webp"
+      },
+      {
+        "ten": "alb-1790607038719-32b02754",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607038719-32b02754.webp",
+        "nho": "/images/tai-len/alb-1790607038719-32b02754-nho.webp"
+      },
+      {
+        "ten": "alb-1790607040350-1aa08869",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607040350-1aa08869.webp",
+        "nho": "/images/tai-len/alb-1790607040350-1aa08869-nho.webp"
+      },
+      {
+        "ten": "alb-1790607042062-c6ca5d0a",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607042062-c6ca5d0a.webp",
+        "nho": "/images/tai-len/alb-1790607042062-c6ca5d0a-nho.webp"
+      },
+      {
+        "ten": "alb-1790607044118-6cfaeddf",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607044118-6cfaeddf.webp",
+        "nho": "/images/tai-len/alb-1790607044118-6cfaeddf-nho.webp"
+      }
+    ],
+    "tuWeb": true
   }
 ]
