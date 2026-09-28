@@ -1594,5 +1594,92 @@
       }
     ],
     "tuWeb": true
+  },
+  {
+    "slug": "trao-qua-ho-tro-ba-con-bi-anh-huong-lu-lut-tai-xa-tay-khanh-",
+    "ten": "TRAO QUÀ HỖ TRỢ BÀ CON BỊ ẢNH HƯỞNG LŨ LỤT TẠI XÃ TÂY KHÁNH VĨNH",
+    "danhMuc": "cong-tac-xa-hoi",
+    "soAnh": 13,
+    "anh": [
+      {
+        "ten": "alb-1790607771454-eda142e4",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607771454-eda142e4.webp",
+        "nho": "/images/tai-len/alb-1790607771454-eda142e4-nho.webp"
+      },
+      {
+        "ten": "alb-1790607773237-e2d5b5f1",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607773237-e2d5b5f1.webp",
+        "nho": "/images/tai-len/alb-1790607773237-e2d5b5f1-nho.webp"
+      },
+      {
+        "ten": "alb-1790607774837-bfa85deb",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607774837-bfa85deb.webp",
+        "nho": "/images/tai-len/alb-1790607774837-bfa85deb-nho.webp"
+      },
+      {
+        "ten": "alb-1790607776404-be3b95db",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607776404-be3b95db.webp",
+        "nho": "/images/tai-len/alb-1790607776404-be3b95db-nho.webp"
+      },
+      {
+        "ten": "alb-1790607778135-7d08206b",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607778135-7d08206b.webp",
+        "nho": "/images/tai-len/alb-1790607778135-7d08206b-nho.webp"
+      },
+      {
+        "ten": "alb-1790607779460-20d6502c",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607779460-20d6502c.webp",
+        "nho": "/images/tai-len/alb-1790607779460-20d6502c-nho.webp"
+      },
+      {
+        "ten": "alb-1790607780959-051f33d7",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607780959-051f33d7.webp",
+        "nho": "/images/tai-len/alb-1790607780959-051f33d7-nho.webp"
+      },
+      {
+        "ten": "alb-1790607783008-7f2e9e49",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607783008-7f2e9e49.webp",
+        "nho": "/images/tai-len/alb-1790607783008-7f2e9e49-nho.webp"
+      },
+      {
+        "ten": "alb-1790607784366-734a3523",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607784366-734a3523.webp",
+        "nho": "/images/tai-len/alb-1790607784366-734a3523-nho.webp"
+      },
+      {
+        "ten": "alb-1790607785898-e14247f2",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607785898-e14247f2.webp",
+        "nho": "/images/tai-len/alb-1790607785898-e14247f2-nho.webp"
+      },
+      {
+        "ten": "alb-1790607787462-671dfe47",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607787462-671dfe47.webp",
+        "nho": "/images/tai-len/alb-1790607787462-671dfe47-nho.webp"
+      },
+      {
+        "ten": "alb-1790607788762-b9476309",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607788762-b9476309.webp",
+        "nho": "/images/tai-len/alb-1790607788762-b9476309-nho.webp"
+      },
+      {
+        "ten": "alb-1790607790458-49903d9c",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790607790458-49903d9c.webp",
+        "nho": "/images/tai-len/alb-1790607790458-49903d9c-nho.webp"
+      }
+    ],
+    "tuWeb": true
   }
 ]
