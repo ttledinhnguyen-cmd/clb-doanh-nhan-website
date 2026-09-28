@@ -1681,5 +1681,68 @@
       }
     ],
     "tuWeb": true
+  },
+  {
+    "slug": "trao-qua-ho-tro-ba-con-bi-anh-huong-lu-lut-tai-xa-dien-khanh",
+    "ten": "TRAO QUÀ HỖ TRỢ BÀ CON BỊ ẢNH HƯỞNG LŨ LỤT TẠI XÃ DIÊN KHÁNH",
+    "danhMuc": "cong-tac-xa-hoi",
+    "soAnh": 9,
+    "anh": [
+      {
+        "ten": "alb-1790608089323-cffd6935",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608089323-cffd6935.webp",
+        "nho": "/images/tai-len/alb-1790608089323-cffd6935-nho.webp"
+      },
+      {
+        "ten": "alb-1790608090875-fb1e70a6",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608090875-fb1e70a6.webp",
+        "nho": "/images/tai-len/alb-1790608090875-fb1e70a6-nho.webp"
+      },
+      {
+        "ten": "alb-1790608092019-ef4e013b",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608092019-ef4e013b.webp",
+        "nho": "/images/tai-len/alb-1790608092019-ef4e013b-nho.webp"
+      },
+      {
+        "ten": "alb-1790608094057-ea932ce9",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608094057-ea932ce9.webp",
+        "nho": "/images/tai-len/alb-1790608094057-ea932ce9-nho.webp"
+      },
+      {
+        "ten": "alb-1790608096173-c71e7c88",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608096173-c71e7c88.webp",
+        "nho": "/images/tai-len/alb-1790608096173-c71e7c88-nho.webp"
+      },
+      {
+        "ten": "alb-1790608098005-64be430b",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608098005-64be430b.webp",
+        "nho": "/images/tai-len/alb-1790608098005-64be430b-nho.webp"
+      },
+      {
+        "ten": "alb-1790608099865-2287afa9",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608099865-2287afa9.webp",
+        "nho": "/images/tai-len/alb-1790608099865-2287afa9-nho.webp"
+      },
+      {
+        "ten": "alb-1790608101198-652bcf74",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608101198-652bcf74.webp",
+        "nho": "/images/tai-len/alb-1790608101198-652bcf74-nho.webp"
+      },
+      {
+        "ten": "alb-1790608102796-561e5bb2",
+        "ngang": true,
+        "lon": "/images/tai-len/alb-1790608102796-561e5bb2.webp",
+        "nho": "/images/tai-len/alb-1790608102796-561e5bb2-nho.webp"
+      }
+    ],
+    "tuWeb": true
   }
 ]
