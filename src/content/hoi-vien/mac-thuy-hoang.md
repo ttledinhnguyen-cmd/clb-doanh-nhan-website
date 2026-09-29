@@ -2,12 +2,12 @@
 hoTen: "Mạc Thuý Hoàng"
 xungHo: "Bà"
 anh: "/images/tai-len/mac-thuy-hoang-1790690514285.webp"
-chucVuClb: ""
+chucVuClb: "Thành viên CLB"
 capBac: ""
 thuTu: 9999
-chucDanh: ""
-doanhNghiep: ""
-nganhNghe: "Đang cập nhật"
+chucDanh: "Phó Giám Đốc"
+doanhNghiep: "Công Ty Cổ Phần Kiến Tạo Redhomes"
+nganhNghe: "Thiết kế thi công nội thất"
 namThanhLap: null
 quyMo: ""
 dienThoai: ""
