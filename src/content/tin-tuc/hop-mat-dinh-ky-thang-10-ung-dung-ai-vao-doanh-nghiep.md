@@ -33,8 +33,11 @@ noiBat: false
 CLB Doanh Nhân Khánh Hòa – Sài Gòn tổ chức chương trình Họp mặt định kỳ tháng 10 với chủ đề “Ứng dụng AI vào Doanh nghiệp”, mang đến cơ hội giao lưu, kết nối và cùng nhau cập nhật những xu hướng công nghệ mới trong thời đại chuyển đổi số.
 
 ✨ Chương trình là dịp để:
+
 🔹 Họp mặt và kết nối: Gặp gỡ, giao lưu, thắt chặt tình đoàn kết giữa các doanh nhân, cùng chia sẻ kinh nghiệm và mở rộng cơ hội hợp tác kinh doanh.
+
 🔹 Trao đổi Ứng dụng AI vào doanh nghiệp: Cùng tìm hiểu những giải pháp trí tuệ nhân tạo thiết thực, góp phần tối ưu quy trình vận hành, nâng cao hiệu suất làm việc và gia tăng năng lực cạnh tranh cho doanh nghiệp.
+
 🔹 Kết nạp thành viên mới: Chào đón những doanh nhân mới gia nhập đại gia đình CLB, cùng chung tinh thần kết nối, sẻ chia, hợp tác và phát triển bền vững.
 
 💙 Mỗi buổi họp mặt không chỉ là dịp gặp gỡ, mà còn là cơ hội để những người con Khánh Hòa và bạn hữu tại TP.HCM cùng nhau vun đắp tình đồng hương, phát huy tinh thần doanh nhân và lan tỏa những giá trị tốt đẹp đến cộng đồng.
