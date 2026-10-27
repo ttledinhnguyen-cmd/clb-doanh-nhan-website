@@ -1,7 +1,7 @@
 ---
 hoTen: "Nguyễn Thị Thanh Hương"
 xungHo: "Bà"
-anh: ""
+anh: "/images/tai-len/nguyen-thi-thanh-huong-1793110985957.webp"
 chucVuClb: ""
 capBac: ""
 thuTu: 9999
